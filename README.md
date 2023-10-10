@@ -1,10 +1,11 @@
 CapivApp
 
-Lara Victoria Souza Pereira
-Suzy Wellen Guimarães de Oliveira
-Thais Florentin Silvero da Cruz
+Lara Victoria Souza Pereira,
+Suzy Wellen Guimarães de Oliveira,
+Thais Florentin Silvero da Cruz;
 
 Instituto Federal do Paraná (IFPR) - Campus Foz do Iguaçu – PR – Brasil
+
 laratrabalhos83@gmail.com, suzy.wellen07@gmail.com, thais.florentin26@gmail.com
 
 
