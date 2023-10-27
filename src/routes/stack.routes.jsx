@@ -1,15 +1,20 @@
 import  { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 
-import { Profile, Config, Prioridade, Cliente, EsperaOs, New, Settings, Historico } from '../screens/Inside'
+import { Profile, Config, Prioridade, Cliente, EsperaOs, New, Settings, Historico, Home } from '../screens/Inside'
+import { NavigationContainer } from '@react-navigation/native'
 
 const Stack = createNativeStackNavigator()
 
 export default function StackRoutes(){
     return (
+    <NavigationContainer>
         <Stack.Navigator >
 
-
+            <Stack.Screen
+                name='homeScreen'
+                component={Home}
+            />
 
             <Stack.Screen
                 name='perfil'
@@ -44,5 +49,6 @@ export default function StackRoutes(){
                 component={Historico}
             />
         </Stack.Navigator>
+        </NavigationContainer>
     )
 }

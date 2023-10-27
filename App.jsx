@@ -4,13 +4,13 @@ import Routes from './src/routes';
 import { View, Text, StatusBar, } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import React, {useState} from 'react';
-
+import StackRoutes from './src/routes/stack.routes';
 import { Login, Welcome, SignUp, AlterarSenha, NovaSenha } from './src/screens/outside';
 import { Prioridade } from './src/screens/Inside';
 
 import { auth } from './src/config/firebase';
 import useAuth from './src/hooks/useAuth';
-
+import 'react-native-gesture-handler';
 const Stack = createNativeStackNavigator()
 
 export default function App() {

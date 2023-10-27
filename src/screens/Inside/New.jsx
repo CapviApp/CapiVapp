@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc } from "firebase/firestore";
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -8,7 +8,9 @@ import { Button } from 'react-native-paper';
 
 
 export default function New() {
+
   const [formData, setFormData] = useState({
+    
     prioridade: '',
     status: '',
     hardware: '',
@@ -21,66 +23,155 @@ export default function New() {
 
   const osCollectionRef = collection(db, 'os');
   const [OS, setOS] = useState([]);
-  const [docIdToBeUpdated, setDocIdToBeUpdated] = useState('');
-
-  const docRef = addDoc(osCollectionRef, formData);
-  let idRef = docRef.id
+  const [docIdToBeUpdated, setDocIdToBeUpdated] = useState(null);
+ 
   const adicionar = async () => {
     try {
-     
-      console.log('OS dados foram adicionados com sucesso, id: ');
-     
-      console.log('este e um id',idRef);
-     
+      const docRef = await addDoc(osCollectionRef, formData);
+      console.log('OS dados foram adicionados com sucesso, id: ', docRef.id);
+
+      const newOS = {
+        id: docRef.id,
+        ...formData,
+      };
+
+      setOS([...OS, newOS]);
+
+      console.log('este é um id', docRef.id);
+
+      // Limpar o formulário após a adição
+      setFormData({
+        prioridade: '',
+        status: '',
+        hardware: '',
+        servico: '',
+        descricao: '',
+        comentarios: '',
+        cliente: '',
+        data: '',
+      });
     } catch (error) {
       console.log('Erro ao adicionar dados:', error);
     }
   }
-
-  const deleteOS = async (docId) => {
-    if (docId) {
+ 
+  const deleteOS = async (id) => {
+    if (id) {
       try {
-        const docRef = doc(db, 'os', docId); // Certifique-se de que 'os' é o nome correto da coleção
-        await deleteDoc(docRef);
-        console.log('Documento excluído com sucesso.');
-        // Você pode adicionar aqui a lógica para atualizar a lista de documentos após a exclusão, se necessário.
+        await deleteDoc(doc(osCollectionRef, id));
+        console.log('Os dados da OS foram excluídos com sucesso.');
+  
+        // Remover o objeto excluído da lista
+        const updatedOS = OS.filter((os) => os.id !== id);
+        setOS(updatedOS);
       } catch (error) {
-        console.error('Erro ao excluir OS:', error);
+        console.log('Erro ao excluir os dados:', error);
       }
     } else {
-      console.error('Nenhum ID de documento fornecido para exclusão.');
+      console.log('Nenhum ID de documento válido para exclusão.');
+    }
+  };
+  
+  const update = async (id) => {
+    if(id){
+      try {
+        const docRef = doc(osCollectionRef, id);
+        const updateData = {
+        prioridade: formData.prioridade,
+        status: formData.status,
+        hardware: formData.hardware,
+        servico: formData.servico,
+        descricao: formData.descricao,
+        comentarios: formData.comentarios,
+        cliente: formData.cliente,
+        data: formData.data,
+      };
+      await updateDoc(docRef, updateData);
+      console.log('Os dados da OS foram atualizados com sucesso.');
+      }catch (error) {
+        console.log('Erro ao atualizar os dados:', error);
+      }
+    }else {
+      console.log('Nenhum ID de documento válido para o update.');
     }
   }
 
-  const Listar = () => {
+  
+
+
+  const ListOS = async () => {
+    try {
+      const querySnapshot = await getDocs(osCollectionRef);
+      const osList = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        osList.push({
+          id: doc.id,
+          cliente: data.cliente,
+          prioridade: data.prioridade,
+          status: data.status,
+          hardware: data.hardware,
+          servico: data.servico,
+          descricao: data.descricao,
+          comentarios: data.comentarios,
+        });
+      });
+      setOS(osList);
+      console.log('OS listadas: ', osList);
+    } catch (error) {
+      console.log('Erro ao listar os:', error);
+    }
+  }
+
+  const preencherFormulario = (item) => {
+    setDocIdToBeUpdated(item.id); // Defina o ID do documento a ser atualizado
+    setFormData({
+      prioridade: item.prioridade,
+      status: item.status,
+      hardware: item.hardware,
+      servico: item.servico,
+      descricao: item.descricao,
+      comentarios: item.comentarios,
+      cliente: item.cliente,
+      data: item.data,
+    });
+  }
+
+  function Listar() {
     return (
-      <View>
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
+      <FlatList
+        data={OS}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => preencherFormulario(item)} style={styles.formOS}>
             <View>
-              <Text>Nome: {item.nome}</Text>
-              <Text>Email: {item.email}</Text>
+              <Text style={styles.subTitle}>ID: {item.id}</Text>
+              <Text style={styles.subTitle}>Hardware: {item.hardware}</Text>
+              <TextInput
+              style={styles.input}
+              placeholder='Hardware'
+              placeholderTextColor='#fff'
+              onChangeText={(value) => setFormData({ ...formData, hardware: value })}
+              value={formData.hardware}
+            />
+              <View style={styles.buttonContainer}>
+              <Button mode='contained' onPress={() => deleteOS(item.id)}>Excluir</Button>
+
+              <Button mode='contained' onPress={() => update(item.id)}>Atualizar</Button>
+              </View>
             </View>
-          )}
-        />
-      </View>
+          </TouchableOpacity>
+        )}
+      />
     )
   }
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-      <ScrollView>
+     
       <View style={styles.container}>
         <View style={styles.inputContainer}>
-        <TextInput
-            style={styles.input}
-            placeholder='ID'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, id: value })}
-            value={formData.id}
-          >{formData.id}</TextInput>
           <TextInput
             style={styles.input}
             placeholder='Hardware'
@@ -139,14 +230,14 @@ export default function New() {
           />
         </View>
         <View style={styles.buttonContainer}>
-          <Button mode='contained' onPress={adicionar} style={styles.button}>Adicionar</Button>
-          <Button mode='contained' style={styles.button}>Atualizar</Button>
-          <Button mode='contained' onPress={() => deleteOS(docIdToBeUpdated)}  style={styles.button}>Excluir</Button>
-          <Button mode='contained'  style={styles.button}>Listar</Button>
+          <Button mode='contained' onPress={adicionar} >Adicionar</Button>
+        
+        
+          <Button mode='contained' onPress={ListOS} >Listar</Button>
         </View>
-      
+        <Listar/>
       </View>
-      </ScrollView>
+     
     </LinearGradient>
   );
 }
@@ -170,7 +261,7 @@ const styles = StyleSheet.create({
     paddingStart: 20,
   },
   subTitle: {
-    fontSize: 20,
+    fontSize: 12,
     fontWeight: 'bold',
     color: 'white',
     padding: 5,
@@ -185,7 +276,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 40,
     color: 'white',
-    height: 47,
+    height: 20,
     width: '90%',
     paddingStart: 20,
     marginBottom: 10,
@@ -197,6 +288,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: 'center',
+    flexDirection: 'row',
   },
   button: {
     width: '80%',
@@ -204,5 +296,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginBottom: 10,
   },
-
+  formOS: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
 })
