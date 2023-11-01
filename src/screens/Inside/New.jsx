@@ -9,7 +9,6 @@ import { Button } from 'react-native-paper';
 
 export default function New() {
 
-  console.log('New');
 
   const [formData, setFormData] = useState({
     

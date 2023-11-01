@@ -11,8 +11,8 @@ import { Button, SafeAreaView, View, Image, Text, StyleSheet } from "react-nativ
 import User from '../../assets/user.jpeg'
 
 import TabRoutes from './tab.routes'
-import StackRoutes from './stack.routes'
-import { Prioridade, Config, EsperaOs, Historico, Cliente, Profile, OSIndividual } from '../screens/Inside'
+
+import { Prioridade, Config, EsperaOs, Historico, Cliente, Profile } from '../screens/Inside'
 
 const Drawer = createDrawerNavigator()
 
