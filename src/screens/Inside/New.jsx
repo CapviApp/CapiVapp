@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc } from "firebase/firestore";
 import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
+
 import { db } from'../../config/firebase'
 import { Button } from 'react-native-paper';
 
 
 export default function New() {
+
+  console.log('New');
 
   const [formData, setFormData] = useState({
     
@@ -144,8 +146,9 @@ export default function New() {
         data={OS}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
+          <View>
           <TouchableOpacity onPress={() => preencherFormulario(item)} style={styles.formOS}>
-            <View>
+            
               <Text style={styles.subTitle}>ID: {item.id}</Text>
               <Text style={styles.subTitle}>Hardware: {item.hardware}</Text>
               <TextInput
@@ -160,8 +163,9 @@ export default function New() {
 
               <Button mode='contained' onPress={() => update(item.id)}>Atualizar</Button>
               </View>
-            </View>
+            
           </TouchableOpacity>
+          </View>
         )}
       />
     )
