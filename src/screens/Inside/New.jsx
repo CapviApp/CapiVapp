@@ -175,6 +175,7 @@ export default function New() {
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
      
       <View style={styles.container}>
+        <Text style={styles.title}> CRUD OS </Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -261,8 +262,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
-    flex: 1,
-    paddingStart: 20,
+    
+    
   },
   subTitle: {
     fontSize: 12,
