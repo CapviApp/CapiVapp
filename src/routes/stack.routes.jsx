@@ -7,8 +7,8 @@ const Stack = createNativeStackNavigator()
 
 export default function StackRoutes(){
     return (
-        <Stack.Navigator >
-
+        <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
 
 
             <Stack.Screen
@@ -44,5 +44,6 @@ export default function StackRoutes(){
                 component={Historico}
             />
         </Stack.Navigator>
+        </NavigationContainer>
     )
 }

@@ -1,7 +1,7 @@
 
 import New from "./New";
 import Profile from "./Profile";
-import Config from './Settings'
+import Config from './Config'
 import Historico from "./HistoricoOs";
 import Cliente from "./Cliente";
 import EsperaOs from "./EsperaOs";

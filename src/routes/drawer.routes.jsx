@@ -129,16 +129,8 @@ export default function DrawerRoutes(){
                 }}
                 
             />
-             <Drawer.Screen
-                name='os'
-                component={OSIndividual}
-                options={{
-                    drawerIcon:  ({ color, size }) => <AntDesign name="team" size={size} color={color} />,
-                    drawerLabel: 'OS'
-                }}
-                
-            />
-          
+        
+        
         </Drawer.Navigator>
     )
 }
