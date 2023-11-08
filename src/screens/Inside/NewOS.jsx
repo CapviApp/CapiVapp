@@ -1,101 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
-import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native'; // Importe FlatList
+import { doc, setDoc, collection, updateDoc, deleteDoc, query, where, getDocs } from "firebase/firestore";
 import firebase, { db } from '../../config/firebase';
+import { useState, useEffect } from 'react';
 
 export default function NewOS() {
-  const [username, setUsername] = useState('');
+  const [username, setName] = useState('');
   const [email, setEmail] = useState('');
   const [users, setUsers] = useState([]);
+  const [editMode, setEditMode] = useState(false);
 
   const userCollectionRef = collection(db, 'teste');
 
   const adicionar = async () => {
     try {
-      await setDoc(doc(db, 'teste', email), {
+      await setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
       });
-      console.log('Os dados foram adicionados com sucesso.');
+      console.log('Cadastro realizado com sucesso!');
+      limparCampos();
+      loadUsers(); // Atualize a lista de usuários após o cadastro
     } catch (error) {
-      console.log('Erro ao adicionar dados:', error);
+      console.error('Erro ao cadastrar:', error);
     }
-  };
+  }
 
   const update = async () => {
     try {
-      await updateDoc(doc(db, 'teste', email), {
+      await updateDoc(doc(userCollectionRef, email), {
         nome: username,
       });
-      console.log('Os dados foram atualizados com sucesso.');
+      console.log('Atualização realizada com sucesso!');
+      limparCampos();
+      setEditMode(false);
+      loadUsers(); // Atualize a lista de usuários após a atualização
     } catch (error) {
-      console.log('Erro ao atualizar dados:', error);
+      console.error('Erro ao atualizar:', error);
     }
-  };
+  }
 
   const deleteUser = async () => {
     try {
-      await deleteDoc(doc(db, 'teste', email));
-      console.log('Os dados foram excluídos com sucesso.');
+      await deleteDoc(doc(userCollectionRef, email));
+      console.log('Usuário deletado com sucesso!');
+      limparCampos();
+      loadUsers(); // Atualize a lista de usuários após a exclusão
     } catch (error) {
-      console.log('Erro ao excluir dados:', error);
+      console.error('Erro ao deletar:', error);
     }
-  };
+  }
 
   const listUser = async () => {
     try {
-      const querySnapshot = await getDocs(userCollectionRef);
-      const userList = [];
-
+      const q = query(userCollectionRef, where('email', '==', email));
+      const querySnapshot = await getDocs(q);
+      const userData = [];
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        userList.push({
-          nome: data.nome,
-          email: data.email,
-        });
+        userData.push(doc.data());
       });
-
-      setUsers(userList);
-      console.log('Usuários listados:', userList);
+      setUsers(userData);
     } catch (error) {
-      console.log('Erro ao listar usuários:', error);
+      console.error('Erro ao listar:', error);
     }
-  };
+  }
+
+  const loadUsers = async () => {
+    try {
+      const q = query(userCollectionRef);
+      const querySnapshot = await getDocs(q);
+      const userData = [];
+      querySnapshot.forEach((doc) => {
+        userData.push(doc.data());
+      });
+      setUsers(userData);
+    } catch (error) {
+      console.error('Erro ao carregar usuários:', error);
+    }
+  }
+
+  const limparCampos = () => {
+    setName('');
+    setEmail('');
+  }
 
   useEffect(() => {
-    listUser();
+    loadUsers(); // Carregue a lista de usuários ao iniciar o componente
   }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>NewOS</Text>
-      <TextInput
-        placeholder='Nome'
-        onChangeText={(value) => setUsername(value)}
-        value={username}
+      <TextInput placeholder='Nome' onChangeText={(value) => setName(value)} value={username} />
+      <TextInput placeholder='Email' onChangeText={(value) => setEmail(value)} value={email} />
+
+      {editMode ? (
+        <Button onPress={update} title='Atualizar' />
+      ) : (
+        <Button onPress={adicionar} title='Salvar' />
+      )}
+
+      <Button onPress={deleteUser} title='Deletar' />
+
+      {editMode ? (
+        <Button onPress={() => { limparCampos(); setEditMode(false); }} title='Cancelar' />
+      ) : (
+        <Button onPress={() => setEditMode(true)} title='Editar' />
+      )}
+
+      <Button onPress={loadUsers} title='Listar' />
+
+
+      <Text style={styles.listTitle}>Lista de Usuários:</Text>
+      <FlatList
+        data={users}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <Text>{`Nome: ${item.nome}, Email: ${item.email}`}</Text>
+        )}
       />
-      <TextInput
-        placeholder='Email'
-        onChangeText={(value) => setEmail(value)}
-        value={email}
-      />
-      <Button onPress={adicionar} title='Adicionar'/>
-      <Button onPress={update} title='Atualizar'/>
-      <Button onPress={deleteUser} title='Excluir'/>
-      <Button onPress={listUser} title='Listar'/>
-      <View>
-        <Text>Lista de Usuários</Text>
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Text>Nome: {item.nome}</Text>
-              <Text>Email: {item.email}</Text>
-            </View>
-          )}
-        />
-      </View>
     </View>
   );
 }
@@ -105,11 +128,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'flex',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 50,
+    fontSize: 22,
     fontWeight: 'bold',
   },
- 
+  listTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
