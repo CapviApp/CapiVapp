@@ -16,7 +16,7 @@ export default function StackRoutes(){
                 component={Profile}
             />
             <Stack.Screen
-                name='settings'
+                name='config'
                 component={Config}
             />
             <Stack.Screen
@@ -30,10 +30,6 @@ export default function StackRoutes(){
             <Stack.Screen
                 name='cliente'
                 component={Cliente}
-            />
-            <Stack.Screen
-                name='config'
-                component={Settings}
             />
             <Stack.Screen
                 name='new'

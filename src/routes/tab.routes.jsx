@@ -1,13 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import { View, Text, Platform } from "react-native";
-import {
-    SimpleLineIcons,
-    Fontisto,
-    MaterialCommunityIcons,
-    MaterialIcons,
-  } from "@expo/vector-icons";
-import { Home, New, Profile, Settings, Historico, Cliente } from '../screens/Inside';
+import { View, Text, Platform, StyleSheet } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
+import { Home, New, Profile, Historico, Cliente } from '../screens/Inside';
 import COLORS from '../constants/color'
 
 const Tab = createBottomTabNavigator()
@@ -31,34 +27,20 @@ const screenOptions = {
 export default function TabRoutes(){
     return (
         <Tab.Navigator screenOptions={screenOptions}>
-            <Tab.Screen 
+           <Tab.Screen 
                 name='Home'
+                style={styles.tabButton}
                 component={Home}
                 options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                          <SimpleLineIcons
-                            name="home"
-                            size={24}
-                            color={focused ? COLORS.primary : COLORS.black}
-                          />
-                        );
-                      },
+                  tabBarButton: props => <CustumTabBarBotton route="home" {...props} />,
+
                 }}
             />
-            <Tab.Screen 
+           <Tab.Screen 
                 name='cliente'
                 component={Cliente}
                 options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                            <AntDesign
-                            name="team"
-                            size={24}
-                            color={focused ? COLORS.primary : COLORS.black}
-                          />
-                        );
-                      },
+                  tabBarButton: props => <CustumTabBarBotton {...props} />,
                 }}
             />
             <Tab.Screen 
@@ -90,30 +72,16 @@ export default function TabRoutes(){
                 name='profile'
                 component={Profile}
                 options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                          <MaterialIcons
-                            name="person-outline"
-                            size={24}
-                            color={focused ? COLORS.primary : COLORS.black}
-                          />
-                        );
-                      },
+                  tabBarButton: props => <CustumTabBarBotton {...props} />,
+
                 }}
             />
             <Tab.Screen 
                 name='historico'
                 component={Historico}
                 options={{
-                    tabBarIcon: ({ focused }) => {
-                        return (
-                          <MaterialIcons
-                            name="book"
-                            size={24}
-                            color={focused ? COLORS.primary : COLORS.black}
-                          />
-                        );
-                      },
+                  tabBarButton: props => <CustumTabBarBotton {...props} />,
+
                 }}
             />
 
