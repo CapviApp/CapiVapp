@@ -11,8 +11,7 @@ import {
 } from '@expo/vector-icons'
 import { Searchbar } from 'react-native-paper';
 import React, {useState} from 'react'
-
-
+import { useNavigation } from '@react-navigation/native';
 import Prioridade from './Prioridade';
 import { OsItemH, OsItemV } from '../components/OS';
 
@@ -21,6 +20,11 @@ import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizo
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Home() {
+
+
+  const navigation = useNavigation()
+
+
 
   const data = [
     '#FF33FF',
@@ -33,6 +37,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const onChangeSearch = query => setSearchQuery(query);
+  console.log('HomeScreen');
 
   const name = 'Lara'
   return (
@@ -97,7 +102,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     width: '100%',
-    marginBottom: '30%'
+    marginBottom: '30%',
+    
   },
   title: {
     fontSize: 22,
