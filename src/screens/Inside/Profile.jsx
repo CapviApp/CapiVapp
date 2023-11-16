@@ -8,7 +8,7 @@ import { Button } from 'react-native-paper';
 
 
 
-export default function New() {
+export default function Profile() {
 
   const [docId, setDocId] = useState('')
   const [formData, setFormData] = useState({
@@ -25,7 +25,7 @@ export default function New() {
 
   const osCollectionRef = collection(db, 'os');
   const [OS, setOS] = useState([]);
-  
+
  
   const adicionar = async () => {
     try {
@@ -275,5 +275,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginBottom: 10,
   },
+
 
 })

@@ -263,8 +263,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
-    
-    
+
   },
   subTitle: {
     fontSize: 12,
@@ -306,4 +305,6 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     borderWidth: 1,
   },
+
 })
+

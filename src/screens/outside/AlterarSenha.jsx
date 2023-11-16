@@ -10,7 +10,6 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function AlterarSenha() {
 
-
   const navigation = useNavigation()
   const alert = () => Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
     {
