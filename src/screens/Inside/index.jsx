@@ -8,7 +8,7 @@ import EsperaOs from "./EsperaOs";
 import Prioridade from "./Prioridade";
 import OSIndividual from "./OSIndividual";
 import ClientesList from "./ClientesList";
-import Home from "./Home"
+import Home from  "./Home"
 export {
     Home,
     New,

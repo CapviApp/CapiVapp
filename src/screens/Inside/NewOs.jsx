@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
 import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
+import firebase, { db } from '../../config/firebase';
 
-import { db } from'../../config/firebase'
-
-export default function Cliente() {
+export default function NewOS() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [users, setUsers] = useState([]);
@@ -23,7 +22,7 @@ export default function Cliente() {
     }
   };
 
-   const update = async () => {
+  const update = async () => {
     try {
       await updateDoc(doc(db, 'teste', email), {
         nome: username,
@@ -67,34 +66,15 @@ export default function Cliente() {
     listUser();
   }, []);
 
-  const Listar = () => {
-    return (
-      <View>
-        <FlatList
-          data={users}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View>
-              <Text>Nome: {item.nome}</Text>
-              <Text>Email: {item.email}</Text>
-            </View>
-          )}
-        />
-      </View>
-    )
-  }
-
   return (
     <View style={styles.container}>
-     
+      <Text style={styles.title}>NewOS</Text>
       <TextInput
-        style={styles.input}
         placeholder='Nome'
         onChangeText={(value) => setUsername(value)}
         value={username}
       />
       <TextInput
-        style={styles.input}
         placeholder='Email'
         onChangeText={(value) => setEmail(value)}
         value={email}
@@ -105,8 +85,16 @@ export default function Cliente() {
       <Button onPress={listUser} title='Listar'/>
       <View>
         <Text>Lista de Usuários</Text>
-        <Listar/>
-        <Text>Listando</Text>
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View>
+              <Text>Nome: {item.nome}</Text>
+              <Text>Email: {item.email}</Text>
+            </View>
+          )}
+        />
       </View>
     </View>
   );
@@ -123,5 +111,5 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
   },
-
+ 
 });
