@@ -7,6 +7,7 @@ import { db } from'../../config/firebase'
 import { Button } from 'react-native-paper';
 
 
+
 export default function New() {
 
   const [docId, setDocId] = useState('')
@@ -142,7 +143,9 @@ export default function New() {
   }
 
 
+
   return (
+
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
     
       <View style={styles.container}>
@@ -214,6 +217,7 @@ export default function New() {
       </View>
      
     </LinearGradient>
+
   );
 }
 

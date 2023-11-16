@@ -5,5 +5,12 @@ import StackRoutes from './stack.routes'
 
 
 export default function Routes(){
-   return null
+
+
+    return (
+        <NavigationContainer>
+            <StackRoutes/>
+        </NavigationContainer>
+    )
+
 }

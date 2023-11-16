@@ -129,8 +129,7 @@ export default function DrawerRoutes(){
                 }}
                 
             />
-             
-          
+
         </Drawer.Navigator>
     )
 }
