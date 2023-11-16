@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 
 
-export default function AlterarSenha({ navigation }) {
+export default function AlterarSenha() {
 
   const alert = () => Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
     {
@@ -22,7 +22,7 @@ export default function AlterarSenha({ navigation }) {
             name="leftcircle" 
             size={30} 
             color="white" 
-            onPress={() => navigation.navigate("Welcome")}
+            onPress={() => navigation.navigate("welcome")}
         />
         <Image 
             source={require('../../../assets/capibara.png')} 

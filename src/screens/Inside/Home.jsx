@@ -20,7 +20,7 @@ import { OsItemH, OsItemV } from '../components/OS';
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default function Home({ navigation }) {
+export default function Home() {
 
   const data = [
     '#FF33FF',

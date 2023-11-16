@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex',
   },
   title: {
-    fontSize: 22,
+    fontSize: 50,
     fontWeight: 'bold',
   }
 });
