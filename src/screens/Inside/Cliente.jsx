@@ -106,6 +106,7 @@ export default function Cliente() {
       <View>
         <Text>Lista de Usuários</Text>
         <Listar/>
+        <Text>Listando</Text>
       </View>
     </View>
   );
