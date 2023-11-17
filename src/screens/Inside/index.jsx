@@ -10,8 +10,11 @@ import OSIndividual from "./OSIndividual";
 import ClientesList from "./ClientesList";
 import Home from  "./Home"
 <<<<<<< HEAD
+<<<<<<< HEAD
 import NewOS from "./NewOS";
 import NewCliente from "./NewCliente";
+=======
+>>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
 =======
 >>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
 export {
