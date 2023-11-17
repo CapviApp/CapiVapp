@@ -1,256 +1,115 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import {addDoc, collection,query, getDocs,updateDoc,deleteDoc,where,} from 'firebase/firestore';
-import { db } from '../../config/firebase';
-import {format,addHours,set,getUnixTime,} from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz/esm';
+import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
+import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs } from "firebase/firestore";
+import firebase, { db } from '../../config/firebase';
 
 export default function NewOS() {
-  const [osId, setOsId] = useState(''); // Adicione o estado para o ID da OS
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [users, setUsers] = useState([]);
 
-  const [cliente, setCliente] = useState('');
-  const [tipoHardware, setTipoHardware] = useState('');
-  const [tipoServico, setTipoServico] = useState('');
-  const [outros, setOutros] = useState('');
-  const [prioridade, setPrioridade] = useState('baixa');
-  const [comentario, setComentario] = useState('');
-  const [descricaoProduto, setDescricaoProduto] = useState('');
-  const [status, setStatus] = useState('Novo'); // Corrija para definir um valor inicial
-  const [editMode, setEditMode] = useState(false);
-  const [osList, setOSList] = useState([]);
+  const userCollectionRef = collection(db, 'teste');
 
-  const osCollectionRef = collection(db, 'teste');
-
-  const getNextOsId = async () => {
+  const adicionar = async () => {
     try {
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      const osCount = querySnapshot.size;
-      const nextId = osCount + 1;//aqui ele ta fazendo a contagem
-      setOsId(nextId.toString());
-      //console.log('osId definido:', osId); // sla parece q ele substitui ou aparece tanto o id quando a contagem desse satanas
+      await setDoc(doc(db, 'teste', email), {
+        nome: username,
+        email: email,
+      });
+      console.log('Os dados foram adicionados com sucesso.');
     } catch (error) {
-      console.error('Erro ao obter o próximo ID da Ordem de Serviço:', error);
+      console.log('Erro ao adicionar dados:', error);
+    }
+  };
+
+  const update = async () => {
+    try {
+      await updateDoc(doc(db, 'teste', email), {
+        nome: username,
+      });
+      console.log('Os dados foram atualizados com sucesso.');
+    } catch (error) {
+      console.log('Erro ao atualizar dados:', error);
+    }
+  };
+
+  const deleteUser = async () => {
+    try {
+      await deleteDoc(doc(db, 'teste', email));
+      console.log('Os dados foram excluídos com sucesso.');
+    } catch (error) {
+      console.log('Erro ao excluir dados:', error);
+    }
+  };
+
+  const listUser = async () => {
+    try {
+      const querySnapshot = await getDocs(userCollectionRef);
+      const userList = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        userList.push({
+          nome: data.nome,
+          email: data.email,
+        });
+      });
+
+      setUsers(userList);
+      console.log('Usuários listados:', userList);
+    } catch (error) {
+      console.log('Erro ao listar usuários:', error);
     }
   };
 
   useEffect(() => {
-    getNextOsId();
-  }, []);
-
-  const adicionarOS = async () => {
-    try {
-      const dataAtualUTC = new Date();
-      const dataAtualBrasilia = utcToZonedTime(dataAtualUTC, 'America/Sao_Paulo');
-      const dataFormatada = format(dataAtualBrasilia, 'dd-MM-yyyy / HH:mm');//yyyy-MM-dd HH:mm:ssXXX'
-  
-      const docRef = await addDoc(osCollectionRef, {
-        data: dataFormatada,
-        cliente: cliente,
-        tipoHardware: tipoHardware,
-        tipoServico: tipoServico,
-        outros: outros,
-        prioridade: prioridade,
-        comentario: comentario,
-        descricaoProduto: descricaoProduto,
-        status: status,
-      });
-  
-      const osId = docRef.id;
-  
-      console.log('Ordem de serviço cadastrada com sucesso! ID da OS:', osId);
-      limparCampos();
-      loadOS();
-    } catch (error) {
-      console.error('Erro ao cadastrar ordem de serviço:', error);
-    }
-  }
-  
-  
-
-  const updateOS = async () => {
-    try {
-      const osQuery = query(osCollectionRef, where('cliente', '==', cliente));
-      const osQuerySnapshot = await getDocs(osQuery);
-
-      osQuerySnapshot.forEach(async (doc) => {
-        await updateDoc(doc.ref, {
-          cliente: cliente,
-          tipoHardware: tipoHardware,
-          tipoServico: tipoServico,
-          outros: outros,
-          prioridade: prioridade,
-          comentario: comentario,
-          descricaoProduto: descricaoProduto,
-          status: status,
-        });
-      });
-
-      console.log('Atualização realizada com sucesso!');
-      limparCampos();
-      setEditMode(false);
-      loadOS();
-    } catch (error) {
-      console.error('Erro ao atualizar:', error);
-    }
-  }
-
-  const deleteOS = async () => {
-    try {
-      const osQuery = query(osCollectionRef, where('cliente', '==', cliente));
-      const osQuerySnapshot = await getDocs(osQuery);
-
-      osQuerySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-
-      console.log('Ordem de serviço excluída com sucesso!');
-      limparCampos();
-      loadOS();
-    } catch (error) {
-      console.error('Erro ao excluir:', error);
-    }
-  }
-
-  const listOS = async () => {
-    try {
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-
-      const osData = [];
-      querySnapshot.forEach((doc) => {
-        osData.push({ id: doc.id, ...doc.data() });
-      });
-      setOSList(osData);
-    } catch (error) {
-      console.error('Erro ao listar:', error);
-    }
-  }
-
-  const loadOS = async () => {
-    try {
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      const osData = [];
-      querySnapshot.forEach((doc) => {
-        osData.push({ id: doc.id, ...doc.data() });
-      });
-      setOSList(osData);
-    } catch (error) {
-      console.error('Erro ao carregar ordens de serviço:', error);
-    }
-  }
-
-  const limparCampos = () => {
-    setCliente('');
-    setTipoHardware('');
-    setTipoServico('');
-    setOutros('');
-    setPrioridade('baixa');
-    setComentario('');
-    setDescricaoProduto('');
-    setStatus('Novo');
-  }
-
-  useEffect(() => {
-    loadOS();
+    listUser();
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
-
-      <Text>ID da OS:</Text>{/**aqui ele exibe a contagem no começo, sempremicao de edicao */}
-      <Text>{osId}</Text>
-
-      <Text>Cliente:</Text>
-      <TextInput placeholder="Selecione um cliente ou digite um novo" value={cliente} onChangeText={text => setCliente(text)} />
-
-      <Text>Tipo de Hardware:</Text>
-      <Picker selectedValue={tipoHardware} onValueChange={itemValue => setTipoHardware(itemValue)}>
-        <Picker.Item label="Selecione" value="" />
-        <Picker.Item label="Opção 1" value="Opção 1" />
-        <Picker.Item label="Opção 2" value="Opção 2" />
-      </Picker>
-
-      <Text>Tipo de Serviço:</Text>
-      <Picker selectedValue={tipoServico} onValueChange={itemValue => setTipoServico(itemValue)}>
-        <Picker.Item label="Selecione" value="" />
-        <Picker.Item label="Opção 1" value="Opção 1" />
-        <Picker.Item label="Opção 2" value="Opção 2" />
-      </Picker>
-
-      <Text>Outros:</Text>
-      <TextInput placeholder="Comentários adicionais" value={outros} onChangeText={text => setOutros(text)} />
-
-      <Text>Prioridade:</Text>
-      <Picker selectedValue={prioridade} onValueChange={itemValue => setPrioridade(itemValue)}>
-        <Picker.Item label="Baixa" value="baixa" />
-        <Picker.Item label="Média" value="média" />
-        <Picker.Item label="Alta" value="alta" />
-      </Picker>
-
-      <Text>Comentário:</Text>
-      <TextInput placeholder="Comentário da OS" value={comentario} onChangeText={text => setComentario(text)} />
-
-      <Text>Descrição do Produto:</Text>
-      <TextInput placeholder="Descrição do produto" value={descricaoProduto} onChangeText={text => setDescricaoProduto(text)} />
-
-      <Text>Status:</Text>
-      <Picker selectedValue={status} onValueChange={itemValue => setStatus(itemValue)} />
-
-      {editMode ? (
-        <Button onPress={updateOS} title='Atualizar' />
-      ) : (
-        <Button onPress={adicionarOS} title='Salvar' />
-      )}
-
-      <Button onPress={deleteOS} title='Deletar' />
-
-      {editMode ? (
-        <Button onPress={() => { limparCampos(); setEditMode(false); }} title='Cancelar' />
-      ) : (
-        <Button onPress={() => setEditMode(true)} title='Editar' />
-      )}
-
-      <Button onPress={listOS} title='Listar' />
-
-      <Text style={styles.listTitle}>Lista de Ordens de Serviço:</Text>
-      {/**O id da OS aparece com 'undefined para vizualizacao */}
-      <FlatList
-      data={osList}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item }) => (
-        <Text>{`ID da OS: ${item.id}
-        Data: ${item.data}
-        Cliente: ${item.cliente}
-        TipoHardware: ${item.tipoHardware}
-        TipoServico: ${item.tipoServico} 
-        Outros: ${item.outros} 
-        Prioridade: ${item.prioridade}
-        Comentario: ${item.comentario}
-        DescricaoProduto: ${item.descricaoProduto}
-        Status: ${item.status}`}</Text>
-      )}
-/>
-
+      <Text style={styles.title}>NewOS</Text>
+      <TextInput
+        placeholder='Nome'
+        onChangeText={(value) => setUsername(value)}
+        value={username}
+      />
+      <TextInput
+        placeholder='Email'
+        onChangeText={(value) => setEmail(value)}
+        value={email}
+      />
+      <Button onPress={adicionar} title='Adicionar'/>
+      <Button onPress={update} title='Atualizar'/>
+      <Button onPress={deleteUser} title='Excluir'/>
+      <Button onPress={listUser} title='Listar'/>
+      <View>
+        <Text>Lista de Usuários</Text>
+        <FlatList
+          data={users}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View>
+              <Text>Nome: {item.nome}</Text>
+              <Text>Email: {item.email}</Text>
+            </View>
+          )}
+        />
+      </View>
     </View>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'flex',
   },
   title: {
-    fontSize: 18,
+    fontSize: 50,
     fontWeight: 'bold',
   },
-  listTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-};
+ 
+});

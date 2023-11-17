@@ -21,7 +21,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default function Home() {
 
+
   const navigation = useNavigation()
+
+
 
   const data = [
     '#FF33FF',
