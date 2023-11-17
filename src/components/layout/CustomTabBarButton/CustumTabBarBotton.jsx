@@ -9,7 +9,7 @@ const CustumTabBarBotton = props => {
    
     const {route, children, acessibilityState, onPress} = props
 
-    if (acessibilityState.selected) {
+    if (acessibilityState) {
         return (
             <TouchableOpacity onPress={onPress} style={styles.activeBtn}>
             <Text>{children}</Text>

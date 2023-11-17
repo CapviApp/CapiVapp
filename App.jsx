@@ -17,7 +17,7 @@ export default function App() {
 
   const {user} = useAuth();
   //const user = false 
-  
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       {user ? <StackRoutes /> : (
@@ -33,6 +33,4 @@ export default function App() {
       )}
     </GestureHandlerRootView>
   );
- 
 }
-

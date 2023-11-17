@@ -10,7 +10,9 @@ const Stack = createNativeStackNavigator()
 
 export default function StackRoutes(){
     return (
-    <NavigationContainer>
+
+        <NavigationContainer>
+
         <Stack.Navigator screenOptions={{ headerShown: false }}>
 
             <Stack.Screen
