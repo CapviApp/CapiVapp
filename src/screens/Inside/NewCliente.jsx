@@ -1,24 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import {addDoc, collection,query, getDocs,updateDoc,deleteDoc,where,} from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import {format,addHours,set,getUnixTime,} from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz/esm';
+import Listar from './NewOS'
 
 export default function NewCliente() {
+ 
+  
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>OS</Text>
-      
+    <View>
+      <Text>Hello World</Text>
+      <Listar/>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 16,
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
-  }
-});
+  },
+  listTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+};
