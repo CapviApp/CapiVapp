@@ -33,11 +33,5 @@ export default function App() {
       )}
     </GestureHandlerRootView>
   );
-<<<<<<< HEAD
-<<<<<<< HEAD
-}
-=======
-=======
->>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
 
->>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
+}

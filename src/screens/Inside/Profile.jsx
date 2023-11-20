@@ -8,15 +8,9 @@ import { Button } from 'react-native-paper';
 
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-export default function New() {
-=======
+
 export default function Profile() {
->>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
-=======
-export default function Profile() {
->>>>>>> 66b29dd220e6d5d9800572fbf4163099b9c75bdf
+
 
   const [docId, setDocId] = useState('')
   const [formData, setFormData] = useState({
