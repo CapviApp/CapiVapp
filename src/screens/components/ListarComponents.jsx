@@ -13,7 +13,7 @@ function Listar({ osList, dadosItem }) {
             <Text>Hardware: {item.hardware}</Text>
             <Text>Serviço: {item.servico}</Text>
             <Text>Prioridade: {item.prioridade}</Text>
-            {/* Exiba os dados do item do formulário */}
+           
             <Text>Cliente: {dadosItem.cliente}</Text>
             <Text>Tipo de Hardware: {dadosItem.tipoHardware}</Text>
             <Text>Tipo de Serviço: {dadosItem.tipoServico}</Text>
