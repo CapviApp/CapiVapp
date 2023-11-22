@@ -15,7 +15,6 @@ import { useNavigation } from '@react-navigation/native';
 import Prioridade from './Prioridade';
 import { OsItemH, OsItemV } from '../components/OS';
 
-
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -91,6 +90,7 @@ export default function Home() {
             <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
             <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Iniciada"onPress={() => navigation.navigate("os")}/>
           </View>
+          
     </View>
     </ScrollView>
      </LinearGradient>

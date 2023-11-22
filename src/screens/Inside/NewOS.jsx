@@ -7,6 +7,7 @@ import {format,addHours,set,getUnixTime,} from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz/esm';
 import { ScrollView } from 'react-native-gesture-handler';
 import Listar from '../components/ListarComponents';
+import { StyleSheet } from 'react-native';
 
 export default function NewOS() {
   const [osId, setOsId] = useState(''); // Adicione o estado para o ID da OS
@@ -21,6 +22,8 @@ export default function NewOS() {
   const [status, setStatus] = useState('Novo'); 
   const [editMode, setEditMode] = useState(false);
   const [osList, setOSList] = useState([]);
+  const [selectedOS, setSelectedOS] = useState(null);
+
 
   const osCollectionRef = collection(db, 'teste');
 
@@ -71,52 +74,11 @@ export default function NewOS() {
   
   
 
-  const updateOS = async () => {
-    try {
-      const osQuery = query(osCollectionRef, where('cliente', '==', cliente));
-      const osQuerySnapshot = await getDocs(osQuery);
-
-      osQuerySnapshot.forEach(async (doc) => {
-        await updateDoc(doc.ref, {
-          cliente: cliente,
-          tipoHardware: tipoHardware,
-          tipoServico: tipoServico,
-          outros: outros,
-          prioridade: prioridade,
-          comentario: comentario,
-          descricaoProduto: descricaoProduto,
-          status: status,
-        });
-      });
-
-      console.log('Atualização realizada com sucesso!');
-      limparCampos();
-      setEditMode(false);
-      loadOS();
-    } catch (error) {
-      console.error('Erro ao atualizar:', error);
-    }
-  }
-
-  const deleteOS = async () => {
-    try {
-      const osQuery = query(osCollectionRef, where('cliente', '==', cliente));
-      const osQuerySnapshot = await getDocs(osQuery);
-
-      osQuerySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-
-      console.log('Ordem de serviço excluída com sucesso!');
-      limparCampos();
-      loadOS();
-    } catch (error) {
-      console.error('Erro ao excluir:', error);
-    }
-  }
+ 
 
   const listOS = async () => {
     try {
+      setSelectedOS(item);
       const q = query(osCollectionRef);
       const querySnapshot = await getDocs(q);
 
@@ -204,35 +166,26 @@ export default function NewOS() {
       <Text>Status:</Text>
       <Picker selectedValue={status} onValueChange={itemValue => setStatus(itemValue)} />
 
-      {editMode ? (
-        <Button onPress={updateOS} title='Atualizar' />
-      ) : (
+    
         <Button onPress={adicionarOS} title='Salvar' />
-      )}
-
-      <Button onPress={deleteOS} title='Deletar' />
-
-      {editMode ? (
+       
         <Button onPress={() => { limparCampos(); setEditMode(false); }} title='Cancelar' />
-      ) : (
-        <Button onPress={() => setEditMode(true)} title='Editar' />
-      )}
-
-      <Button onPress={listOS} title='Listar' />
-
+        <Button onPress={listOS} title='Listar'/>
+  
       <Text style={styles.listTitle}>Lista de Ordens de Serviço:</Text>
       {/**O id da OS aparece com 'undefined para vizualizacao */}
      
-        <Listar osList={osList}/>
+        <Listar osList={osList} selecionarOS={listOS}/>
     </View>
     </ScrollView>
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: '25%',
   },
   title: {
     fontSize: 18,
@@ -243,4 +196,4 @@ const styles = {
     fontWeight: 'bold',
     marginTop: 10,
   },
-};
+})

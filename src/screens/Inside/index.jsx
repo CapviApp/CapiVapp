@@ -9,9 +9,9 @@ import Prioridade from "./Prioridade";
 import OSIndividual from "./OSIndividual";
 import ClientesList from "./ClientesList";
 import Home from  "./Home"
-
 import NewOS from "./NewOS";
 import NewCliente from "./NewCliente";
+import EditOS from "./EditOS";
 
 export {
     Home,
@@ -26,4 +26,5 @@ export {
     ClientesList,
     NewCliente,
     NewOS,
+    EditOS
 }
