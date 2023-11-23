@@ -4,15 +4,26 @@ import Button from '../../components/Button';
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
 
+import { auth} from '../../config/firebase'
+import { sendEmailVerification } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
 
+export default function AlterarSenha() {
 
-export default function AlterarSenha({ navigation }) {
-
+  const navigation = useNavigation()
   const alert = () => Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
     {
       text: 'OK', onPress: () => console.log('OK Pressed')
     }
   ])
+
+  sendEmailVerification(auth.currentUser)
+  .then(() => {
+    console.log('Email enviado!');
+  })
+  .catch((error) => {
+    console.log('erro: ', error);
+  })
 
   return (
     <View style={styles.container}>
@@ -22,7 +33,7 @@ export default function AlterarSenha({ navigation }) {
             name="leftcircle" 
             size={30} 
             color="white" 
-            onPress={() => navigation.navigate("Welcome")}
+            onPress={() => navigation.navigate("welcome")}
         />
         <Image 
             source={require('../../../assets/capibara.png')} 
