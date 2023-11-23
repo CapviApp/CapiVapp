@@ -11,16 +11,19 @@ import {
 } from '@expo/vector-icons'
 import { Searchbar } from 'react-native-paper';
 import React, {useState} from 'react'
-
-
+import { useNavigation } from '@react-navigation/native';
 import Prioridade from './Prioridade';
 import { OsItemH, OsItemV } from '../components/OS';
-
 
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default function Home({ navigation }) {
+export default function Home() {
+
+
+  const navigation = useNavigation()
+
+
 
   const data = [
     '#FF33FF',
@@ -33,6 +36,7 @@ export default function Home({ navigation }) {
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const onChangeSearch = query => setSearchQuery(query);
+  console.log('HomeScreen');
 
   const name = 'Lara'
   return (
@@ -86,6 +90,7 @@ export default function Home({ navigation }) {
             <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
             <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Iniciada"onPress={() => navigation.navigate("os")}/>
           </View>
+          
     </View>
     </ScrollView>
      </LinearGradient>
@@ -97,7 +102,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     width: '100%',
-    marginBottom: '30%'
+    marginBottom: '30%',
+    
   },
   title: {
     fontSize: 22,

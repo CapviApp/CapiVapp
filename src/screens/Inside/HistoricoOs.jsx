@@ -7,11 +7,13 @@ import React, {useState} from 'react'
 import { Filtro } from '../components/Filtro';
 import { OsItemH } from '../components/OS';
 
+import Listar from '../components/ListarComponents';
+
 export default function Historico({ navigation }) {
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
-
+  const [osList, setOSList] = useState([]);
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
     <ScrollView>
@@ -36,16 +38,8 @@ export default function Historico({ navigation }) {
            </View>
            <Text style={styles.subTitle}>Ordens de Serviço</Text>
            <View style={styles.PrioridadeContainer}>
-            <OsItemH data="10/10/2023" title="005-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="13/10/2023" title="008-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="14/10/2023" title="009-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="15/10/2023" title="010-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="16/10/2023" title="011-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="17/10/2023" title="012-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="18/10/2023" title="013-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-      
+              <Listar osList={osList}
+              />  
           </View>
     </View>
     </ScrollView>
