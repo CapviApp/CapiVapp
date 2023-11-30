@@ -1,48 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
-import React, {useState} from 'react'
-
-import { Filtro } from '../components/Filtro';
-import { OsItemH } from '../components/OS';
 
 import Listar from '../components/ListarComponents';
 
 export default function Historico({ navigation }) {
-
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => setSearchQuery(query);
+  const [searchQuery, setSearchQuery] = useState('');
+  const onChangeSearch = (query) => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
+
+  // Dados de exemplo para as seções
+  const data = [
+    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+   
+  ];
+
+  // Função para renderizar um item individual na SectionList
+  const renderItem = ({ item }) => (
+    <View>
+      {/* Seu componente de item da lista (OsItemH) */}
+      <Text>{item}</Text>
+    </View>
+  );
+
   return (
-    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
-    <ScrollView>
-    <View style={styles.container}>
-      <Text style={styles.title}>Historico OS</Text>
-      <View style={styles.searchContainer}>
+    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
+     
+      <SectionList
+        sections={data}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <View style={styles.container}>
+          <Text style={styles.title}>Histórico OS</Text>
+          <View style={styles.searchContainer}>
             <Searchbar
               placeholder="Pesquisar"
               onChangeText={onChangeSearch}
-              value={searchQuery} 
+              value={searchQuery}
               style={styles.searchBar}
             />
           </View>
-           <View>
-           <Text style={styles.subTitle}>Filtros:</Text>
-              <Filtro title='Prioridade'/>
-              <Filtro title='Status'/>
-              <Filtro title='Tipo Serviço'/>
-              <Filtro title='Tipo Hardware'/>
-              <Filtro title='Cliente'/>
-              <Filtro title='Data'/>
-           </View>
-           <Text style={styles.subTitle}>Ordens de Serviço</Text>
-           <View style={styles.PrioridadeContainer}>
-              <Listar osList={osList}
-              />  
-          </View>
-    </View>
-    </ScrollView>
+          <Text style={styles.subTitle}>Ordens de Serviço</Text>
+          <Listar osList={osList}/>
+        </View>
+        
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </LinearGradient>
   );
 }
@@ -50,15 +55,14 @@ export default function Historico({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: '100%',
-    marginBottom: '10%'
+    marginBottom: '23%',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
-    flex: 1,
     paddingStart: 22,
     textAlign: 'center',
   },
@@ -72,54 +76,14 @@ const styles = StyleSheet.create({
   },
   backgroundColor: {
     flex: 1,
-    widht: '100%',
-  },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 40,
-    color: 'white',
-    height: 47,
-    width: '94%', 
-    paddingStart: 20,
-  },
-  inputContainer: {
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   searchBar: {
-    width: '90%'
+    width: '90%',
   },
   searchContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 10,
-  },
-  buttonText: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: '15%'
-  },  
-  icon:{
-    marginTop: 7,
-    marginEnd: 10,
-  },
-  NovasContainer: {
-    height: '100%',
-    flexDirection: 'row',
-    flex: 1,
-    marginBottom: 15,
-    justifyContent: 'center',
-  },
-  prioridade: {
-  backgroundColor: "#C61B11"
-    
-  },
-  filtros: {
-
-  },
-  filtro: {
-
   },
 });
