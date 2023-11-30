@@ -10,6 +10,8 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function AlterarSenha() {
 
+
+
   const navigation = useNavigation()
   const alert = () => Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
     {
@@ -19,7 +21,7 @@ export default function AlterarSenha() {
 
   sendEmailVerification(auth.currentUser)
   .then(() => {
-    console.log('Email enviado!');
+    alert('Email enviado!');
   })
   .catch((error) => {
     console.log('erro: ', error);
