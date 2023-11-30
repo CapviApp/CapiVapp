@@ -1,5 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { useNavigation } from 'expo-router';
+
+import { db } from '../../config/firebase';
 
 export default function EditOS({ osList, selecionarOS}) {
 
@@ -23,24 +28,20 @@ export default function EditOS({ osList, selecionarOS}) {
         }
       };
     
-      const updateOS = async () => {
+      const updateOS = async (osId) => {
         try {
-          const osQuery = query(osCollectionRef, where('cliente', '==', cliente));
-          const osQuerySnapshot = await getDocs(osQuery);
-    
-          osQuerySnapshot.forEach(async (doc) => {
-            await updateDoc(doc.ref, {
-              cliente: cliente,
-              tipoHardware: tipoHardware,
-              tipoServico: tipoServico,
-              outros: outros,
-              prioridade: prioridade,
-              comentario: comentario,
-              descricaoProduto: descricaoProduto,
-              status: status,
-            });
+          const osRef = doc(osCollectionRef, osId);
+          await updateDoc(osRef, {
+            cliente: cliente,
+            tipoHardware: tipoHardware,
+            tipoServico: tipoServico,
+            outros: outros,
+            prioridade: prioridade,
+            comentario: comentario,
+            descricaoProduto: descricaoProduto,
+            status: status,
           });
-    
+      
           console.log('Atualização realizada com sucesso!');
           limparCampos();
           setEditMode(false);
@@ -48,7 +49,7 @@ export default function EditOS({ osList, selecionarOS}) {
         } catch (error) {
           console.error('Erro ao atualizar:', error);
         }
-      }
+      };
 
   return (
     <View style={styles.container}>

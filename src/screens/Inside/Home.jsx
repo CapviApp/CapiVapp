@@ -55,41 +55,8 @@ export default function Home() {
               style={styles.searchBar}
             />
           </View>
-          <ListaHorizontal 
-              data={data}
-              />
-          <Text 
-              style={styles.title} >
-              Ordens de Serviço Novas
-            </Text>
-            <View style={styles.NovasContainer}>
-              <OsItemV style={styles.novaOS} data="06/10/2023" title="001-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-              <OsItemV style={styles.novaOS} data="07/10/2023" title="002-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            </View>
-            <View style={styles.NovasContainer}>
-              <OsItemV style={styles.novaOS} data="08/10/2023" title="003-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-              <OsItemV style={styles.novaOS} data="09/10/2023" title="004-2023" prioridade="alta" onPress={() => navigation.navigate("os")}/>
-            </View>
-           
-          <TouchableOpacity 
-            style={styles.buttonText}
-            onPress={() => navigation.navigate("prioridade")}
-            >
-              <Text style={styles.title} >
-              OS Prioridade Alta</Text>
-            
-            <AntDesign 
-              name="right" 
-              size={24} 
-              color="white" 
-              style={styles.icon} 
-            />
-          </TouchableOpacity>
-          <View style={styles.PrioridadeContainer}>
-            <OsItemH data="10/10/2023" title="005-2023" prioridade="alta" status="Iniciada"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Iniciada"onPress={() => navigation.navigate("os")}/>
-          </View>
+          
+         
           
     </View>
     </ScrollView>

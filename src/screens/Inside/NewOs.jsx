@@ -166,7 +166,9 @@ export default function NewOS() {
   ]}
   onSelect={(value) => setTipoHardware(value)}
   defaultValue={tipoHardware}
-  setSelected={(value) => setSelectedTipoHardware(value)}/>
+  setSelected={(value) => setSelectedTipoHardware(value)}
+  style={styles.selectList}
+  />
   
 <Text>Tipo de Serviço:</Text>
 <SelectList
@@ -257,4 +259,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     
   },
+  selectList: {
+    backgroundColor: '#fff'
+  }
 });
