@@ -5,7 +5,7 @@ import { db } from '../../config/firebase';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-export default function OSIndividual({ osList, selecionarOS}) {
+export default function OSIndividual({ osList, selecionarOS, item}) {
 
 
 
@@ -21,7 +21,7 @@ export default function OSIndividual({ osList, selecionarOS}) {
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
       });
-      console.log('Dados carregados:', osData);
+     
       setOSList(osData);
       return osData;
     } catch (error) {
@@ -49,6 +49,23 @@ export default function OSIndividual({ osList, selecionarOS}) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OS</Text>
+    
+            <View style={styles.containerText}>
+          <Text>Status: {item.status}</Text>
+           
+
+            <Text>Data: {item.data}</Text>
+            <Text>Cliente: {item.cliente}</Text>                   
+            <Text>Prioridade: {item.prioridade}</Text>           
+           
+           
+            </View>
+            
+           
+            <TouchableOpacity onPress={() => navigation.navigate("editOS", {osId: item.id})} style={styles.button}>
+                <FontAwesome name="pencil-square-o" size={24} color="black" />
+            </TouchableOpacity>
+          
       <Button title="Deletar"  onPress={() => deleteOS(item.id)} />
     </View>
   );
