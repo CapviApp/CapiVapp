@@ -71,7 +71,7 @@ export default function SignUp({ navigation }) {
       <TextInput 
           style={styles.input}
           textContentType='password'
-          placeholder='Confirmas Senha'  
+          placeholder='Confirmar Senha'  
           placeholderTextColor='#FFF' 
           secureTextEntry
         />

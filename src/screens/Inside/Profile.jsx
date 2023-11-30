@@ -7,10 +7,26 @@ import { db } from'../../config/firebase'
 import { Button } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons'; 
 import User from '../../../assets/index'
+import { getAuth, signOut } from 'firebase/auth';
+
+import { auth, firebase } from '../../config/firebase'
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function Profile() {
 
+  const SignOutFunction = () => {
+    signOut(auth).then(() => {
+     console.log('usuario deslogado com sucesso');
+    }).catch((error) => {
+      console.log('Erro ao deslogar', error);
+    });
+  }
+
+
+
+ 
+ 
 
   return (
 
@@ -34,7 +50,7 @@ export default function Profile() {
           <Text style={styles.title}>Telefone</Text>
           <Text style={styles.subTitle}>45 9 9123-4567</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button}> 
+            <TouchableOpacity style={styles.button} onPress={() => SignOutFunction()}> 
               <AntDesign name="logout" size={20} color="white" style={styles.textButton}/> 
               <Text style={styles.text}>Desconectar</Text>     
             </TouchableOpacity>
