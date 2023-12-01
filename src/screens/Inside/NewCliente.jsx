@@ -4,7 +4,8 @@ import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, getDoc } from "
 import firebase, { db } from '../../config/firebase';
 import { Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import Toast from 'react-native-toast-message';
+//Toast.show
 export default function Cliente() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -13,9 +14,34 @@ export default function Cliente() {
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [users, setUsers] = useState([]);
+  const [isCpfValid, setIsCpfValid] = useState(true);
+  const [isEmailValid, setIsEmailValid] = useState(true);
+  const [isCnpjValid, setIsCnpjValid] = useState(true);
+  const [isTelefoneValid, setIsTelefoneValid] = useState(true);
 
   const userCollectionRef = collection(db, 'Cliente teste');
 
+  const handleCpfChange = (value) => {
+    const formattedValue = formatarCPF(value);
+    setCpf(formattedValue);
+    setIsCpfValid(validarCPF(formattedValue));
+  };
+  const handleEmailChange = (value) => {
+    setEmail(value);
+    setIsEmailValid(validarEmail(value));
+  };
+  
+  const handleCnpjChange = (value) => {
+    const formattedValue = formatarCNPJ(value);
+    setCnpj(formattedValue);
+    setIsCnpjValid(validarCNPJ(formattedValue));
+  };
+  
+  const handleTelefoneChange = (value) => {
+    const formattedValue = formatarTelefone(value);
+    setTelefone(formattedValue);
+    setIsTelefoneValid(formattedValue.length === 15); 
+  };
   const validarCPF = (cpf) => {
     if (cpf === '') return true;
     cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
@@ -98,6 +124,7 @@ export default function Cliente() {
     valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
     return valor;
   };
+ 
   const adicionar = () => {
     try {
       if (cpf && !validarCPF(cpf)) {
@@ -122,7 +149,11 @@ export default function Cliente() {
         telefone: telefone,
         endereco: endereco,
       }).then(() => {
-        console.log('Cliente adicionado');
+        Toast.show({
+          type: 'success',
+          text1: 'Salvo',
+          text2: 'Cliente adicionado com sucesso!'
+        });
         // Limpar os campos após a adição
         setUsername('');
         setEmail('');
@@ -131,10 +162,20 @@ export default function Cliente() {
         setTelefone('');
         setEndereco('');
       }).catch((error) => {
-        console.log(error);
+        console.error(error);
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'Não foi possível salvar'
+        });
       });
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Não foi possível salvar'
+      });
     }
   };
   
@@ -213,15 +254,14 @@ export default function Cliente() {
           <View style={styles.inputContainer}>
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="Email:" onChangeText={(value) => setEmail(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="CPF:"value={cpf} onChangeText={(value) => setCpf(formatarCPF(value))}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>
-            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={(value) => setCnpj(formatarCNPJ(value))}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>
-            <TextInput placeholder="Telefone:"value={telefone} onChangeText={(value) => setTelefone(formatarTelefone(value))}keyboardType="numeric" style={styles.input} placeholderTextColor='white'/>
+            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={[styles.input, !isEmailValid && styles.inputError]}  placeholderTextColor='white'/>{!isEmailValid && <Text style={styles.errorText}>E-mail inválido</Text>}            
+            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={[styles.input, !isCpfValid && styles.inputError]}placeholderTextColor='white'/>{!isCpfValid && <Text style={styles.errorText}>CPF inválido</Text>}            
+            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={[styles.input, !isCnpjValid && styles.inputError]}placeholderTextColor='white'/>{!isCnpjValid && <Text style={styles.errorText}>CNPJ inválido</Text>}
+            <TextInput placeholder="Telefone:"value={telefone}onChangeText={handleTelefoneChange}keyboardType="numeric"style={[styles.input, !isTelefoneValid && styles.inputError]}placeholderTextColor='white'/>{!isTelefoneValid && <Text style={styles.errorText}>Telefone inválido</Text>}
             <TextInput placeholder="Endereço:" onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
           </View>
           <View style={styles.buttonContainer}>
             <Button onPress={adicionar} mode='contained' style={styles.button}>Salvar</Button>
-            
           </View>
           {users.map((user, index) => (
             <View key={index}>
@@ -238,6 +278,7 @@ export default function Cliente() {
       )}
       keyExtractor={(item, index) => index.toString()}
     />
+    <Toast />
    </LinearGradient>
   );
 }
@@ -246,6 +287,14 @@ const styles = StyleSheet.create({
   backgroundColor: {
     flex: 1,
     width: '100%',
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginLeft: 10,
   },
   container: {
     flex: 1,
