@@ -1,11 +1,72 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, TouchableOpacity, View, Text, Button, StyleSheet } from 'react-native';
+import {addDoc, collection,query, getDocs,doc,updateDoc,deleteDoc,where,} from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-export default function OSIndividual() {
+export default function OSIndividual({ osList, selecionarOS, item}) {
+
+
+
+  const [osListState, setOSList] = useState([]);
+  const osCollectionRef = collection(db, 'teste');
+  const navigation = useNavigation()
+
+  const loadOS = async () => {
+    try {
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+      });
+     
+      setOSList(osData);
+      return osData;
+    } catch (error) {
+      console.error('Erro ao carregar ordens de serviço:', error);
+    }
+  };
+
+  const deleteOS = async (osId) => {
+    console.log('Deletando OS com ID:', osId);
+  
+    if (osId) {
+      try {
+        const osDocRef = doc(osCollectionRef, osId);
+        await deleteDoc(osDocRef);
+        console.log('Ordem de serviço excluída com sucesso!', osId);
+        loadOS();
+      } catch (deleteError) {
+        console.error('Erro ao excluir documento:', deleteError);
+      }
+    } else {
+      console.log('Nenhum ID de documento válido para exclusão.');
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OS</Text>
-      
+    
+            <View style={styles.containerText}>
+          <Text>Status: {item.status}</Text>
+           
+
+            <Text>Data: {item.data}</Text>
+            <Text>Cliente: {item.cliente}</Text>                   
+            <Text>Prioridade: {item.prioridade}</Text>           
+           
+           
+            </View>
+            
+           
+            <TouchableOpacity onPress={() => navigation.navigate("editOS", {osId: item.id})} style={styles.button}>
+                <FontAwesome name="pencil-square-o" size={24} color="black" />
+            </TouchableOpacity>
+          
+      <Button title="Deletar"  onPress={() => deleteOS(item.id)} />
     </View>
   );
 }
