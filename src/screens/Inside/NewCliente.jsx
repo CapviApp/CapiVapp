@@ -96,9 +96,9 @@ export default function Cliente() {
   };
 
   const validarEmail = (email) => {
-    const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    const regex = /^[a-z]+([.-]?[a-z0-9]+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     return regex.test(email);
-  };
+};
   
   const formatarCPF = (valor) => {
     valor = valor.replace(/\D/g, "").slice(0, 11);
