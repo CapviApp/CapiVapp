@@ -39,14 +39,14 @@ export default function Cliente() {
       const querySnapshot = await getDocs(userCollectionRef);
       const userList = [];
       querySnapshot.forEach((doc) => {
-        userList.push(doc.data());
+        userList.push({ id: doc.id, ...doc.data() });
       });
       setUsers(userList);
       console.log('Clientes listados:', userList);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const update = async () => {
     try {
@@ -107,7 +107,7 @@ export default function Cliente() {
        
         <View>
           <View style={styles.inputContainer}>
-          <Text style={styles.title}>Novos Cliente</Text>
+          <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Email:" onChangeText={(value) => setEmail(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="CNPJ/CPF:" onChangeText={(value) => setCpfCnpj(value)} style={styles.input} placeholderTextColor={color='white'}/>
@@ -116,9 +116,7 @@ export default function Cliente() {
           </View>
           <View style={styles.buttonContainer}>
             <Button onPress={adicionar} mode='contained' style={styles.button}>Salvar</Button>
-            <Button onPress={update} mode='contained' style={styles.button}>Atualizar</Button>
-            <Button onPress={deleteUser} mode='contained' style={styles.button}>Deletar</Button>
-            <Button onPress={listUser} mode='contained' style={styles.button}>Listar</Button>
+            
           </View>
           {users.map((user, index) => (
             <View key={index}>
@@ -137,6 +135,8 @@ export default function Cliente() {
    </LinearGradient>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   backgroundColor: {
@@ -159,6 +159,8 @@ const styles = StyleSheet.create({
   },
   button:{
     marginBottom: 10,
+    paddingVertical: 6,
+    borderRadius: 30,
    
   },
   buttonContainer: {
@@ -166,11 +168,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   input:{
-    borderBottomWidth: 1,
-    borderBottomColor: 'white',
-    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: 'white',
+    paddingVertical: 10,
+    marginVertical: 10,
+    paddingStart: 10,
+    borderRadius: 30,
+    color: 'white',
+    backgroundColor: '#1A4963'
+    
   },
   inputContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
   }
 });
