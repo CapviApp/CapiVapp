@@ -118,7 +118,7 @@ export default function Cliente() {
     return valor;
   };
   const formatarTelefone = (valor) => {
-    valor = valor.replace(/\D/g, "").slice(0, 11);
+    valor = valor.replace(/\D/g, "").slice(0, 10);
     valor = valor.replace(/\D/g, "");
     valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
     valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
