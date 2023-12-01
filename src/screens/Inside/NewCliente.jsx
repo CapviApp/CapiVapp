@@ -8,7 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function Cliente() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [cpfCnpj, setCpfCnpj] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [cnpj, setCnpj] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [users, setUsers] = useState([]);
@@ -20,8 +21,8 @@ export default function Cliente() {
       setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
-        cpf: cpfCnpj,
-        cnpj: cpfCnpj,
+        cpf: cpf,
+        cnpj: cnpj,
         telefone: telefone,
         endereco: endereco,
       }).then(() => {
@@ -54,8 +55,8 @@ export default function Cliente() {
       if (userDoc.exists()) {
         updateDoc(doc(userCollectionRef, email), {
           nome: username,
-          cpf: cpfCnpj,
-          cnpj: cpfCnpj,
+          cpf: cpf,
+          cnpj: cnpj,
           telefone: telefone,
           endereco: endereco,
         }).then(() => {
@@ -110,7 +111,8 @@ export default function Cliente() {
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Email:" onChangeText={(value) => setEmail(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="CNPJ/CPF:" onChangeText={(value) => setCpfCnpj(value)} style={styles.input} placeholderTextColor={color='white'}/>
+            <TextInput placeholder="CPF:" onChangeText={(value) => setCpf(value)} style={styles.input} placeholderTextColor={color='white'}/>
+            <TextInput placeholder="CNPJ:" onChangeText={(value) => setCnpj(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Telefone:" onChangeText={(value) => setTelefone(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Endereço:" onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
           </View>
@@ -122,7 +124,8 @@ export default function Cliente() {
             <View key={index}>
               <Text>Nome: {user.nome}</Text>
               <Text>Email: {user.email}</Text>
-              <Text>CNPJ/CPF: {user.cnpj || user.cpf}</Text>
+              <Text>CPF: {user.cpf}</Text>
+              <Text>CNPJ: {user.cnpj}</Text>
               <Text>Número de Telefone: {user.telefone}</Text>
               <Text>Endereço: {user.endereco}</Text>
             </View>
@@ -135,8 +138,6 @@ export default function Cliente() {
    </LinearGradient>
   );
 }
-
-
 
 const styles = StyleSheet.create({
   backgroundColor: {
