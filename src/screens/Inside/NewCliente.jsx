@@ -16,8 +16,104 @@ export default function Cliente() {
 
   const userCollectionRef = collection(db, 'Cliente teste');
 
+  const validarCPF = (cpf) => {
+    if (cpf === '') return true;
+    cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+    if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+  
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let resto = (soma * 10) % 11;
+    if ((resto === 10) || (resto === 11)) resto = 0;
+    if (resto !== parseInt(cpf.charAt(9))) return false;
+  
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+      soma += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    resto = (soma * 10) % 11;
+    if ((resto === 10) || (resto === 11)) resto = 0;
+    if (resto !== parseInt(cpf.charAt(10))) return false;
+  
+    return true;
+  };
+  
+
+  const validarCNPJ = (cnpj) => {
+    if (cnpj === '') return true;
+    cnpj = cnpj.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+    if (cnpj.length !== 14) return false;
+  
+    // Validação do primeiro dígito verificador
+    let soma = 0;
+    let peso = 2;
+    for (let i = 11; i >= 0; i--) {
+      soma += parseInt(cnpj.charAt(i)) * peso;
+      peso = peso === 9 ? 2 : peso + 1;
+    }
+    let resto = soma % 11;
+    if (parseInt(cnpj.charAt(12)) !== (resto < 2 ? 0 : 11 - resto)) return false;
+  
+    // Validação do segundo dígito verificador
+    soma = 0;
+    peso = 2;
+    for (let i = 12; i >= 0; i--) {
+      soma += parseInt(cnpj.charAt(i)) * peso;
+      peso = peso === 9 ? 2 : peso + 1;
+    }
+    resto = soma % 11;
+    if (parseInt(cnpj.charAt(13)) !== (resto < 2 ? 0 : 11 - resto)) return false;
+  
+    return true;
+  };
+
+  const validarEmail = (email) => {
+    const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    return regex.test(email);
+  };
+  
+  const formatarCPF = (valor) => {
+    valor = valor.replace(/\D/g, "").slice(0, 11);
+    valor = valor.replace(/\D/g, ""); // Remove tudo o que não é dígito
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+    valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    return valor;
+  }
+  const formatarCNPJ = (valor) => {
+    valor = valor.replace(/\D/g, "").slice(0, 14);
+    valor = valor.replace(/\D/g, "");
+    valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+    valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+    valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+    valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+    return valor;
+  };
+  const formatarTelefone = (valor) => {
+    valor = valor.replace(/\D/g, "").slice(0, 11);
+    valor = valor.replace(/\D/g, "");
+    valor = valor.replace(/^(\d{2})(\d)/, "($1) $2");
+    valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+    return valor;
+  };
   const adicionar = () => {
     try {
+      if (cpf && !validarCPF(cpf)) {
+        console.log("CPF inválido");
+        return;
+      }
+  
+      if (cnpj && !validarCNPJ(cnpj)) {
+        console.log("CNPJ inválido");
+        return;
+      }
+      if (!validarEmail(email)) {
+        console.log("E-mail inválido");
+        return;
+      }
+  
       setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
@@ -27,14 +123,21 @@ export default function Cliente() {
         endereco: endereco,
       }).then(() => {
         console.log('Cliente adicionado');
+        // Limpar os campos após a adição
+        setUsername('');
+        setEmail('');
+        setCpf('');
+        setCnpj('');
+        setTelefone('');
+        setEndereco('');
       }).catch((error) => {
         console.log(error);
       });
     } catch (error) {
       console.log(error.message);
     }
-  }
-
+  };
+  
   const listUser = async () => {
     try {
       const querySnapshot = await getDocs(userCollectionRef);
@@ -111,9 +214,9 @@ export default function Cliente() {
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Email:" onChangeText={(value) => setEmail(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="CPF:" onChangeText={(value) => setCpf(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="CNPJ:" onChangeText={(value) => setCnpj(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="Telefone:" onChangeText={(value) => setTelefone(value)} style={styles.input} placeholderTextColor={color='white'}/>
+            <TextInput placeholder="CPF:"value={cpf} onChangeText={(value) => setCpf(formatarCPF(value))}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>
+            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={(value) => setCnpj(formatarCNPJ(value))}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>
+            <TextInput placeholder="Telefone:"value={telefone} onChangeText={(value) => setTelefone(formatarTelefone(value))}keyboardType="numeric" style={styles.input} placeholderTextColor='white'/>
             <TextInput placeholder="Endereço:" onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
           </View>
           <View style={styles.buttonContainer}>
