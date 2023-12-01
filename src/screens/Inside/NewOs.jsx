@@ -366,7 +366,7 @@ export default function NewOS() {
 const styles = StyleSheet.create({
   backgroundColor: {
     flex: 1,
-    widht: '100%',
+    width: '100%',
   },
   container: {
     flex: 1,
