@@ -14,8 +14,9 @@ O aplicativo está sendo desenvolvido para atender às necessidades de microempr
 ```bash
 # 1. Instalando o Expo CLI no terminal 
  $ npm install
-# 3. Iniciando servidor
-$ expo start
+# 3. Iniciando servidor (somente uma das opções)
+ $ expo start
+ $ npx expo
 # 4. Leia o QR Code utilizando o app Expo Go
 ```
 
