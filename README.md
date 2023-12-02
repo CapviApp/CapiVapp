@@ -1,5 +1,4 @@
 # CapivApp
-![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
 
 O aplicativo está sendo desenvolvido para atender às necessidades de microempresas e profissionais autônomos na área de tecnologia que utilizam a dinâmica de ordens de serviço (OS).
 

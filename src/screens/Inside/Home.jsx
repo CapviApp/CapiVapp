@@ -12,6 +12,7 @@ import {
 import { Searchbar } from 'react-native-paper';
 import React, {useState} from 'react'
 import { useNavigation } from '@react-navigation/native';
+
 import Prioridade from './Prioridade';
 import { OsItemH, OsItemV } from '../components/OS';
 
@@ -22,7 +23,6 @@ export default function Home() {
 
 
   const navigation = useNavigation()
-
 
 
   const data = [
