@@ -151,71 +151,7 @@ export default function Cliente() {
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
     
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder='Hardware'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, hardware: value })}
-            value={formData.hardware}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Serviço'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, servico: value })}
-            value={formData.servico}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Prioridade'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, prioridade: value })}
-            value={formData.prioridade}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Status'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, status: value })}
-            value={formData.status}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Cliente'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, cliente: value })}
-            value={formData.cliente}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Data'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, data: value })}
-            value={formData.data}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Descrição'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, descricao: value })}
-            value={formData.descricao}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Comentários'
-            placeholderTextColor='#fff'
-            onChangeText={(value) => setFormData({ ...formData, comentarios: value })}
-            value={formData.comentarios}
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button mode='contained' onPress={adicionar} >Adicionar</Button>
-          <Button mode='contained'onPress={update} >Atualizar</Button>
-          <Button mode='contained'  onPress={deleteOS} >Excluir</Button>
-          <Button mode='contained' onPress={ListOS} >Listar</Button>
-        </View>
-          <Listar/>
+       
       </View>
      
     </LinearGradient>
