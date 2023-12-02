@@ -20,7 +20,7 @@ O aplicativo está sendo desenvolvido para atender às necessidades de microempr
 ```
 
 ## Autoras
-| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/93216372?v=4" width=115><br><sub>Lara Victoria</sub>](https://github.com/LaraVic9) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/66921441?v=4" width=115><br><sub>Suzy Wellen Oliveira</sub>](https://github.com/SuzyWellen07) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/84157862?v=4" width=115><br><sub>Thais Florentin</sub>](https://github.com/LennyBla) |
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/93216372?v=4" width=115><br><sub>Lara Victoria</sub>](https://github.com/LaraVic9) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/66921441?v=4" width=115><br><sub>Suzy Wellen</sub>](https://github.com/SuzyWellen07) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/84157862?v=4" width=115><br><sub>Thais Florentin</sub>](https://github.com/LennyBla) |
 | :---: | :---: | :---: |
 
 ---
