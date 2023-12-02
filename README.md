@@ -1,11 +1,27 @@
-![Logo CapivApp](https://pasteboard.co/7tBRCtqBFqHt.jpg)
+# CapivApp
+![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
 
-O aplicativo atende microempresas e autônomos de tecnologia que utilizam a dinâmica de ordens de serviço (OS). Ele prioriza e classifica as OS com base em níveis de urgência, facilitando a identificação das tarefas importantes. Os usuários podem modificar o status e adicionar comentários, com isso melhorando a eficiência. A acessibilidade e facilidade de uso são fortes pontos do aplicativo. Os usuários podem cadastrar clientes, criar novas OS e visualizar as pendentes, tudo de forma intuitiva. Um menu de acesso rápido oferece recursos essenciais, como informações da conta e histórico de OS. A plataforma mantém um registro organizado de todas as OS, economizando tempo e reduzindo erros. A metodologia de desenvolvimento mobile inclui tecnologias modernas como React Native, Expo e Firebase para desempenho e confiabilidade. O aplicativo de gerenciamento de ordens de serviço para microempresas e autônomos de tecnologia simplifica e melhora a gestão de tarefas.
+O aplicativo está sendo desenvolvido para atender às necessidades de microempresas e profissionais autônomos na área de tecnologia que utilizam a dinâmica de ordens de serviço (OS).
 
-### Contribuidores
-- Lara Victoria Souza Pereira (laratrabalhos83@gmail.com)
-- Suzy Wellen Guimarães de Oliveira (suzy.wellen07@gmail.com)
-- Thais Florentin Silvero da Cruz (thais.florentin26@gmail.com)
+
+## Ferramentas e Tecnologias
+
+<img loading="lazy" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" height="40"/> <img loadinh="lazy" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" width="40" height="40"/> <img loadinh="lazy" src="https://raw.githubusercontent.com/CapviApp/CapiVapp/cb4bc64bc960202f9afc5a90459f3bb2c64d06ed/expo_1.svg" width="40" height="40"/>
+
+
+### 🛠️ Abrir e rodar o projeto
+
+```bash
+# 1. Instalando o Expo CLI no terminal 
+ $ npm install
+# 3. Iniciando servidor
+$ expo start
+# 4. Leia o QR Code utilizando o app Expo Go
+```
+
+## Autoras
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/93216372?v=4" width=115><br><sub>Lara Victoria</sub>](https://github.com/LaraVic9) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/66921441?v=4" width=115><br><sub>Suzy Wellen Oliveira</sub>](https://github.com/SuzyWellen07) |  [<img loading="lazy" src="https://avatars.githubusercontent.com/u/84157862?v=4" width=115><br><sub>Thais Florentin</sub>](https://github.com/LennyBla) |
+| :---: | :---: | :---: |
 
 ---
 
