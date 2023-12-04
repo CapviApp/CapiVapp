@@ -18,20 +18,7 @@ function Listar({ osList, selecionarOS }) {
     navigation.push(`editOS/${osId}`); // Use the navigation prop to navigate to the editOS screen
   };
 
-  const loadOS = async () => {
-    try {
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      const osData = [];
 
-      querySnapshot.forEach((doc) => {
-        osData.push({ id: doc.id, ...doc.data() });
-      });
-      setOSList(osData);
-    } catch (error) {
-      console.error('Erro ao carregar ordens de serviço:', error);
-    }
-  };
 
   useEffect(() => {
     loadOS();
@@ -50,7 +37,7 @@ function Listar({ osList, selecionarOS }) {
               <Text>Prioridade: {item.prioridade}</Text>
             </View>
             <TouchableOpacity
-              onPress={() => navigateToOS(item)} // Pass the item to the navigateToOS function
+              onPress={() => navigateToOS(item)} 
               style={styles.button}>
               <FontAwesome name="pencil-square-o" size={24} color="black" />
             </TouchableOpacity>
