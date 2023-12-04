@@ -4,7 +4,6 @@ import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, getDoc } from "
 import { db } from '../../config/firebase';
 import { Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
-import Toast from 'react-native-toast-message';
 
 export default function Cliente() {
   const [username, setUsername] = useState('');
