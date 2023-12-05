@@ -27,7 +27,7 @@ function Listar({ osList, selecionarOS }) {
                 <Text>Data: {item.data}</Text>
                
                 <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
-              
+                <Text>Prioridade: {item.prioridade}</Text>
               </View>
               <TouchableOpacity  onPress={() => navigateToOS(item)}
                 style={styles.button}>

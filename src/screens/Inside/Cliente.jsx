@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc } from "firebase/firestore";
+import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc, query } from "firebase/firestore";
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView } from 'react-native-gesture-handler';
 import { db } from'../../config/firebase'
@@ -8,11 +8,9 @@ import { Button } from 'react-native-paper';
 
 
 
-
 export default function Cliente() {
 
 
-  console.log('tela cliente');
   return (
     
 
