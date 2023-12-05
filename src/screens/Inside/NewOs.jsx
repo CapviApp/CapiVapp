@@ -120,22 +120,6 @@ export default function NewOS() {
     }
   };
 
-  const listOS = async () => {
-    try {
-      //const selectedValue = selected; 
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      
-  
-      const osData = [];
-      querySnapshot.forEach((doc) => {
-        osData.push({ id: doc.id, ...doc.data() });
-      });
-      setOSList(osData);
-    } catch (error) {
-      console.error('Erro ao listar:', error);
-    }
-  };
 
   const listCliente = async () => {
     try {

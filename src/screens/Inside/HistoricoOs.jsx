@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
-
+import { addDoc, collection, query, getDocs } from 'firebase/firestore';
 import Listar from '../components/ListarComponents';
+import { db } from '../../config/firebase';
+
+
 
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -15,14 +18,40 @@ export default function Historico({ navigation }) {
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
   ];
+  const osCollectionRef = collection(db, 'teste');
+  
+  const listOS = async () => {
+    try {
+      //const selectedValue = selected; 
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      
+  
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+        console.log('OS, id:', doc.id);
+      });
+      
+      setOSList(osData);
+    } catch (error) {
+      console.error('Erro ao listar:', error);
+    }
+  };
 
-  // Função para renderizar um item individual na SectionList
+
+ 
   const renderItem = ({ item }) => (
     <View>
-      {/* Seu componente de item da lista (OsItemH) */}
+    
       <Text>{item}</Text>
     </View>
   );
+
+  useEffect(() => {
+    listOS();
+  }, []);
+
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>

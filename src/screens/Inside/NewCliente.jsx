@@ -153,11 +153,7 @@ export default function Cliente() {
         telefone: telefone,
         endereco: endereco,
       }).then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Salvo',
-          text2: 'Cliente adicionado com sucesso!'
-        });
+       
         // Limpar os campos após a adição
         setUsername('');
         setEmail('');
@@ -167,19 +163,11 @@ export default function Cliente() {
         setEndereco('');
       }).catch((error) => {
         console.error(error);
-        Toast.show({
-          type: 'error',
-          text1: 'Erro',
-          text2: 'Não foi possível salvar'
-        });
+       
       });
     } catch (error) {
       console.error(error.message);
-      Toast.show({
-        type: 'error',
-        text1: 'Erro',
-        text2: 'Não foi possível salvar'
-      });
+      
     }
   };
   
@@ -282,7 +270,7 @@ export default function Cliente() {
       )}
       keyExtractor={(item, index) => index.toString()}
     />
-    <Toast />
+   
    </LinearGradient>
   );
 }
