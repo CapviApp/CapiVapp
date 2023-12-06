@@ -1,93 +1,100 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
-import React, {useState} from 'react'
-
+import React, {useState, useEffect} from 'react'
+import Listar from '../components/ListarComponents';
 import CarrosselOS from '../components/carrossel/CarrosselOS';
 import OSCarrossel from '../components/carrossel/OS';
 import { OsItemH } from '../components/OS';
 import { Filtro } from '../components/Filtro';
+import { addDoc, collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../../config/firebase';
 
 export default function Prioridade({ navigation }) {
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
+  const [osList, setOSList] = useState([]);
+
+  const osCollectionRef = collection(db, 'teste');
+  
+  const listOS = async () => {
+    try {
+      //const selectedValue = selected; 
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      
+  
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+        console.log('OS, id:', doc.id);
+      });
+      
+      setOSList(osData);
+    } catch (error) {
+      console.error('Erro ao listar:', error);
+    }
+  };
+
+
+  const data = [
+    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+   
+  ];
+
+  const renderItem = ({ item }) => (
+    <View>
+    
+      <Text>{item}</Text>
+    </View>
+  );
+
+  
+  useEffect(() => {
+    listOS();
+  }, []);
 
 
 
   return (
-    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
-    <ScrollView>
-    <View style={styles.container}>
-      <Text style={styles.title}>OS Prioritárias</Text>
-      <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Pesquisar"
-              onChangeText={onChangeSearch}
-              value={searchQuery} 
-              style={styles.searchBar}
-            />
-          </View>
-          <View>
-          <Text style={styles.subTitle}>Filtros:</Text>
-              <Filtro title='Status'/>
-              <Filtro title='Tipo Serviço'/>
-              <Filtro title='Tipo Hardware'/>
-              <Filtro title='Cliente'/>
-              <Filtro title='Data'/>
-           </View>
-          <Text style={styles.subTitle}>Prioritárias:</Text>
 
-         <View style={styles.CarrosseContainer}>
-          <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.carrossel}
-              >
-              <OSCarrossel title="001-2023" data="23/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="002-2023" data="21/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="003-2023" data="20/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="004-2023" data="20/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="005-2023" data="10/10/2023" status="Em espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="006-2023" data="16/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              
-            </ScrollView>
-            <Text style={styles.subTitle}>Mais Recentes</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.carrossel}
-              >
-              <OSCarrossel title="001-2023" data="23/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="002-2023" data="21/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="003-2023" data="20/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="004-2023" data="20/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="005-2023" data="10/10/2023" status="Em espera" onPress={() => navigation.navigate("os")}/>
-              <OSCarrossel title="006-2023" data="16/10/2023" status="Em Espera" onPress={() => navigation.navigate("os")}/>
-              
-            </ScrollView>
+    <SectionList
+    sections={data}
+    renderItem={renderItem}
+    renderSectionHeader={({ section: { title } }) => (
+      <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
+    
+      <View style={styles.container}>
+        <Text style={styles.title}>OS Prioritárias</Text>
+        <View style={styles.searchContainer}>
+              <Searchbar
+                placeholder="Pesquisar"
+                onChangeText={onChangeSearch}
+                value={searchQuery} 
+                style={styles.searchBar}
+              />
             </View>
-            <Text style={styles.subTitle}>Todas as Ordens de Serviço</Text>
-            <View style={styles.PrioridadeContainer}>
-            <OsItemH data="10/10/2023" title="005-2023" prioridade="alta" status="Em espera" onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="11/10/2023" title="006-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
-            <OsItemH data="12/10/2023" title="007-2023" prioridade="alta" status="Em espera"onPress={() => navigation.navigate("os")}/>
+            <View>
+            <Text style={styles.subTitle}>Filtros:</Text>
+                <Filtro title='Status'/>
+                <Filtro title='Tipo Serviço'/>
+                <Filtro title='Tipo Hardware'/>
+                <Filtro title='Cliente'/>
+                <Filtro title='Data'/>
+             </View>
+            <Text style={styles.subTitle}>Prioritárias:</Text>
+  
+           <Listar osList={osList}/>
+           
+      </View>
       
-          </View>
-          
-         
-    </View>
-    </ScrollView>
-    </LinearGradient>
+      </LinearGradient>
+
+    )}/>
+
+   
   );
 }
 

@@ -23,6 +23,10 @@ export default function Cliente() {
   const [isTelefoneValid, setIsTelefoneValid] = useState(true);
   const [isCepValid, setIsCepValid] = useState(true);
   const [isNumeroValid, setIsNumeroValid] = useState(true)
+  const [isCpfDuplicated, setIsCpfDuplicated] = useState(false);
+  const [isCnpjDuplicated, setIsCnpjDuplicated] = useState(false);
+  const [isEmailDuplicated, setIsEmailDuplicated] = useState(false);
+
 
 
   const userCollectionRef = collection(db, 'Cliente teste');
@@ -155,8 +159,12 @@ const validarNumero = (numero) => {
     
   };
  
-  const adicionar = () => {
+  const adicionar = async () => {
     try {
+      if (!cpf && !cnpj) {
+        console.log("CPF ou CNPJ necessário");
+        return;
+      }
       if (cpf && !validarCPF(cpf)) {
         console.log("CPF inválido");
         return;
@@ -171,37 +179,45 @@ const validarNumero = (numero) => {
         return;
       }
   
-      setDoc(doc(userCollectionRef, email), {
+      const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
+      if (clienteExiste) {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: 'Cliente com este e-mail, CPF ou CNPJ já existe!'
+        });
+        return;
+      }
+  
+      await setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
         cpf: cpf,
         cnpj: cnpj,
         telefone: telefone,
         endereco: endereco,
-      }).then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Salvo',
-          text2: 'Cliente adicionado com sucesso!'
-        });
-        // Limpar os campos após a adição
-        setUsername('');
-        setEmail('');
-        setCpf('');
-        setCnpj('');
-        setTelefone('');
-        setEndereco('');
-        setBairro('');
-        setCep('');
-        setNumero('');
-      }).catch((error) => {
-        console.error(error);
-        Toast.show({
-          type: 'error',
-          text1: 'Erro',
-          text2: 'Não foi possível salvar'
-        });
+        bairro: bairro,
+        cep: cep,
+        numero: numero
       });
+  
+      Toast.show({
+        type: 'success',
+        text1: 'Salvo',
+        text2: 'Cliente adicionado com sucesso!'
+      });
+  
+      // Limpar os campos após a adição
+      setUsername('');
+      setEmail('');
+      setCpf('');
+      setCnpj('');
+      setTelefone('');
+      setEndereco('');
+      setBairro('');
+      setCep('');
+      setNumero('');
+  
     } catch (error) {
       console.error(error.message);
       Toast.show({
@@ -211,6 +227,7 @@ const validarNumero = (numero) => {
       });
     }
   };
+  
   const cancelarOperacao = () => {
   // Limpar todos os estados
   setUsername('');
@@ -222,9 +239,38 @@ const validarNumero = (numero) => {
   setBairro('');
   setCep('');
   setNumero('');
-
-};
   
+  };
+  
+  //VERIFICA SE O CLINETE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
+  const verificarClienteExistente = async (email, cpf, cnpj) => {
+    const querySnapshot = await getDocs(userCollectionRef);
+    let existe = false;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.email === email) {
+        existe = true;
+        setIsEmailDuplicated(true);
+      } else {
+        setIsEmailDuplicated(false);
+      }
+      if (cpf && data.cpf === cpf) {
+        existe = true;
+        setIsCpfDuplicated(true);
+      } else {
+        setIsCpfDuplicated(false);
+      }
+      if (cnpj && data.cnpj === cnpj) {
+        existe = true;
+        setIsCnpjDuplicated(true);
+      } else {
+        setIsCnpjDuplicated(false);
+      }
+    });
+    return existe;
+  }; 
+
+//LISTA USUARIOS CADASTRADOS -------------------------------------------------------------------------------------
   const listUser = async () => {
     try {
       const querySnapshot = await getDocs(userCollectionRef);
@@ -298,9 +344,9 @@ const validarNumero = (numero) => {
           <View style={styles.inputContainer}>
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" value={username}onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={[styles.input, !isEmailValid && styles.inputError]}  placeholderTextColor='white'/>{!isEmailValid && <Text style={styles.errorText}>E-mail inválido</Text>}            
-            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={[styles.input, !isCpfValid && styles.inputError]}placeholderTextColor='white'/>{!isCpfValid && <Text style={styles.errorText}>CPF inválido</Text>}            
-            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={[styles.input, !isCnpjValid && styles.inputError]}placeholderTextColor='white'/>{!isCnpjValid && <Text style={styles.errorText}>CNPJ inválido</Text>}
+            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={[styles.input, !isEmailValid && styles.inputError]}  placeholderTextColor='white'/>{!isEmailValid && <Text style={styles.errorText}>E-mail inválido</Text>}{isEmailDuplicated && <Text style={styles.errorText}>E-mail já cadastrado</Text>}         
+            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={[styles.input, !isCpfValid && styles.inputError]}placeholderTextColor='white'/>{!isCpfValid && <Text style={styles.errorText}>CPF inválido</Text>}{isCpfDuplicated && <Text style={styles.errorText}>CPF já cadastrado</Text>}          
+            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={[styles.input, !isCnpjValid && styles.inputError]}placeholderTextColor='white'/>{!isCnpjValid && <Text style={styles.errorText}>CNPJ inválido</Text>}{isCnpjDuplicated && <Text style={styles.errorText}>CNPJ já cadastrado</Text>}
             <TextInput placeholder="Telefone:"value={telefone}onChangeText={handleTelefoneChange}keyboardType="numeric"style={[styles.input, !isTelefoneValid && styles.inputError]}placeholderTextColor='white'/>{!isTelefoneValid && <Text style={styles.errorText}>Telefone inválido</Text>}
             <TextInput placeholder="Endereço:" value={endereco}onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Bairro:"value={bairro}onChangeText={(value) => setBairro(value)} style={styles.input} placeholderTextColor={color='white'} />
