@@ -48,10 +48,9 @@ export default function NewOS() {
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
-  const [selectedCliente, setSelectedCliente] = useState('')
+  const [selectedCliente, setSelectedCliente] = useState({ value: '' })
   const [imageUri, setImageUri] = useState(null);
-
- 
+  const [isClienteSelected, setIsClienteSelected] = useState(true);
 
   const userCollectionRef = collection(db, 'Cliente teste');
 
@@ -88,7 +87,9 @@ export default function NewOS() {
   useEffect(() => {
     getNextOsId();
     loadOS();
+    listUser(); 
   }, []);
+  
   
   const adicionarOS = async () => {
     try {
@@ -96,13 +97,13 @@ export default function NewOS() {
       const dataAtualBrasilia = utcToZonedTime(dataAtualUTC, 'America/Sao_Paulo');
       const dataFormatada = format(dataAtualBrasilia, 'dd-MM-yyyy / HH:mm');
       
-      if (!selectedCliente) {
+      let docRef;
+  
+      if (!selectedCliente || !selectedCliente.value) {
         console.error('Erro: Cliente não selecionado');
         return;
       }
-    
-      //setStatus('Novo');
-      const docRef = await addDoc(osCollectionRef, {
+      docRef = await addDoc(osCollectionRef, {
         data: dataFormatada,
         cliente: selectedCliente,
         tipoHardware: selectedTipoHardware, 
@@ -112,13 +113,13 @@ export default function NewOS() {
         comentario: comentario,
         descricaoProduto: descricaoProduto,
         status: 'Novo',
-        imageUri:imageUri, //isto dever para ou
-        //status: status,
+        imageUri: imageUri, // isto deveria ser algo diferente?
+        // status: status, selectedCliente
       });
-
+  
       const osId = docRef.id;
-    
-      alert(`Ordem de serviço cadastrada com sucesso! ID:` , osId);
+  
+      alert(`Ordem de serviço cadastrada com sucesso! ID: ${osId}`);
       
       limparCampos();
       loadOS();
@@ -126,6 +127,7 @@ export default function NewOS() {
       console.error('Erro ao cadastrar ordem de serviço:', error);
     }
   };
+  
   const listOS = async () => {
     try {
       //const selectedValue = selected; 
@@ -176,8 +178,6 @@ export default function NewOS() {
       console.error(error);
     }
   };  
-
-
 
   const loadOS = async () => {
     try {

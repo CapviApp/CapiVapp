@@ -1,6 +1,4 @@
 import  { createNativeStackNavigator } from '@react-navigation/native-stack'
-
-
 import { Profile, Config, Prioridade, EditOS, Cliente, EsperaOs, New, Historico, Home, OSIndividual } from '../screens/Inside'
 import { NavigationContainer } from '@react-navigation/native'
 
@@ -54,7 +52,7 @@ export default function StackRoutes(){
                 
             />
              <Stack.Screen
-                name='editOS'
+                name='ditOS'
                 component={EditOS}
             />
        

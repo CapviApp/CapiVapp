@@ -3,11 +3,11 @@ import New from "./New";
 import Profile from "./Profile";
 import Config from './Config'
 import Historico from "./HistoricoOs";
-import Cliente from "./Cliente";
+import Cliente from "./ClienteList.jsx";
 import EsperaOs from "./EsperaOs";
 import Prioridade from "./Prioridade";
 import OSIndividual from "./OSIndividual";
-import ClientesList from "./ClientesList";
+import ClientesList from "./ClienteList";
 import Home from  "./Home"
 import NewOS from "./NewOs.jsx";
 import NewCliente from "./NewCliente";
@@ -28,5 +28,5 @@ export {
     NewCliente,
     NewOS,
     EditOS,
-    Image
+    Image,
 }
