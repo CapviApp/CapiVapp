@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
-import { Searchbar, Card } from 'react-native-paper'; // Adicionado Card aqui
+import { Searchbar, Card } from 'react-native-paper';
 import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,8 +8,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function Cliente() {
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [notFound, setNotFound] = useState(false); // Adicionado para controlar a mensagem de não encontrado
 
-  const onChangeSearch = query => setSearchQuery(query);
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+    setNotFound(false); // Reseta o estado de não encontrado quando a busca muda
+  };
 
   useEffect(() => {
     const carregarClientes = async () => {
@@ -31,18 +35,23 @@ export default function Cliente() {
   const filteredClientes = clientes.filter(cliente => 
     cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  useEffect(() => {
+    // Atualiza o estado de não encontrado se não houver clientes após a filtragem
+    setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
+  }, [searchQuery, filteredClientes]);
   
-  const renderItem = ({ item }) => (
-    <Card style={styles.card}>
-      <View style={styles.clienteItem}>
-        <Image source={{ uri: item.foto }} style={styles.clienteFoto} />
-        <View style={styles.clienteInfo}>
-          <Text style={styles.clienteNome}>{item.nome}</Text>
-          <Text style={styles.clienteData}>{item.data}</Text>
-        </View>
+const renderItem = ({ item }) => (
+  <Card style={styles.card}>
+    <View style={styles.clienteItem}>
+      <Image source={{ uri: item.foto }} style={styles.clienteFoto} />
+      <View style={styles.clienteInfo}>
+        <Text style={styles.clienteNome}>{item.nome}</Text>
+        <Text style={styles.clienteData}>{item.data}</Text>
       </View>
-    </Card>
-  );
+    </View>
+  </Card>
+);
 
   return (
     <View style={styles.container}>
@@ -54,13 +63,19 @@ export default function Cliente() {
           value={searchQuery}
           style={styles.searchbar}
         />
-        <Text style={styles.subtitulo}>Mais recentes:</Text>
-        <FlatList
-          data={filteredClientes}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      </LinearGradient>
+        {notFound && (
+          <Text style={styles.notFoundText}>Não foi encontrado</Text>
+        )}
+      <FlatList
+        data={filteredClientes}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
+          <Text style={styles.subtitulo}>Mais recentes:</Text>
+        ) : null}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    </LinearGradient>
     </View>
   );
 }
@@ -78,6 +93,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     marginVertical: 20,
+    alignSelf: 'center', 
+    textAlign: 'center',
   },
   searchbar: {
     marginBottom: 20,
@@ -113,5 +130,11 @@ const styles = StyleSheet.create({
   clienteData: {
     fontSize: 14,
     color: 'white',
+  },
+  notFoundText: {
+    color: 'red', 
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 5,
   },
 });
