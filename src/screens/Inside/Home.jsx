@@ -46,7 +46,7 @@ export default function Home() {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-        console.log('OS, id:', doc.id);
+       
       });
       
       setOSList(osData);
@@ -76,11 +76,12 @@ export default function Home() {
 
   const name = 'Lara'
   return (
+    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
     <SectionList
     sections={data}
     renderItem={renderItem}
     renderSectionHeader={({ section: { title } }) => (
-      <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
+      
   
     <View style={styles.container}>
       <StatusBar  animated={true} style='light'
@@ -100,9 +101,9 @@ export default function Home() {
           
     </View>
   
-     </LinearGradient>
+   
     )}/>
-    
+      </LinearGradient>
   );
 }
 

@@ -17,7 +17,7 @@ function Listar({ osList, selecionarOS }) {
     <SectionList
       sections={[{ data: osList }]}
       renderItem={({ item }) => {
-        console.log('Item:', item);
+       
   
         return (
           <TouchableOpacity onPress={() => navigateToOS(item)}>

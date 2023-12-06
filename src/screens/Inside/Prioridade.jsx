@@ -29,7 +29,7 @@ export default function Prioridade({ navigation }) {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-        console.log('OS, id:', doc.id);
+        
       });
       
       setOSList(osData);
