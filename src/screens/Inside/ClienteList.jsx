@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
     marginBottom: 10,
+    marginLeft: 10,
   },
   card: {
     // Ajuste esses valores conforme necessário para combinar com o design

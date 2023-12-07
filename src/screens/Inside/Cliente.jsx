@@ -12,6 +12,7 @@ export default function Cliente() {
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
   
+  
   useEffect(() => {
     const buscarClienteEOrdensServico = async () => {
         setLoading(true);

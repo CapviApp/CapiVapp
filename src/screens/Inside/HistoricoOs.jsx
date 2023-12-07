@@ -64,13 +64,13 @@ export default function Historico({ navigation }) {
           <Text style={styles.title}>Histórico OS</Text>
           <View style={styles.searchContainer}>
             <Searchbar
-              placeholder="Pesquisar"
+              placeholder="Busca Histórico"
               onChangeText={onChangeSearch}
               value={searchQuery}
               style={styles.searchBar}
             />
           </View>
-          <Text style={styles.subTitle}>Ordens de Serviço</Text>
+          <Text style={styles.subtitulo}>Ordens de Serviço</Text>
           <Listar osList={osList}/>
         </View>
         
@@ -84,24 +84,18 @@ export default function Historico({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: '23%',
+  },
+  gradient: {
+    flex: 1,
+    padding: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 32,
+    color: 'white',
     fontWeight: 'bold',
-    color: 'white',
-    paddingStart: 22,
+    marginVertical: 20,
+    alignSelf: 'center', 
     textAlign: 'center',
-  },
-  subTitle: {
-    fontSize: 20,
-    fontWeight: '400',
-    color: 'white',
-    padding: 5,
-    paddingStart: 20,
-    marginVertical: 10,
   },
   backgroundColor: {
     flex: 1,
@@ -113,6 +107,12 @@ const styles = StyleSheet.create({
   searchContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 30,
+  },
+  subtitulo: {
+    fontSize: 24,
+    color: 'white',
+    marginBottom: 10,
+    marginLeft: 30,
   },
 });
