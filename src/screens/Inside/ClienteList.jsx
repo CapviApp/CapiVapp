@@ -113,32 +113,33 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
     marginBottom: 10,
-    marginLeft: 10,
   },
   card: {
-    // Ajuste esses valores conforme necessário para combinar com o design
+    
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 20, // Aumente o raio da borda para que seja mais arredondado
+    borderRadius: 20,
     padding: 15,
     marginBottom: 15,
     elevation: 10,
     borderWidth: 1,
     borderColor: 'white',
+    
   },
   clienteItem: {
-    flexDirection: 'row', // Isso garante que a foto e o texto fiquem lado a lado
-    alignItems: 'center', // Isso alinha verticalmente a foto e o texto
-    borderRadius: 15, // Isso vai arredondar as bordas do card
-    overflow: 'hidden', // Isso garante que o conteúdo não ultrapasse as bordas arredondadas
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    borderRadius: 15, 
+    overflow: 'hidden', 
 
   },
   clienteFoto: {
-    width: 70, // Ajuste a largura como desejado
-    height: 70, // A altura deve ser igual à largura para ser um círculo
-    borderRadius: 35, // A metade da largura/altura para ser completamente arredondado
-    borderWidth: 1, // Ajuste a largura da borda conforme desejado
-    borderColor: 'white', // Ajuste a cor da borda conforme desejado
+    width: 70, 
+    height: 70, 
+    borderRadius: 35, 
+    borderWidth: 1, 
+    borderColor: 'white', 
     marginRight: 10,
+    
   },
   clienteNome: {
     fontSize: 18,

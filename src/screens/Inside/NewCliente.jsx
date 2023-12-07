@@ -5,6 +5,9 @@ import firebase, { db } from '../../config/firebase';
 import { Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Toast from 'react-native-toast-message';
+import { useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
+
 //Toast.show
 export default function Cliente() {
   const [users, setUsers] = useState([]);
@@ -26,8 +29,6 @@ export default function Cliente() {
   const [isCpfDuplicated, setIsCpfDuplicated] = useState(false);
   const [isCnpjDuplicated, setIsCnpjDuplicated] = useState(false);
   const [isEmailDuplicated, setIsEmailDuplicated] = useState(false);
-
-
 
   const userCollectionRef = collection(db, 'Cliente teste');
 
@@ -60,7 +61,7 @@ export default function Cliente() {
 
   const validarCPF = (cpf) => {
     if (cpf === '') return true;
-    cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+    cpf = cpf.replace(/[^\d]+/g, ''); 
     if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
   
     let soma = 0;
@@ -82,10 +83,9 @@ export default function Cliente() {
     return true;
   };
   
-
   const validarCNPJ = (cnpj) => {
     if (cnpj === '') return true;
-    cnpj = cnpj.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+    cnpj = cnpj.replace(/[^\d]+/g, ''); 
     if (cnpj.length !== 14) return false;
     let soma = 0;
     let peso = 2;
@@ -116,7 +116,6 @@ const validarCEP = (cep) => {
   return cep.length === 9 && /^\d{5}-\d{3}$/.test(cep);
 };
 
-// Função para validar se o número é numérico e não vazio
 const validarNumero = (numero) => {
   const numeroRegex = /^\d+$/;
   return numero.length <= 5 && /^\d*$/.test(numero);
@@ -124,7 +123,7 @@ const validarNumero = (numero) => {
   
   const formatarCPF = (valor) => {
     valor = valor.replace(/\D/g, "").slice(0, 11);
-    valor = valor.replace(/\D/g, ""); // Remove tudo o que não é dígito
+    valor = valor.replace(/\D/g, ""); 
     valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
     valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
     valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
@@ -161,31 +160,26 @@ const validarNumero = (numero) => {
  
   const adicionar = async () => {
     try {
-      if (!cpf && !cnpj) {
-        console.log("CPF ou CNPJ necessário");
-        return;
-      }
-      if (cpf && !validarCPF(cpf)) {
-        console.log("CPF inválido");
-        return;
-      }
-  
-      if (cnpj && !validarCNPJ(cnpj)) {
-        console.log("CNPJ inválido");
-        return;
-      }
-      if (!validarEmail(email)) {
-        console.log("E-mail inválido");
-        return;
-      }
-  
+      const cpfIsValid = cpf ? validarCPF(cpf) : !cnpj;  // Se CPF for preenchido, valida, senão, é válido se CNPJ não for preenchido
+      const cnpjIsValid = cnpj ? validarCNPJ(cnpj) : !cpf;  // Se CNPJ for preenchido, valida, senão, é válido se CPF não for preenchido
+      const emailIsValid = validarEmail(email);
       const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
-      if (clienteExiste) {
-        Toast.show({
-          type: 'error',
-          text1: 'Erro',
-          text2: 'Cliente com este e-mail, CPF ou CNPJ já existe!'
-        });
+      const peloMenosUmDocumentoValido = cpfIsValid || cnpjIsValid;
+  
+      // Atualizar estados de validação
+      setIsCpfValid(cpfIsValid);
+      setIsCnpjValid(cnpjIsValid);
+      setIsEmailValid(emailIsValid);
+      setIsCpfDuplicated(clienteExiste && cpf);
+      setIsCnpjDuplicated(clienteExiste && cnpj);
+      setIsEmailDuplicated(clienteExiste && email);
+  
+      // Verificações
+      if (!peloMenosUmDocumentoValido || !emailIsValid || clienteExiste) {
+        Alert.alert("Erro", "Verifique os erros nos campos");
+        setIsCpfValid(false);  // Definir como falso para mostrar borda vermelha
+        setIsCnpjValid(false);  // Definir como falso para mostrar borda vermelha
+        setIsEmailValid(false);  // Definir como falso para mostrar borda vermelha
         return;
       }
   
@@ -207,7 +201,6 @@ const validarNumero = (numero) => {
         text2: 'Cliente adicionado com sucesso!'
       });
   
-      // Limpar os campos após a adição
       setUsername('');
       setEmail('');
       setCpf('');
@@ -228,6 +221,7 @@ const validarNumero = (numero) => {
     }
   };
   
+  
   const cancelarOperacao = () => {
   // Limpar todos os estados
   setUsername('');
@@ -242,11 +236,7 @@ const validarNumero = (numero) => {
   
   };
   
-<<<<<<< HEAD
-  //VERIFICA SE O CLINETE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
-=======
   //VERIFICA SE O CLIENTE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
->>>>>>> origin/components-Lara
   const verificarClienteExistente = async (email, cpf, cnpj) => {
     const querySnapshot = await getDocs(userCollectionRef);
     let existe = false;
@@ -288,6 +278,30 @@ const validarNumero = (numero) => {
       console.log(error);
     }
   };
+  useFocusEffect(
+    React.useCallback(() => {  
+      return () => {  
+        setUsername('');
+        setEmail('');
+        setCpf('');
+        setCnpj('');
+        setTelefone('');
+        setEndereco('');
+        setBairro('');
+        setCep('');
+        setNumero('');
+        setIsCpfValid(true);
+        setIsEmailValid(true);
+        setIsCnpjValid(true);
+        setIsTelefoneValid(true);
+        setIsCepValid(true);
+        setIsNumeroValid(true);
+        setIsCpfDuplicated(false);
+        setIsCnpjDuplicated(false);
+        setIsEmailDuplicated(false);
+      };
+    }, [])
+  );
 
   const update = async () => {
     try {
@@ -356,35 +370,6 @@ const validarNumero = (numero) => {
             <TextInput placeholder="Bairro:"value={bairro}onChangeText={(value) => setBairro(value)} style={styles.input} placeholderTextColor={color='white'} />
           
             <View style={styles.row}>
-<<<<<<< HEAD
-  <TextInput
-    placeholder="CEP:"
-    value={cep}
-    onChangeText={(value) => {
-      const formattedValue = formatarCEP(value);
-      setCep(formattedValue);
-      setIsCepValid(validarCEP(formattedValue));
-    }}
-    keyboardType="numeric"
-    style={[styles.input, styles.inputFlex, !isCepValid && styles.inputError]}
-    placeholderTextColor='white'
-  />
-  {!isCepValid && <Text style={styles.errorTextRow}>CEP inválido</Text>}
-  
-  <TextInput
-    placeholder="Nº:"
-    value={numero}
-    onChangeText={(value) => {
-      setIsNumeroValid(validarNumero(value));
-      setNumero(value);
-    }}
-    keyboardType="numeric"
-    style={[styles.input, styles.inputFlex, !isNumeroValid && styles.inputError]}
-    placeholderTextColor='white'
-  />
-  {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
-</View>
-=======
         <TextInput
           placeholder="CEP:"
           value={cep}
@@ -412,7 +397,6 @@ const validarNumero = (numero) => {
         />
         {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
       </View>
->>>>>>> origin/components-Lara
 
 
           </View>
@@ -462,22 +446,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 10,
   },
-  inputError: {
-    borderColor: 'red',
-    borderWidth: 1,
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginBottom: 10,
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
-<<<<<<< HEAD
-=======
     paddingBottom: '23%',
->>>>>>> origin/components-Lara
     
   },
   title: {

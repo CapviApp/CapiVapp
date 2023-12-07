@@ -7,8 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function OSIndividual({ osList, selecionarOS, item}) {
 
-
-
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
   const navigation = useNavigation()

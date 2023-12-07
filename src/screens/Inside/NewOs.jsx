@@ -1,41 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-<<<<<<< HEAD
-import { View, Text, TextInput, StyleSheet, SectionList } from 'react-native';
-=======
 import { View, Text, TextInput, StyleSheet, SectionList, Alert } from 'react-native';
->>>>>>> origin/components-Lara
 import { SelectList } from 'react-native-dropdown-select-list-expo';
 import { addDoc, collection, query, getDocs } from 'firebase/firestore';
 import { db, uploadToFirebase, listFiles } from '../../config/firebase';
 import { getStorage, ref, listAll } from "firebase/storage";
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-<<<<<<< HEAD
-import Listar from '../components/ListarComponents';
-=======
->>>>>>> origin/components-Lara
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
-<<<<<<< HEAD
-//import * as ImagePicker from 'react-native-image-picker';
-var ImagePicker = require('react-native-image-picker');
-
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-=======
-
+import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
->>>>>>> origin/components-Lara
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
-    onSelect(value);
-    setSelected(data.find((item) => item.value === value)); 
+    onSelect(value); // Chama a função passada como propriedade
+    setSelected(data.find((item) => item.value === value));
   };
-
 
   return (
     <SelectList
@@ -64,42 +48,17 @@ export default function NewOS() {
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
   const [selectedCliente, setSelectedCliente] = useState({ value: '' })
   const [imageUri, setImageUri] = useState(null);
-<<<<<<< HEAD
   const [isClienteSelected, setIsClienteSelected] = useState(true);
-
-  const userCollectionRef = collection(db, 'Cliente teste');
+  const [isPrioridadeSelected, setIsPrioridadeSelected] = useState(true);
 
   const [clientes, setClientes] = useState([])
 
-=======
- 
- const [clientes, setClientes] = useState([])
-
   const userCollectionRef = collection(db, 'Cliente teste');
->>>>>>> origin/components-Lara
   const osCollectionRef = collection(db, 'teste');
-  
-  const listUser = async () => {
-    try {
-      const querySnapshot = await getDocs(userCollectionRef);
-      const userList = querySnapshot.docs.map((doc) => {
-        const cliente = doc.data();
-        return { id: doc.id, label: cliente.nome, value: doc.id };
-      });
-  
-      setClientes(userList);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const [files, setFiles] = useState([])
   
-
   const [permission, requestPermission] = ImagePicker.useCameraPermissions()
-
-   
-
 
   const listUser = async () => {
     try {
@@ -127,16 +86,6 @@ export default function NewOS() {
     }
   };
 
-<<<<<<< HEAD
-  useEffect(() => {
-    getNextOsId();
-    loadOS();
-    listUser(); 
-  }, []);
-=======
->>>>>>> origin/components-Lara
-  
-  
   const adicionarOS = async () => {
     try {
       const dataAtualUTC = new Date();
@@ -144,11 +93,16 @@ export default function NewOS() {
       const dataFormatada = format(dataAtualBrasilia, 'dd-MM-yyyy / HH:mm');
       
       let docRef;
+      const clienteIsValid = selectedCliente && selectedCliente.value;
+      const prioridadeIsValid = selectedPrioridade && selectedPrioridade.value;
   
-      if (!selectedCliente || !selectedCliente.value) {
-        console.error('Erro: Cliente não selecionado');
+      setIsClienteSelected(clienteIsValid);
+      setIsPrioridadeSelected(prioridadeIsValid);
+  
+      if (!clienteIsValid || !prioridadeIsValid) {
+        Alert.alert('Erro', 'Cliente e/ou Prioridade não selecionados');
         return;
-      }
+      }  
       docRef = await addDoc(osCollectionRef, {
         data: dataFormatada,
         cliente: selectedCliente,
@@ -158,15 +112,9 @@ export default function NewOS() {
         prioridade: selectedPrioridade,
         comentario: comentario,
         descricaoProduto: descricaoProduto,
-<<<<<<< HEAD
-        status: 'Novo',
-        imageUri: imageUri, // isto deveria ser algo diferente?
-        // status: status, selectedCliente
-=======
         statusOS: 'Novo',
         imageUri: imageUri, // isto deveria ser algo diferente?
         // statusOS: statusOS, selectedCliente
->>>>>>> origin/components-Lara
       });
   
       const osId = docRef.id;
@@ -180,62 +128,36 @@ export default function NewOS() {
     }
   };
   
-  const listOS = async () => {
-    try {
-      //const selectedValue = selected; 
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      
-  
-      const osData = [];
-      querySnapshot.forEach((doc) => {
-        osData.push({ id: doc.id, ...doc.data() });
-      });
-      setOSList(osData);
-    } catch (error) {
-      console.error('Erro ao listar:', error);
-    }
+  const selecionarCliente = (value) => {
+    setSelectedCliente(value); // Atualiza o estado do cliente selecionado
+    setIsClienteSelected(true); // Define que um cliente foi selecionado
   };
-
-<<<<<<< HEAD
-  const listCliente = async () => {
-    try {
-      listUser(); // Obtém a lista de clientes
-      // Resto do código...
-    } catch (error) {
-      console.error('Erro ao listar:', error);
-    }
+  const limparCampos = () => {
+    setCliente('');
+    setTipoHardware('');
+    setTipoServico('');
+    setOutros('');
+    setPrioridade('');
+    setComentario('');
+    setDescricaoProduto('');
+    setStatusOS('Novo');
+    setImageUri(null);
+    setSelectedCliente({ value: '' });
+    setSelectedPrioridade({ value: '' });
+    setIsClienteSelected(true);
+    setIsPrioridadeSelected(true);
   };
-
-  const selectImage = () => {
-    const options = {
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
   
-    try {
-      launchImageLibrary(options, (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else {
-          const source = { uri: response.assets[0].uri };
-          console.log(source);
-          setselectImage(source);
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };  
-=======
-
- 
->>>>>>> origin/components-Lara
-
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => limparCampos(); 
+    }, [])
+  );
+  
+  const cancelarOperacao = () => {
+    limparCampos(); 
+  };
+  
   const loadOS = async () => {
     try {
       const q = query(osCollectionRef);
@@ -267,54 +189,6 @@ export default function NewOS() {
 
   console.log(files);
 
-  const limparCampos = () => {
-    setCliente('');
-    setTipoHardware('');
-    setTipoServico('');
-    setOutros('');
-    setPrioridade('baixa');
-    setComentario('');
-    setDescricaoProduto('');
-<<<<<<< HEAD
-    setStatus('Novo');
-    setImageUri(null);
-  };
-
-  useEffect(() => {
-    loadOS();
-    listCliente()
-  }, []);  
-
-  const data = [
-    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
-   
-  ];
-  
-
-  // Função para renderizar um item individual na SectionList
-  const renderItem = ({ item }) => (
-    <View>
-      {/* Seu componente de item da lista (OsItemH) */}
-      <Text>{item}</Text>
-    </View>
-  );
-
-  return (
-    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-            {imageUri && ( <Image source={{ uri: imageUri }}style={{ width: 100, height: 100 }} />)}
-      <SectionList
-        sections={data}
-        renderItem={renderItem}
-        renderSectionHeader={({ section: { title } }) => (
-          
-          <View style={styles.container}>
-          <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
-  
-=======
-    setStatusOS('Novo');
-    setImageUri(null);
-  };
-
   // Permissoes e configuracoes da camera
 
   if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
@@ -326,9 +200,6 @@ export default function NewOS() {
     )
    }
 
-
-
-  
   const takePhoto = async () => {
     try {
     const cameraResp = await ImagePicker.launchCameraAsync({
@@ -362,21 +233,16 @@ export default function NewOS() {
   
   }
 
-
   const data = [
-    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+    { title: 'Seção 1', data: [] },
    
   ];
   
-
-  // Função para renderizar um item individual na SectionList
   const renderItem = ({ item }) => (
     <View>
-      {/* Seu componente de item da lista (OsItemH) */}
       <Text>{item}</Text>
     </View>
   );
-
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
@@ -389,23 +255,24 @@ export default function NewOS() {
           <View style={styles.container}>
           <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
   
->>>>>>> origin/components-Lara
               <Text style={styles.text}>Cliente:</Text>
               <SelectList
               data={clientes}
-              onSelect={(value) => setSelectedCliente(value)}
-              defaultValue={cliente}
+              
+              onSelect={(value) => {
+              setSelectedCliente(value);
+              setIsClienteSelected(value && value.value !== ''); }}              defaultValue={cliente}
               setSelected={(value) => setSelectedCliente(value)}
-                          placeholder="Selecione um cliente ou digite um novo"
-                dropdownItemStyles={{ color: 'whitw' }}
-                dropdownTextStyles={{ color: 'white' }}
-                arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
-                searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
-                closeicon={<Ionicons name="close" size={24} color="white" />}
-                boxStyles={{ color: 'white', borderColor: 'white', borderRadius: 30, backgroundColor: '#1A4963' }}
-                inputStyles={{ color: 'white', borderColor: 'white' }}
-                dropdownStyles={{ borderColor: 'white' }}
-                searchPlaceholder=''
+              placeholder="Selecione um cliente ou digite um novo"
+              dropdownItemStyles={{ color: 'white' }}
+              dropdownTextStyles={{ color: 'white' }}
+              arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
+              searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
+              closeicon={<Ionicons name="close" size={24} color="white" />}
+              boxStyles={[styles.selectBox, !isClienteSelected && styles.errorBorder]}
+              inputStyles={{ color: 'white', borderColor: 'white' }}
+              dropdownStyles={{ borderColor: 'white' }}
+              searchPlaceholder=''
               />
       
       <Text style={styles.text}>Tipo de Hardware:</Text>
@@ -451,11 +318,7 @@ export default function NewOS() {
         defaultValue={tipoServico}
         setSelected={setSelectedTipoServico} 
         placeholder='Selecionar'
-<<<<<<< HEAD
-        dropdownItemStyles={{ color: 'whitw' }}
-=======
         dropdownItemStyles={{ color: 'white' }}
->>>>>>> origin/components-Lara
         dropdownTextStyles={{ color: 'white' }}
         arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
         searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
@@ -481,8 +344,9 @@ export default function NewOS() {
                   { label: 'Média', value: 'média' },
                   { label: 'Alta', value: 'alta' },
                 ]}
-                onSelect={(value) => setPrioridade(value)}
-                defaultValue={prioridade}
+                onSelect={(value) => {
+                setSelectedPrioridade(value);
+                setIsPrioridadeSelected(value && value.value !== ''); }}                defaultValue={prioridade}
                 setSelected={setSelectedPrioridade}
                 placeholder='Selecionar'
                 dropdownItemStyles={{ color: 'white' }}
@@ -490,7 +354,7 @@ export default function NewOS() {
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
                 searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
                 closeicon={<Ionicons name="close" size={24} color="white" />}
-                boxStyles={{ color: 'white', borderColor: 'white', borderRadius: 30, backgroundColor: '#1A4963'  }}
+                boxStyles={[styles.selectBox, !isPrioridadeSelected && styles.errorBorder]}
                 inputStyles={{ color: 'white', borderColor: 'white' }}
                 dropdownStyles={{ borderColor: 'white' }}
                 searchPlaceholder=''
@@ -513,13 +377,8 @@ export default function NewOS() {
                 style={styles.input}
                 placeholderTextColor={color='#DEDEDE'}
               />
-<<<<<<< HEAD
-              <View style={styles.photoButtonContainer}>
-                <TouchableOpacity onPress={selectImage} style={styles.photoButton}>
-=======
               <View style={styles.photoButtonContainer} >
                 <TouchableOpacity  style={styles.photoButton} onPress={takePhoto}>
->>>>>>> origin/components-Lara
                   <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
                   <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
                 </TouchableOpacity>
@@ -527,7 +386,7 @@ export default function NewOS() {
 
               <View style={styles.buttonContainer}>
                 <Button onPress={adicionarOS} mode='contained' style={styles.button}>Salvar</Button>
-                <Button onPress={limparCampos} mode='contained' style={styles.button}>Cancelar</Button>
+                <Button onPress={cancelarOperacao} mode='contained' style={styles.button}>Cancelar</Button>
               </View>
             </View>
         
@@ -613,6 +472,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 20,
   },
+  selectBox: {
+    color: 'white', 
+    borderColor: 'white', 
+    borderRadius: 30, 
+    backgroundColor: '#1A4963'
+  },
+  errorBorder: {
+    borderColor: 'red',
+  },
   
   photoButton: {
     backgroundColor: '#08354a', // Cor de fundo do botão
@@ -635,8 +503,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> origin/components-Lara

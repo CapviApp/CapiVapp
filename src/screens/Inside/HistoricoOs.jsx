@@ -6,14 +6,11 @@ import { addDoc, collection, query, getDocs } from 'firebase/firestore';
 import Listar from '../components/ListarComponents';
 import { db } from '../../config/firebase';
 
-
-
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = (query) => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
 
-  // Dados de exemplo para as seções
   const data = [
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
@@ -30,11 +27,7 @@ export default function Historico({ navigation }) {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-<<<<<<< HEAD
-        console.log('OS, id:', doc.id);
-=======
         
->>>>>>> origin/components-Lara
       });
       
       setOSList(osData);
@@ -43,8 +36,6 @@ export default function Historico({ navigation }) {
     }
   };
 
-
- 
   const renderItem = ({ item }) => (
     <View>
     
@@ -68,13 +59,13 @@ export default function Historico({ navigation }) {
           <Text style={styles.title}>Histórico OS</Text>
           <View style={styles.searchContainer}>
             <Searchbar
-              placeholder="Busca Histórico"
+              placeholder="Pesquisar"
               onChangeText={onChangeSearch}
               value={searchQuery}
               style={styles.searchBar}
             />
           </View>
-          <Text style={styles.subtitulo}>Ordens de Serviço</Text>
+          <Text style={styles.subTitle}>Ordens de Serviço</Text>
           <Listar osList={osList}/>
         </View>
         
@@ -88,18 +79,24 @@ export default function Historico({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  gradient: {
-    flex: 1,
-    padding: 20,
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: '23%',
   },
   title: {
-    fontSize: 32,
-    color: 'white',
+    fontSize: 22,
     fontWeight: 'bold',
-    marginVertical: 20,
-    alignSelf: 'center', 
+    color: 'white',
+    paddingStart: 22,
     textAlign: 'center',
+  },
+  subTitle: {
+    fontSize: 20,
+    fontWeight: '400',
+    color: 'white',
+    padding: 5,
+    paddingStart: 20,
+    marginVertical: 10,
   },
   backgroundColor: {
     flex: 1,
@@ -111,12 +108,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 30,
-  },
-  subtitulo: {
-    fontSize: 24,
-    color: 'white',
-    marginBottom: 10,
-    marginLeft: 30,
+    marginVertical: 10,
   },
 });

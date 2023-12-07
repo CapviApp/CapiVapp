@@ -29,11 +29,7 @@ export default function Prioridade({ navigation }) {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-<<<<<<< HEAD
-        console.log('OS, id:', doc.id);
-=======
         
->>>>>>> origin/components-Lara
       });
       
       setOSList(osData);
@@ -80,16 +76,7 @@ export default function Prioridade({ navigation }) {
                 style={styles.searchBar}
               />
             </View>
-            <View>
-            <Text style={styles.subTitle}>Filtros:</Text>
-                <Filtro title='Status'/>
-                <Filtro title='Tipo Serviço'/>
-                <Filtro title='Tipo Hardware'/>
-                <Filtro title='Cliente'/>
-                <Filtro title='Data'/>
-             </View>
-            <Text style={styles.subTitle}>Prioritárias:</Text>
-  
+
            <Listar osList={osList}/>
            
       </View>

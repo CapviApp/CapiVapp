@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import storage from '@react-native-firebase/storage';
-import styles from './styles';
 
 export default function ImageComponent() {
     const [image, setImage] = useState(null);
@@ -45,6 +44,17 @@ export default function ImageComponent() {
             }
         );
     };
+
+    // Estilos definidos diretamente no componente
+    const styles = StyleSheet.create({
+        container: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          // outros estilos para o container...
+        },
+        // outros estilos que você possa precisar...
+    });
 
     return (
         <View style={styles.container}>
