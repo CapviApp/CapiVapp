@@ -1,9 +1,11 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApp } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
 import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 import { getFirebase, getFirestore } from 'firebase/firestore'
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, listAll } from "firebase/storage";
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -27,8 +29,72 @@ initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
+export const fbApp = getApp()
+
 export const auth = getAuth()
 
-export default{ app, getApp, getAuth };
+export const storage = getStorage()
+
+/**
+ * 
+ * @param {*} uri
+ * 
+ * @returns
+ */
+
+
+export const listFiles = async () => {
+  // Create a sreference under which you want to list
+  const listRef = ref(storage, 'images');
+
+  // Find all the prefixes and items.
+  const listResp = await listAll(listRef)
+  return listResp.items
+}
+
+
+/**
+ * 
+ * @param {*} uri
+ * @param {*} name
+ * 
+ */
+
+export const uploadToFirebase = async (uri, name, onProgress) => {
+
+    const fetchResponse = await fetch(uri)
+    const theBlob = await fetchResponse.blob()
+    
+   
+    const imageRef = ref(getStorage(), `images/${name}`);
+
+    const uploadTask = uploadBytesResumable(imageRef, theBlob);
+
+  return new Promise((resolve, reject) => {
+
+    uploadTask.on(
+      'state_changed', 
+      (snapshot) => {
+      const progress = 
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress && onProgress(progress);
+      }, 
+      (error) => {
+        reject(error)
+      }, 
+      async () => {
+        const dowloadUrl = await getDownloadURL(uploadTask.snapshot.ref)
+        resolve({
+          dowloadUrl, 
+          metadata : uploadTask.snapshot.metadata,
+        })
+      }
+    );
+    name = dowloadUrl
+  })
+}
+
+
+export default{ app, getApp, getAuth, listFiles };
 
 export const db = getFirestore(app)

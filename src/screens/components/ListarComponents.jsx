@@ -17,7 +17,11 @@ function Listar({ osList, selecionarOS }) {
     <SectionList
       sections={[{ data: osList }]}
       renderItem={({ item }) => {
+<<<<<<< HEAD
         console.log('Item:', item);
+=======
+       
+>>>>>>> origin/components-Lara
   
         return (
           <TouchableOpacity onPress={() => navigateToOS(item)}>

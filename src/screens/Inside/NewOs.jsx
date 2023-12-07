@@ -1,21 +1,34 @@
 
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { View, Text, TextInput, StyleSheet, SectionList } from 'react-native';
+=======
+import { View, Text, TextInput, StyleSheet, SectionList, Alert } from 'react-native';
+>>>>>>> origin/components-Lara
 import { SelectList } from 'react-native-dropdown-select-list-expo';
 import { addDoc, collection, query, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase';
+import { db, uploadToFirebase, listFiles } from '../../config/firebase';
+import { getStorage, ref, listAll } from "firebase/storage";
 import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+<<<<<<< HEAD
 import Listar from '../components/ListarComponents';
+=======
+>>>>>>> origin/components-Lara
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
+<<<<<<< HEAD
 //import * as ImagePicker from 'react-native-image-picker';
 var ImagePicker = require('react-native-image-picker');
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+=======
+
+import * as ImagePicker from 'expo-image-picker'
+>>>>>>> origin/components-Lara
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
@@ -33,6 +46,7 @@ function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   );
 }
 export default function NewOS() {
+
   const [osId, setOsId] = useState('');
   const [cliente, setCliente] = useState('');
   const [tipoHardware, setTipoHardware] = useState('');
@@ -42,7 +56,7 @@ export default function NewOS() {
   const [comentario, setComentario] = useState('');
   const [osList, setOSList] = useState([]);
   const [descricaoProduto, setDescricaoProduto] = useState('');
-  const [status, setStatus] = useState('Novo');
+  const [statusOS, setStatusOS] = useState('Novo');
   const [editMode, setEditMode] = useState(false);
   const [selected, setSelected] = React.useState({ value: "" });
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
@@ -50,14 +64,43 @@ export default function NewOS() {
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
   const [selectedCliente, setSelectedCliente] = useState({ value: '' })
   const [imageUri, setImageUri] = useState(null);
+<<<<<<< HEAD
   const [isClienteSelected, setIsClienteSelected] = useState(true);
 
   const userCollectionRef = collection(db, 'Cliente teste');
 
   const [clientes, setClientes] = useState([])
 
+=======
+ 
+ const [clientes, setClientes] = useState([])
+
+  const userCollectionRef = collection(db, 'Cliente teste');
+>>>>>>> origin/components-Lara
   const osCollectionRef = collection(db, 'teste');
   
+  const listUser = async () => {
+    try {
+      const querySnapshot = await getDocs(userCollectionRef);
+      const userList = querySnapshot.docs.map((doc) => {
+        const cliente = doc.data();
+        return { id: doc.id, label: cliente.nome, value: doc.id };
+      });
+  
+      setClientes(userList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [files, setFiles] = useState([])
+  
+
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions()
+
+   
+
+
   const listUser = async () => {
     try {
       const querySnapshot = await getDocs(userCollectionRef);
@@ -84,11 +127,14 @@ export default function NewOS() {
     }
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     getNextOsId();
     loadOS();
     listUser(); 
   }, []);
+=======
+>>>>>>> origin/components-Lara
   
   
   const adicionarOS = async () => {
@@ -112,9 +158,15 @@ export default function NewOS() {
         prioridade: selectedPrioridade,
         comentario: comentario,
         descricaoProduto: descricaoProduto,
+<<<<<<< HEAD
         status: 'Novo',
         imageUri: imageUri, // isto deveria ser algo diferente?
         // status: status, selectedCliente
+=======
+        statusOS: 'Novo',
+        imageUri: imageUri, // isto deveria ser algo diferente?
+        // statusOS: statusOS, selectedCliente
+>>>>>>> origin/components-Lara
       });
   
       const osId = docRef.id;
@@ -145,6 +197,7 @@ export default function NewOS() {
     }
   };
 
+<<<<<<< HEAD
   const listCliente = async () => {
     try {
       listUser(); // Obtém a lista de clientes
@@ -178,6 +231,10 @@ export default function NewOS() {
       console.error(error);
     }
   };  
+=======
+
+ 
+>>>>>>> origin/components-Lara
 
   const loadOS = async () => {
     try {
@@ -195,6 +252,21 @@ export default function NewOS() {
     }
   };
 
+  useEffect(() => {
+    
+    listFiles().then((listResp) => {
+      const files = listResp.map((value) => {
+        return {name : value.fullPath }
+      })
+      setFiles(files)
+    })
+    getNextOsId();
+    loadOS();
+    listUser(); 
+  }, []); 
+
+  console.log(files);
+
   const limparCampos = () => {
     setCliente('');
     setTipoHardware('');
@@ -203,6 +275,7 @@ export default function NewOS() {
     setPrioridade('baixa');
     setComentario('');
     setDescricaoProduto('');
+<<<<<<< HEAD
     setStatus('Novo');
     setImageUri(null);
   };
@@ -237,6 +310,86 @@ export default function NewOS() {
           <View style={styles.container}>
           <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
   
+=======
+    setStatusOS('Novo');
+    setImageUri(null);
+  };
+
+  // Permissoes e configuracoes da camera
+
+  if(permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
+    return (
+      <View style={styles.container}>
+        <Text>Sem permissão para usar a câmera - {permission?.status}</Text>
+        <Button mode='contained' onPress={requestPermission}> Permitir </Button>
+      </View>
+    )
+   }
+
+
+
+  
+  const takePhoto = async () => {
+    try {
+    const cameraResp = await ImagePicker.launchCameraAsync({
+      allowsEditing : true,
+      mediaTypes : ImagePicker.MediaTypeOptions.All,
+      quality: 1
+    })
+
+    if (!cameraResp.canceled) {
+      const  {uri} = cameraResp.assets[0]
+
+      const fileName = uri.split('/').pop()
+
+      const uploadResp = await uploadToFirebase(  uri, fileName, (v) => 
+      console.log(v)
+      )
+      console.log('upload: ', uploadResp);
+
+     
+      listFiles().then((listResp) => {
+        const files = listResp.map((value) => {
+          return {name : value.fullPath }
+        })
+        setFiles(files)
+      })
+      }
+   
+  }catch (e) {
+    Alert.alert ('Erro ao carregar imagem: ' + e.messsage)
+  }
+  
+  }
+
+
+  const data = [
+    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+   
+  ];
+  
+
+  // Função para renderizar um item individual na SectionList
+  const renderItem = ({ item }) => (
+    <View>
+      {/* Seu componente de item da lista (OsItemH) */}
+      <Text>{item}</Text>
+    </View>
+  );
+
+
+  return (
+    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
+          
+      <SectionList
+        sections={data}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          
+          <View style={styles.container}>
+          <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
+  
+>>>>>>> origin/components-Lara
               <Text style={styles.text}>Cliente:</Text>
               <SelectList
               data={clientes}
@@ -298,7 +451,11 @@ export default function NewOS() {
         defaultValue={tipoServico}
         setSelected={setSelectedTipoServico} 
         placeholder='Selecionar'
+<<<<<<< HEAD
         dropdownItemStyles={{ color: 'whitw' }}
+=======
+        dropdownItemStyles={{ color: 'white' }}
+>>>>>>> origin/components-Lara
         dropdownTextStyles={{ color: 'white' }}
         arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
         searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
@@ -356,8 +513,13 @@ export default function NewOS() {
                 style={styles.input}
                 placeholderTextColor={color='#DEDEDE'}
               />
+<<<<<<< HEAD
               <View style={styles.photoButtonContainer}>
                 <TouchableOpacity onPress={selectImage} style={styles.photoButton}>
+=======
+              <View style={styles.photoButtonContainer} >
+                <TouchableOpacity  style={styles.photoButton} onPress={takePhoto}>
+>>>>>>> origin/components-Lara
                   <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
                   <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
                 </TouchableOpacity>
@@ -473,4 +635,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> origin/components-Lara

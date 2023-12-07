@@ -12,7 +12,10 @@ export default function Cliente() {
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
   
+<<<<<<< HEAD
   
+=======
+>>>>>>> origin/components-Lara
   useEffect(() => {
     const buscarClienteEOrdensServico = async () => {
         setLoading(true);

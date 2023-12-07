@@ -29,7 +29,11 @@ export default function Prioridade({ navigation }) {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
+<<<<<<< HEAD
         console.log('OS, id:', doc.id);
+=======
+        
+>>>>>>> origin/components-Lara
       });
       
       setOSList(osData);

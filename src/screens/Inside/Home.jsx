@@ -46,7 +46,11 @@ export default function Home() {
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
+<<<<<<< HEAD
         console.log('OS, id:', doc.id);
+=======
+       
+>>>>>>> origin/components-Lara
       });
       
       setOSList(osData);
@@ -76,11 +80,19 @@ export default function Home() {
 
   const name = 'Lara'
   return (
+<<<<<<< HEAD
+=======
+    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
+>>>>>>> origin/components-Lara
     <SectionList
     sections={data}
     renderItem={renderItem}
     renderSectionHeader={({ section: { title } }) => (
+<<<<<<< HEAD
       <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
+=======
+      
+>>>>>>> origin/components-Lara
   
     <View style={styles.container}>
       <StatusBar  animated={true} style='light'
@@ -100,9 +112,15 @@ export default function Home() {
           
     </View>
   
+<<<<<<< HEAD
      </LinearGradient>
     )}/>
     
+=======
+   
+    )}/>
+      </LinearGradient>
+>>>>>>> origin/components-Lara
   );
 }
 

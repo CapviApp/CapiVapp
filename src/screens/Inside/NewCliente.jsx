@@ -242,7 +242,11 @@ const validarNumero = (numero) => {
   
   };
   
+<<<<<<< HEAD
   //VERIFICA SE O CLINETE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
+=======
+  //VERIFICA SE O CLIENTE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
+>>>>>>> origin/components-Lara
   const verificarClienteExistente = async (email, cpf, cnpj) => {
     const querySnapshot = await getDocs(userCollectionRef);
     let existe = false;
@@ -340,7 +344,7 @@ const validarNumero = (numero) => {
       renderItem={renderItem}
       renderSectionHeader={({ section: { title } }) => (
        
-        <View>
+        <View style={styles.container}>
           <View style={styles.inputContainer}>
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" value={username}onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
@@ -352,6 +356,7 @@ const validarNumero = (numero) => {
             <TextInput placeholder="Bairro:"value={bairro}onChangeText={(value) => setBairro(value)} style={styles.input} placeholderTextColor={color='white'} />
           
             <View style={styles.row}>
+<<<<<<< HEAD
   <TextInput
     placeholder="CEP:"
     value={cep}
@@ -379,6 +384,35 @@ const validarNumero = (numero) => {
   />
   {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
 </View>
+=======
+        <TextInput
+          placeholder="CEP:"
+          value={cep}
+          onChangeText={(value) => {
+            const formattedValue = formatarCEP(value);
+            setCep(formattedValue);
+            setIsCepValid(validarCEP(formattedValue));
+          }}
+          keyboardType="numeric"
+          style={[styles.input, styles.inputFlex, !isCepValid && styles.inputError]}
+          placeholderTextColor='white'
+        />
+        {!isCepValid && <Text style={styles.errorTextRow}>CEP inválido</Text>}
+        
+        <TextInput
+          placeholder="Nº:"
+          value={numero}
+          onChangeText={(value) => {
+            setIsNumeroValid(validarNumero(value));
+            setNumero(value);
+          }}
+          keyboardType="numeric"
+          style={[styles.input, styles.inputFlex, !isNumeroValid && styles.inputError]}
+          placeholderTextColor='white'
+        />
+        {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
+      </View>
+>>>>>>> origin/components-Lara
 
 
           </View>
@@ -417,6 +451,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     width: '100%',
+    
+  },
+  inputError: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
   },
   inputError: {
     borderColor: 'red',
@@ -430,6 +474,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+<<<<<<< HEAD
+=======
+    paddingBottom: '23%',
+>>>>>>> origin/components-Lara
     
   },
   title: {
