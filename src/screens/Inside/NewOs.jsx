@@ -12,7 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
-
+import Fotos from './Fotos';
 import * as ImagePicker from 'expo-image-picker'
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
@@ -388,6 +388,7 @@ export default function NewOS() {
                   <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
                   <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
                 </TouchableOpacity>
+              
               </View>
 
               <View style={styles.buttonContainer}>

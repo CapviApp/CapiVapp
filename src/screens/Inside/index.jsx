@@ -12,6 +12,7 @@ import Home from  "./Home"
 import NewOS from "./NewOS";
 import NewCliente from "./NewCliente";
 import EditOS from "./EditOS";
+import Fotos from "./Fotos";
 
 export {
     Home,
@@ -26,5 +27,6 @@ export {
     ClientesList,
     NewCliente,
     NewOS,
-    EditOS
+    EditOS,
+    Fotos,
 }

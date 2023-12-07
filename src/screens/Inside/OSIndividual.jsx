@@ -5,8 +5,8 @@ import { db } from '../../config/firebase';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-export default function OSIndividual({ osList, selecionarOS, item}) {
-
+const OSIndividual = ({route}) => {
+  const {item} = route.params
 
 
   const [osListState, setOSList] = useState([]);
@@ -50,13 +50,13 @@ export default function OSIndividual({ osList, selecionarOS, item}) {
     <View style={styles.container}>
       <Text style={styles.title}>OS</Text>
     
-            <View style={styles.containerText}>
-          <Text>Status: {item.status}</Text>
+            <View >
+          <Text>Status: {item?.statusOS}</Text>
            
 
-            <Text>Data: {item.data}</Text>
-            <Text>Cliente: {item.cliente}</Text>                   
-            <Text>Prioridade: {item.prioridade}</Text>           
+            <Text>Data: {item?.data}</Text>
+            <Text>Cliente: {item?.cliente}</Text>                   
+            <Text>Prioridade: {item?.prioridade}</Text>           
            
            
             </View>
@@ -66,10 +66,12 @@ export default function OSIndividual({ osList, selecionarOS, item}) {
                 <FontAwesome name="pencil-square-o" size={24} color="black" />
             </TouchableOpacity>
           
-      <Button title="Deletar"  onPress={() => deleteOS(item.id)} />
+      <Button title="Deletar"  onPress={() => deleteOS(item?.id)} />
     </View>
   );
 }
+
+export default OSIndividual
 
 const styles = StyleSheet.create({
   container: {

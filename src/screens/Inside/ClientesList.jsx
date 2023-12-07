@@ -20,6 +20,7 @@ const navigation = useNavigation();
 
 const handlePressCliente = (clienteId) => {
   navigation.navigate('Cliente', { clienteId: clienteId });
+  console.log(clienteId);
 };
 
   useEffect(() => {
@@ -27,14 +28,20 @@ const handlePressCliente = (clienteId) => {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
+        const clienteID = doc.id
+        
         querySnapshot.forEach((doc) => {
           listaClientes.push({ id: doc.id, ...doc.data() });
+          
         });
         setClientes(listaClientes);
+        console.log(clienteID);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
       }
+      
     };
+    
 
     carregarClientes();
   }, []);
@@ -53,7 +60,7 @@ const handlePressCliente = (clienteId) => {
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
           <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
-          <View style={styles.clienteInfo}>
+          <View style={styles.clienteFoto}>
             <Text style={styles.clienteNome}>{item.nome}</Text>
             <Text style={styles.clienteData}>{item.data}</Text>
           </View>
@@ -123,6 +130,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     borderWidth: 1,
     borderColor: 'white',
+    
   },
   clienteItem: {
     flexDirection: 'row', 
@@ -138,6 +146,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: 'white', 
     marginRight: 10,
+    
   },
   clienteNome: {
     fontSize: 18,

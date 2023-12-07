@@ -5,14 +5,20 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { db } from '../../config/firebase';
 
+
+
+
 function Listar({ osList, selecionarOS }) {
   const navigation = useNavigation(); // Move the useNavigation hook inside the function component
 
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
 
- 
+  const navigateToDetails = (item) => {
+    navigation.navigate("os", { osItem: item });
+  };
 
+  
   return (
     <SectionList
       sections={[{ data: osList }]}
@@ -20,10 +26,10 @@ function Listar({ osList, selecionarOS }) {
        
   
         return (
-          <TouchableOpacity onPress={() => navigateToOS(item)}>
+          <TouchableOpacity onPress={() => navigateToDetails(item)}>
             <View style={styles.container}>
               <View style={styles.containerText}>
-                <Text>Status: {item.status}</Text>
+                <Text>status: {item.statusOS}</Text>
                 <Text>Data: {item.data}</Text>
                
                 <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>

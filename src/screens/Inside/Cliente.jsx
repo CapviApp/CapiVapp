@@ -7,7 +7,7 @@ import { useRoute } from '@react-navigation/native';
 
 export default function Cliente() {
   const route = useRoute();
-  const { clienteId } = route.params;
+  const  {clienteId } = route.params;
   const [cliente, setCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
@@ -79,7 +79,7 @@ return (
           <Text style={styles.osStatusText}>{os.status}</Text>
           <Text style={styles.osPriorityText}>{os.prioridade}</Text>
           <Text style={styles.osIdText}>{os.id}</Text>
-          <Text style={styles.osDateText}>{os.data}</Text>
+          <Text style={styles.dateText}>{os.data}</Text>
         </View>
       ))}
     </View>
