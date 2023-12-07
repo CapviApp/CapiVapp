@@ -4,10 +4,10 @@ import {addDoc, collection,query, getDocs,doc,updateDoc,deleteDoc,where,} from '
 import { db } from '../../config/firebase';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-
+import { FontAwesome } from '@expo/vector-icons';
 const OSIndividual = ({route}) => {
   const {item} = route.params
-
+  console.log("item: ", item);
 
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
@@ -51,6 +51,8 @@ const OSIndividual = ({route}) => {
       <Text style={styles.title}>OS</Text>
     
             <View >
+              <Text>ID: {item?.osId}</Text>
+              {console.log(doc.id)}
           <Text>Status: {item?.statusOS}</Text>
            
 
@@ -66,7 +68,7 @@ const OSIndividual = ({route}) => {
                 <FontAwesome name="pencil-square-o" size={24} color="black" />
             </TouchableOpacity>
           
-      <Button title="Deletar"  onPress={() => deleteOS(item?.id)} />
+      <Button title="Deletar"  onPress={() => deleteOS(item.id)} />
     </View>
   );
 }
