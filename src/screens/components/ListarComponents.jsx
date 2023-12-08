@@ -31,7 +31,9 @@ function Listar({ osList, selecionarOS }) {
         });  setOSList(osData);
         
           }
+
         })
+        return()=> subscriber()
         
     
         
@@ -40,7 +42,7 @@ function Listar({ osList, selecionarOS }) {
       } catch (error) {
         console.error('Erro ao listar:', error);
       }
-    return()=> subscriber()
+    
   }, [])
 
   const navigateToDetails = (item) => {
@@ -67,10 +69,7 @@ function Listar({ osList, selecionarOS }) {
                 <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
                 <Text>Prioridade: {item.prioridade}</Text>
               </View>
-              <TouchableOpacity  onPress={() => navigateToOS(item)}
-                style={styles.button}>
-                <Feather name="edit" size={24} color="white" />
-              </TouchableOpacity>
+            
               
             </View>
           </TouchableOpacity>
@@ -99,6 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginLeft: 100,
+    marginLeft: 110,
+    position: 'fixed',
   },
 });

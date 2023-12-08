@@ -5,9 +5,9 @@ import { db } from '../../config/firebase';
 import { useRoute } from '@react-navigation/native';
 
 
-export default function Cliente() {
-  const route = useRoute();
-  const  {clienteId } = route.params;
+const  Cliente = ({ route }) => {
+ 
+  const  {clienteItem } = route.params;
   const [cliente, setCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
@@ -17,7 +17,7 @@ export default function Cliente() {
         setLoading(true);
 
         try {
-            const docRef = doc(db, "Cliente teste", clienteId);
+            const docRef = doc(db, "Cliente teste");
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
@@ -61,15 +61,15 @@ return (
   <ScrollView style={styles.container}>
     <View style={styles.header}>
     <Text style={styles.titulo}>Cliente</Text>
-      <Image source={{ uri: cliente.foto }} style={styles.clienteFoto} />
-      <Text style={styles.nameText}>{cliente.nome}</Text>
+     
+      <Text style={styles.nameText}>{clienteItem?.nome}</Text>
     </View>
     
     <View style={styles.infoContainer}>
       <Text style={styles.infoTitle}>Informações</Text>
-      <Text style={styles.infoText}>Email: {cliente.email}</Text>
-      <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
-      <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
+      <Text style={styles.infoText}>Email: {clienteItem?.email}</Text>
+      <Text style={styles.infoText}>Telefone: {clienteItem?.telefone}</Text>
+      <Text style={styles.infoText}>CPF: {clienteItem?.cpf}</Text>
     </View>
 
     <View style={styles.osContainer}>
@@ -86,6 +86,8 @@ return (
   </ScrollView>
 );
 }
+
+export default Cliente
 
 const styles = StyleSheet.create({
 container: {

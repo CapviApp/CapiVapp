@@ -240,7 +240,7 @@ const [clientes, setClientes] = useState([])
       }
    
   }catch (e) {
-    Alert.alert ('Erro ao carregar imagem: ' + e.messsage)
+   console.log('Erro ao carregar imagem: ' + e.messsage)
   }
   
   }

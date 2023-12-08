@@ -18,10 +18,7 @@ export default function ClienteList() {
 
 const navigation = useNavigation();
 
-const handlePressCliente = (clienteId) => {
-  navigation.navigate('Cliente', { clienteId: clienteId });
-  console.log(clienteId);
-};
+
 
   useEffect(() => {
     const carregarClientes = async () => {
@@ -46,6 +43,11 @@ const handlePressCliente = (clienteId) => {
     carregarClientes();
   }, []);
 
+  const handlePressCliente = (item) => {
+    navigation.navigate('Cliente', { clienteItem: item });
+    console.log('id', item);
+  };
+
   const filteredClientes = clientes.filter(cliente => 
     cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -56,7 +58,7 @@ const handlePressCliente = (clienteId) => {
   }, [searchQuery, filteredClientes]);
   
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePressCliente(item.id)}>
+    <TouchableOpacity onPress={() => handlePressCliente(item)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
           <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />

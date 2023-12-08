@@ -18,15 +18,13 @@ export default function Login({ navigation }) {
   const nav = useNavigation();
    
   const handleSubmit = async () => {
-    if (email && password) {
+   
       try {
         await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
         console.log('got error: ', err.message);
       }
-    }else {
-      console.log('ops');
-    }
+   
   }
 
   return (
