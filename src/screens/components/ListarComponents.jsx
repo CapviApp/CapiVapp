@@ -14,6 +14,7 @@ function Listar({ osList, selecionarOS }) {
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
 
+<<<<<<< HEAD
   
 
   useEffect(() => {
@@ -51,6 +52,13 @@ function Listar({ osList, selecionarOS }) {
   
 
   
+=======
+  const navigateToDetails = (item) => {
+    navigation.navigate("os", { osItem: item });
+  };
+
+  
+>>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
   return (
     <SectionList
       sections={[{ data: osList }]}

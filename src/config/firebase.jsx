@@ -34,6 +34,87 @@ export const fbApp = getApp()
 export const auth = getAuth()
 
 export const storage = getStorage()
+<<<<<<< HEAD
+=======
+
+/**
+ * 
+ * @param {*} uri
+ * 
+ * @returns
+ */
+
+
+export const listFiles = async () => {
+  // Create a sreference under which you want to list
+  const listRef = ref(storage, 'images');
+
+  // Find all the prefixes and items.
+  const listResp = await listAll(listRef)
+  return listResp.items
+}
+
+
+/**
+ * 
+ * @param {*} uri
+ * @param {*} name
+ * 
+ */
+
+export const uploadToFirebase = async (uri, name, onProgress) => {
+
+    const fetchResponse = await fetch(uri)
+    const theBlob = await fetchResponse.blob()
+    
+   
+    const imageRef = ref(getStorage(), `images/${name}`);
+
+    const uploadTask = uploadBytesResumable(imageRef, theBlob);
+
+  return new Promise((resolve, reject) => {
+
+    uploadTask.on(
+      'state_changed', 
+      (snapshot) => {
+      const progress = 
+        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress && onProgress(progress);
+      }, 
+      (error) => {
+        reject(error)
+      }, 
+      async () => {
+        const dowloadUrl = await getDownloadURL(uploadTask.snapshot.ref)
+        resolve({
+          dowloadUrl, 
+          metadata : uploadTask.snapshot.metadata,
+        })
+      }
+    );
+    name = dowloadUrl
+  })
+}
+
+export const listUpload = async (name) => {
+  const listRef = ref(getStorage(), `images/${name}`);
+
+  listAll(listRef)
+  .then((res) => {
+    res.prefixes.forEach((folderRef) => {
+      console.log('Listado com sucesso');
+    });
+    res.items.forEach((itemRef) => {
+      console.log('Lista', name);
+    });
+  }).catch((error) => {
+    console.log(error.message);
+  });
+}
+
+
+export default{ app, getApp, getAuth, listFiles };
+>>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
 
 /**
  * 
