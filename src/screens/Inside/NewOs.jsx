@@ -15,11 +15,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
 import { TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
-    onSelect(value); // Chama a função passada como propriedade
-    setSelected(data.find((item) => item.value === value));
+    onSelect(value);
+    setSelected(data.find((item) => item.value === value)); 
+    onSelectCliente(value);
   };
 
   return (
@@ -47,18 +49,18 @@ export default function NewOS() {
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
-  const [selectedCliente, setSelectedCliente] = useState({ value: '' })
+  const [selectedCliente, setSelectedCliente] = useState('')
   const [imageUri, setImageUri] = useState(null);
-  const [isClienteSelected, setIsClienteSelected] = useState(true);
-  const [isPrioridadeSelected, setIsPrioridadeSelected] = useState(true);
-
+  const [image, setImage] = useState(null)
   const [clientes, setClientes] = useState([])
+  
 
   const userCollectionRef = collection(db, 'Cliente teste');
   const osCollectionRef = collection(db, 'teste');
 
   const [files, setFiles] = useState([])
   
+
   const [permission, requestPermission] = ImagePicker.useCameraPermissions()
 
   const listUser = async () => {
@@ -74,7 +76,6 @@ export default function NewOS() {
       console.log(error);
     }
   };
-
   const getNextOsId = async () => {
     try {
       const q = query(osCollectionRef);
@@ -85,6 +86,11 @@ export default function NewOS() {
     } catch (error) {
       console.error('Erro ao obter o próximo ID da Ordem de Serviço:', error);
     }
+  };
+
+  const handleSelectCliente = (value) => {
+    setCliente(value);
+    setSelectedCliente(clientes.find((item) => item.value === value));
   };
 
   const adicionarOS = async () => {
@@ -187,7 +193,9 @@ export default function NewOS() {
     
     listFiles().then((listResp) => {
       const files = listResp.map((value) => {
+        setImageUri( value.fullPath)
         return {name : value.fullPath }
+        
       })
       setFiles(files)
     })
@@ -258,34 +266,33 @@ export default function NewOS() {
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
        <Toast ref={(ref) => Toast.setRef(ref)} />  
-      <SectionList
+       <SectionList
         sections={data}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
-
+          
           <View style={styles.container}>
           <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
   
               <Text style={styles.text}>Cliente:</Text>
               <SelectList
               data={clientes}
-              
-              onSelect={(value) => {
-              setSelectedCliente(value);
-              setIsClienteSelected(value && value.value !== ''); }}           
+              onSelect={(value) => setCliente(value)}
               defaultValue={cliente}
+
               setSelected={(value) => setSelectedCliente(value)}
-              placeholder="Selecione um Cliente"
-              dropdownItemStyles={{ color: 'white' }}
-              dropdownTextStyles={{ color: 'white' }}
-              arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
-              searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
-              closeicon={<Ionicons name="close" size={24} color="white" />}
-              boxStyles={[styles.selectBox, !isClienteSelected && styles.errorBorder]}
-              inputStyles={{ color: 'white', borderColor: 'white' }}
-              dropdownStyles={{ borderColor: 'white' }}
-              searchPlaceholder=''
+                          placeholder="Selecione um cliente ou digite um novo"
+                dropdownItemStyles={{ color: 'white' }}
+                dropdownTextStyles={{ color: 'white' }}
+                arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
+                searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
+                closeicon={<Ionicons name="close" size={24} color="white" />}
+                boxStyles={{ color: 'white', borderColor: 'white', borderRadius: 30, backgroundColor: '#1A4963' }}
+                inputStyles={{ color: 'white', borderColor: 'white' }}
+                dropdownStyles={{ borderColor: 'white' }}
+                searchPlaceholder=''
               />
+      
            <TouchableOpacity onPress={goToNewCliente} style={styles.addClienteButton}>
                 <Text style={styles.addClienteText}>Cadastrar Cliente</Text>
             </TouchableOpacity>
