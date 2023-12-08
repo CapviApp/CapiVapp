@@ -6,17 +6,11 @@ import { addDoc, collection, query, getDocs, onSnapshot, doc } from 'firebase/fi
 import Listar from '../components/ListarComponents';
 import { db } from '../../config/firebase';
 
-<<<<<<< HEAD
-=======
-
-
-
-
->>>>>>> origin/components-Lara
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = (query) => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
+  const osCollectionRef = collection(db, 'teste');
   
 
   const loadOS = async () => {
@@ -27,9 +21,7 @@ export default function Historico({ navigation }) {
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
       });
-     
       setOSList(osData);
-      return osData;
     } catch (error) {
       console.error('Erro ao carregar ordens de serviço:', error);
     }
@@ -39,7 +31,6 @@ export default function Historico({ navigation }) {
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
   ];
-  const osCollectionRef = collection(db, 'teste');
   
   const listOS = async () => {
     try {
@@ -71,28 +62,30 @@ export default function Historico({ navigation }) {
     listOS();
   }, []);
 
+  const filteredOSList = osList.filter((os) => {
+    // Substitua 'cliente' pelo campo que deseja pesquisar
+    const osField = os.cliente ? os.cliente.toLowerCase() : '';
+    return osField.includes(searchQuery.toLowerCase());
+  });
 
-  return (
+ return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-     
       <SectionList
-        sections={data}
-        renderItem={renderItem}
+        sections={[{ title: 'Seção 1', data: filteredOSList }]}
+        renderItem={({ item }) => <Listar os={item} />}
         renderSectionHeader={({ section: { title } }) => (
           <View style={styles.container}>
-          <Text style={styles.title}>Histórico OS</Text>
-          <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Pesquisar"
-              onChangeText={onChangeSearch}
-              value={searchQuery}
-              style={styles.searchBar}
-            />
+            <Text style={styles.title}>Histórico OS</Text>
+            <View style={styles.searchContainer}>
+              <Searchbar
+                placeholder="Pesquisar"
+                onChangeText={onChangeSearch}
+                value={searchQuery}
+                style={styles.searchBar}
+              />
+            </View>
+            <Text style={styles.subTitle}>Ordens de Serviço</Text>
           </View>
-          <Text style={styles.subTitle}>Ordens de Serviço</Text>
-          <Listar osList={osList}/>
-        </View>
-        
         )}
         keyExtractor={(item, index) => index.toString()}
       />
