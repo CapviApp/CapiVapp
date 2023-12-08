@@ -4,8 +4,11 @@ import {addDoc, collection,query, getDocs,doc,updateDoc,deleteDoc,where,} from '
 import { db } from '../../config/firebase';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons';
 
-export default function OSIndividual({ osList, selecionarOS, item}) {
+const OSIndividual = ({route}) => {
+  const {item} = route.params
+  console.log("item: ", item);
 
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
@@ -47,19 +50,14 @@ export default function OSIndividual({ osList, selecionarOS, item}) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>OS</Text>
-    
-            <View style={styles.containerText}>
-          <Text>Status: {item.status}</Text>
-           
-
-            <Text>Data: {item.data}</Text>
-            <Text>Cliente: {item.cliente}</Text>                   
-            <Text>Prioridade: {item.prioridade}</Text>           
-           
-           
-            </View>
-            
-           
+        <View >
+              <Text>ID: {item?.osId}</Text>
+              {console.log(doc.id)}
+          <Text>Status: {item?.statusOS}</Text>
+            <Text>Data: {item?.data}</Text>
+            <Text>Cliente: {item?.cliente}</Text>                   
+            <Text>Prioridade: {item?.prioridade}</Text>                    
+            </View> 
             <TouchableOpacity onPress={() => navigation.navigate("editOS", {osId: item.id})} style={styles.button}>
                 <FontAwesome name="pencil-square-o" size={24} color="black" />
             </TouchableOpacity>
@@ -68,6 +66,8 @@ export default function OSIndividual({ osList, selecionarOS, item}) {
     </View>
   );
 }
+
+export default OSIndividual
 
 const styles = StyleSheet.create({
   container: {

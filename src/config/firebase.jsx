@@ -94,6 +94,22 @@ export const uploadToFirebase = async (uri, name, onProgress) => {
   })
 }
 
+export const listUpload = async (name) => {
+  const listRef = ref(getStorage(), `images/${name}`);
+
+  listAll(listRef)
+  .then((res) => {
+    res.prefixes.forEach((folderRef) => {
+      console.log('Listado com sucesso');
+    });
+    res.items.forEach((itemRef) => {
+      console.log('Lista', name);
+    });
+  }).catch((error) => {
+    console.log(error.message);
+  });
+}
+
 
 export default{ app, getApp, getAuth, listFiles };
 

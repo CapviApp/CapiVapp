@@ -36,6 +36,10 @@ export default function Cliente() {
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
+  const handlePressCliente = (clienteId) => {
+    // Navega para a tela Cliente e passa o clienteId como parâmetro
+    navigation.navigate('Cliente', { clienteId });
+  };
 
   if (!cliente) {
     return (
