@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
   Feather,
@@ -10,14 +10,16 @@ import {
   AntDesign, 
 } from '@expo/vector-icons'
 import { Searchbar } from 'react-native-paper';
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native';
 
 import Prioridade from './Prioridade';
-import { OsItemH, OsItemV } from '../components/OS';
 
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { addDoc, collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import Listar from '../components/ListarComponents';
 
 export default function Home() {
 
@@ -25,28 +27,66 @@ export default function Home() {
   const navigation = useNavigation()
 
 
-  const data = [
-    '#FF33FF',
-    '#3366E6',
-    '#B34D4D',
-    '#00B3E6'
-  ]
 
   
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const onChangeSearch = query => setSearchQuery(query);
-  console.log('HomeScreen');
+  const [osList, setOSList] = useState([]);
+
+  const osCollectionRef = collection(db, 'teste');
+  
+  const listOS = async () => {
+    try {
+      //const selectedValue = selected; 
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      
+  
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+       
+      });
+      
+      setOSList(osData);
+    } catch (error) {
+      console.error('Erro ao listar:', error);
+    }
+  };
+
+
+  const data = [
+    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+   
+  ];
+
+  const renderItem = ({ item }) => (
+    <View>
+    
+      <Text>{item}</Text>
+    </View>
+  );
+
+  
+  useEffect(() => {
+    listOS();
+  }, []);
+
 
   const name = 'Lara'
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
-    <ScrollView>
+    <SectionList
+    sections={data}
+    renderItem={renderItem}
+    renderSectionHeader={({ section: { title } }) => (
+      
+  
     <View style={styles.container}>
       <StatusBar  animated={true} style='light'
        />
          
-         <Text style={styles.subTitle}>Olá, {name}!</Text>
          <View style={styles.searchContainer}>
             <Searchbar
               placeholder="Pesquisar"
@@ -55,85 +95,49 @@ export default function Home() {
               style={styles.searchBar}
             />
           </View>
-          
+          <Listar osList={osList}/>
          
           
     </View>
-    </ScrollView>
-     </LinearGradient>
+  
+   
+    )}/>
+      </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: '100%',
-    marginBottom: '30%',
-    
+    marginBottom: '23%',
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
-    flex: 1,
-    paddingStart: 20,
-  
+    paddingStart: 22,
+    textAlign: 'center',
   },
   subTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '400',
     color: 'white',
     padding: 5,
     paddingStart: 20,
+    marginVertical: 10,
   },
   backgroundColor: {
     flex: 1,
-    widht: '100%',
-  },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 40,
-    color: 'white',
-    height: 47,
-    width: '94%', 
-    paddingStart: 20,
-  },
-  inputContainer: {
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   searchBar: {
-    width: '90%'
+    width: '90%',
   },
   searchContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 10,
   },
-  buttonText: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: '15%'
-  },  
-  icon:{
-    marginTop: 7,
-    marginEnd: 10,
-  },
-  NovasContainer: {
-    height: '100%',
-    flexDirection: 'row',
-    flex: 1,
-    marginBottom: 15,
-    justifyContent: 'center',
-  },
-  prioridade: {
-  backgroundColor: "#C61B11"
-    
-  },
-  PrioridadeContainer:{
-
-  }
 });

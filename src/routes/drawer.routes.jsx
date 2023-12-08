@@ -12,7 +12,7 @@ import User from '../../assets/user.jpeg'
 
 import TabRoutes from './tab.routes'
 
-import { Prioridade, Config, EsperaOs, Historico, Cliente, Profile } from '../screens/Inside'
+import { Prioridade, Config, EsperaOs, Historico, Cliente, Profile, ClientesList, Fotos } from '../screens/Inside'
 
 const Drawer = createDrawerNavigator()
 
@@ -102,15 +102,7 @@ export default function DrawerRoutes(){
                 }}
                 
             />
-            <Drawer.Screen
-                name='empreraOs'
-                component={EsperaOs}
-                options={{
-                    drawerIcon:  ({ color, size }) => <AntDesign name="pausecircleo" size={size} color={color} />,
-                    drawerLabel: 'Os Em Espera'
-                }}
-                
-            />
+          
             <Drawer.Screen
                 name='historico'
                 component={Historico}
@@ -122,10 +114,19 @@ export default function DrawerRoutes(){
             />
              <Drawer.Screen
                 name='clientes'
-                component={Cliente}
+                component={ClientesList}
                 options={{
                     drawerIcon:  ({ color, size }) => <AntDesign name="team" size={size} color={color} />,
-                    drawerLabel: 'Clientes'
+                    drawerLabel: 'Lista de Clientes'
+                }}
+                
+            />
+              <Drawer.Screen
+                name='foto'
+                component={Fotos}
+                options={{
+                    drawerIcon:  ({ color, size }) => <AntDesign name="team" size={size} color={color} />,
+                    drawerLabel: 'Lista de Fotos'
                 }}
                 
             />

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, View, Text, Button, StyleSheet, SectionList } from 'react-native';
-import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where, onSnapshot } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, Feather } from '@expo/vector-icons';
 import { db } from '../../config/firebase';
+
+
+
 
 function Listar({ osList, selecionarOS }) {
   const navigation = useNavigation(); // Move the useNavigation hook inside the function component
@@ -11,39 +14,67 @@ function Listar({ osList, selecionarOS }) {
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
 
-  const [docId, setDocId] = useState('');
-
-  const navigateToOS = (os) => {
-    const osId = os.id;
-    navigation.push(`editOS/${osId}`); // Use the navigation prop to navigate to the editOS screen
-  };
-
-
+  
 
   useEffect(() => {
-    loadOS();
-  }, []);
+   
+      try {
+        //const selectedValue = selected; 
+        const q = query(osCollectionRef);
+        const querySnapshot = getDocs(q);
+        const subscriber = onSnapshot(osCollectionRef, {
+          next: (snapshot) => {
+            const osData = [];
+            snapshot.docs.forEach((doc) => {
+            osData.push({ id: doc.id, ...doc.data() });
+          
+        });  setOSList(osData);
+        
+          }
 
+        })
+        return()=> subscriber()
+        
+    
+        
+        
+       
+      } catch (error) {
+        console.error('Erro ao listar:', error);
+      }
+    
+  }, [])
+
+  const navigateToDetails = (item) => {
+    navigation.navigate("os", { osItem: item });
+    console.log('id:',item);
+  };
+
+  
+
+  
   return (
     <SectionList
-      sections={[{ data: osListState }]}
-      renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => navigateToOS(item)}> 
-          <View style={styles.container}>
-            <View style={styles.containerText}>
-              <Text>Status: {item.status}</Text>
-              <Text>Data: {item.data}</Text>
-              <Text>Cliente: {item.cliente}</Text>
-              <Text>Prioridade: {item.prioridade}</Text>
+      sections={[{ data: osList }]}
+      renderItem={({ item }) => {
+       
+  
+        return (
+          <TouchableOpacity onPress={() => navigateToDetails(item)}>
+            <View style={styles.container}>
+              <View style={styles.containerText}>
+                <Text>status: {item.statusOS}</Text>
+                <Text>Data: {item.data}</Text>
+               
+                <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
+                <Text>Prioridade: {item.prioridade}</Text>
+              </View>
+            
+              
             </View>
-            <TouchableOpacity
-              onPress={() => navigateToOS(item)} 
-              style={styles.button}>
-              <FontAwesome name="pencil-square-o" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      )}
+          </TouchableOpacity>
+        );
+      }}
       keyExtractor={(item) => item.id.toString()}
     />
   );
@@ -67,6 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginLeft: 90,
+    marginLeft: 110,
+    position: 'fixed',
   },
 });

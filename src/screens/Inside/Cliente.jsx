@@ -1,218 +1,174 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
-import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc } from "firebase/firestore";
-import { LinearGradient } from 'expo-linear-gradient';
-import { ScrollView } from 'react-native-gesture-handler';
-import { db } from'../../config/firebase'
-import { Button } from 'react-native-paper';
-
-
-
+import { StyleSheet, Text, View, ActivityIndicator, Image, ScrollView } from 'react-native';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../config/firebase';
+import { useRoute } from '@react-navigation/native';
 
 export default function Cliente() {
-
-
-  const [docId, setDocId] = useState('')
-  const [formData, setFormData] = useState({
-    
-    prioridade: '',
-    status: '',
-    hardware: '',
-    servico: '',
-    descricao: '',
-    comentarios: '',
-    cliente: '',
-    data: '',
-  });
-
-  const osCollectionRef = collection(db, 'os');
-  const [OS, setOS] = useState([]);
-
- 
-  const adicionar = async () => {
-    try {
-      const docRef = await addDoc(osCollectionRef, formData);
-      console.log('OS dados foram adicionados com sucesso, id: ', docRef.id);
-     
-      console.log('este e um id',docRef.id);
-     
-    } catch (error) {
-      console.log('Erro ao adicionar dados:', error);
-    }
-  }
-
-  const deleteOS = async () => {
-    if(docId){
-    try {
-      await deleteDoc(doc(osCollectionRef, docId)); // Use o ID do documento que você deseja excluir
-      console.log('Os dados da OS foram excluídos com sucesso.');
-    } catch (error) {
-      console.log('Erro ao excluir os dados:', error);
-    }
-  }else {
-    console.log('Nenhum ID de documento válido para exclusão.');
-  }
-  };
-
-  const update = async () => {
-    try {
-      if (docIdToBeUpdated) {
-        const docRef = doc(db, 'os', docIdToBeUpdated);
-        await updateDoc(docRef, formData); // Use formData para atualizar
-
-        console.log('Os dados foram atualizados com sucesso.');
-
-        // Limpe o formulário após a atualização bem-sucedida
-        setFormData({
-          prioridade: '',
-          status: '',
-          hardware: '',
-          servico: '',
-          descricao: '',
-          comentarios: '',
-          cliente: '',
-          data: '',
-        });
-
-        // Limpe o ID do documento a ser atualizado
-        setDocIdToBeUpdated('');
-      }
-    } catch (error) {
-      console.log('Erro ao atualizar dados:', error);
-    }
-  };
+  const route = useRoute();
+  const  {clienteId } = route.params;
+  const [cliente, setCliente] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [ordensServico, setOrdensServico] = useState([]);
 
   useEffect(() => {
-    ListOS();
-  }, []);
-
-  const ListOS = async () => {
-    try {
-      const querySnapshot = await getDocs(osCollectionRef);
-      const osList = [];
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        osList.push({
-          id: doc.id,
-          cliente: data.cliente,
-          prioridade: data.prioridade,
-          status: data.status,
-          hardware: data.hardware,
-          servico: data.servico,
-          descricao: data.descricao,
-          comentarios: data.comentarios,
+    const docRef = doc(db, "Cliente teste", clienteId);
+  
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setCliente(docSnap.data());
+  
+        const osQuery = query(collection(db, "teste"), where("clienteId", "==", clienteId));
+        getDocs(osQuery).then((osSnapshot) => {
+          const osList = osSnapshot.docs.map(doc => doc.data());
+          setOrdensServico(osList);
         });
-      });
-      setOS(osList);
-      console.log('OS listadas: ', osList);
-    } catch (error) {
-      console.log('Erro ao listar os:', error);
-    }
-  }
-
-  const preencherFormulario = (item) => {
-    setDocIdToBeUpdated(item.id); // Defina o ID do documento a ser atualizado
-    setFormData({
-      prioridade: item.prioridade,
-      status: item.status,
-      hardware: item.hardware,
-      servico: item.servico,
-      descricao: item.descricao,
-      comentarios: item.comentarios,
-      cliente: item.cliente,
-      data: item.data,
+      } else {
+        console.log("Cliente não encontrado!");
+      }
+    }, (error) => {
+      console.error("Erro ao buscar cliente e OS:", error);
     });
+  
+    return () => unsubscribe(); // Isso é importante para evitar vazamentos de memória
+  }, [clienteId]);
+  
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
+  const handlePressCliente = (clienteId) => {
+    // Navega para a tela Cliente e passa o clienteId como parâmetro
+    navigation.navigate('Cliente', { clienteId });
+  };
 
-  function Listar() {
+  if (!cliente) {
     return (
-      <FlatList
-        data={OS}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => preencherFormulario(item)}>
-            <View>
-              <Text>ID: {item.id}</Text>
-              <Text>Hardware: {item.hardware}</Text>
-              <Text>Serviço: {item.servico}</Text>
-              <Text>Prioridade: {item.prioridade}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
-    )
+      <View style={styles.container}>
+        <Text style={styles.titulo}>Cliente não encontrado</Text>
+      </View>
+    );
   }
 
-
-
-  return (
-
-    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
+return (
+  <ScrollView style={styles.container}>
+    <View style={styles.header}>
+    <Text style={styles.titulo}>Cliente</Text>
+      <Image source={{ uri: cliente.foto }} style={styles.clienteFoto} />
+      <Text style={styles.nameText}>{cliente.nome}</Text>
+    </View>
     
-      <View style={styles.container}>
-       
-      </View>
-     
-    </LinearGradient>
+    <View style={styles.infoContainer}>
+      <Text style={styles.infoTitle}>Informações</Text>
+      <Text style={styles.infoText}>Email: {cliente.email}</Text>
+      <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
+      <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
+    </View>
 
-  );
+    <View style={styles.osContainer}>
+      <Text style={styles.osTitle}>OS's relacionadas:</Text>
+      {ordensServico.map((os, index) => (
+        <View key={index} style={styles.osItem}>
+          <Text style={styles.osStatusText}>{os.status}</Text>
+          <Text style={styles.osPriorityText}>{os.prioridade}</Text>
+          <Text style={styles.osIdText}>{os.id}</Text>
+          <Text style={styles.dateText}>{os.data}</Text>
+        </View>
+      ))}
+    </View>
+  </ScrollView>
+);
 }
 
 const styles = StyleSheet.create({
-
-  flatList: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    width: '100%',
-    marginBottom: '17%'
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: 'white',
-    flex: 1,
-    paddingStart: 20,
-  },
-  subTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
-    padding: 5,
-    paddingStart: 20,
-  },
-  backgroundColor: {
-    flex: 1,
-    width: '100%',
-  },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 40,
-    color: 'white',
-    height: 30,
-    width: '90%',
-    paddingStart: 20,
-    marginBottom: 10,
-  },
-  inputContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  button: {
-    width: '80%',
-    height: 47,
-    borderRadius: 40,
-    marginBottom: 10,
-  },
-
-
-})
+container: {
+  flex: 1,
+  backgroundColor: '#08354a',
+},
+header: {
+  alignItems: 'center',
+  paddingVertical: 20,
+},
+dateText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 8,
+},
+clienteFoto: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  marginBottom: 8,
+  borderWidth: 1,
+  borderColor: 'white',
+},
+nameText: {
+  color: 'white',
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 16,
+},
+infoContainer: {
+  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  borderRadius: 10,
+  padding: 20,
+  marginHorizontal: 50,
+  marginBottom: 16,
+  borderWidth: 1, // Ajuste a largura da borda conforme desejado
+  borderColor: 'white',
+},
+infoTitle: {
+  color: 'white',
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 8,
+},
+infoText: {
+  color: 'white',
+  fontSize: 18,
+  marginBottom: 4,
+},
+osContainer: {
+  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  borderRadius: 10,
+  padding: 16,
+  marginHorizontal: 50,
+  marginBottom: 20,
+  borderWidth: 1, // Ajuste a largura da borda conforme desejado
+  borderColor: 'white',
+},
+osTitle: {
+  color: 'white',
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 8,
+},
+osItem: {
+  backgroundColor: '#10456e',
+  borderRadius: 10,
+  padding: 10,
+  marginBottom: 10,
+},
+osStatusText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 4,
+},
+osPriorityText: {
+  color: 'red',
+  fontSize: 16,
+  marginBottom: 4,
+},
+osIdText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 4,
+},
+titulo: {
+  fontSize: 32,
+  color: 'white',
+  fontWeight: 'bold',
+  marginVertical: 20,
+  alignSelf: 'center', 
+  textAlign: 'center',
+},
+});

@@ -8,7 +8,7 @@ import {
     MaterialIcons,
     Entypo,
   } from "@expo/vector-icons";
-import { Home, Profile, Historico, Cliente, NewCliente, NewOS } from '../screens/Inside';
+import { Home, Profile, Historico, Cliente, NewCliente, NewOS, Fotos } from '../screens/Inside';
 import COLORS from '../constants/color'
 import FabButton from '../components/FabButton';
 
