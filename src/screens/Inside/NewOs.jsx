@@ -9,12 +9,12 @@ import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
+import { TouchableOpacity } from 'react-native';
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
@@ -209,7 +209,7 @@ export default function NewOS() {
     )
    }
 
-  const takePhoto = async () => {
+   const takePhoto = async () => {
     try {
     const cameraResp = await ImagePicker.launchCameraAsync({
       allowsEditing : true,
@@ -252,7 +252,9 @@ export default function NewOS() {
       <Text>{item}</Text>
     </View>
   );
-
+  const goToNewCliente = () => {
+    navigation.navigate('NewCliente'); // Substitua 'ClienteCadastro' pelo nome correto da sua tela de cadastro
+  };
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
        <Toast ref={(ref) => Toast.setRef(ref)} />  
@@ -260,7 +262,7 @@ export default function NewOS() {
         sections={data}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
-          
+
           <View style={styles.container}>
           <Text style={styles.title}>Nova Ordem de Serviço (OS)</Text>
   
@@ -270,9 +272,10 @@ export default function NewOS() {
               
               onSelect={(value) => {
               setSelectedCliente(value);
-              setIsClienteSelected(value && value.value !== ''); }}              defaultValue={cliente}
+              setIsClienteSelected(value && value.value !== ''); }}           
+              defaultValue={cliente}
               setSelected={(value) => setSelectedCliente(value)}
-              placeholder="Selecione um cliente ou digite um novo"
+              placeholder="Selecione um Cliente"
               dropdownItemStyles={{ color: 'white' }}
               dropdownTextStyles={{ color: 'white' }}
               arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
@@ -283,7 +286,10 @@ export default function NewOS() {
               dropdownStyles={{ borderColor: 'white' }}
               searchPlaceholder=''
               />
-      
+           <TouchableOpacity onPress={goToNewCliente} style={styles.addClienteButton}>
+                <Text style={styles.addClienteText}>Cadastrar Cliente</Text>
+            </TouchableOpacity>
+
       <Text style={styles.text}>Tipo de Hardware:</Text>
       <SelectList
         data={[
@@ -442,8 +448,9 @@ const styles = StyleSheet.create({
    text: {
     color: 'white',
     paddingBottom: 5,
-    paddingTop: 20,
+    paddingTop: 25,
     fontWeight: 'bold',
+    fontSize: 16,
     
     
   },
@@ -511,5 +518,22 @@ const styles = StyleSheet.create({
     color: '#fff', // Text color
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  clienteSelectContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  addClienteText: {
+    color: '#D9D9D9',
+    fontSize: 14,
+    paddingTop: 10,
   },
 });

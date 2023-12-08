@@ -35,7 +35,7 @@ function Listar({ selecionarOS }) {
       setIsLoading(false);
     });
 
-    return () => unsubscribe(); 
+    return () => unsubscribe(); // Limpeza do ouvinte ao desmontar o componente
   }, []);
 
   const navigateToOS = (item) => {
