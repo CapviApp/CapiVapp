@@ -160,8 +160,8 @@ const validarNumero = (numero) => {
  
   const adicionar = async () => {
     try {
-      const cpfIsValid = cpf ? validarCPF(cpf) : !cnpj;  // Se CPF for preenchido, valida, senão, é válido se CNPJ não for preenchido
-      const cnpjIsValid = cnpj ? validarCNPJ(cnpj) : !cpf;  // Se CNPJ for preenchido, valida, senão, é válido se CPF não for preenchido
+      const cpfIsValid = cpf ? validarCPF(cpf) : true;  // Se CPF for preenchido, valida, senão, considera válido
+      const cnpjIsValid = cnpj ? validarCNPJ(cnpj) : true;  // Se CNPJ for preenchido, valida, senão, considera válido
       const emailIsValid = validarEmail(email);
       const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
       const peloMenosUmDocumentoValido = cpfIsValid || cnpjIsValid;
@@ -176,7 +176,7 @@ const validarNumero = (numero) => {
   
       // Verificações
       if (!peloMenosUmDocumentoValido || !emailIsValid || clienteExiste) {
-        Alert.alert("Erro", "Verifique os erros nos campos");
+        Alert.alert("Erro. Verifique se os campos obrigatórios foram preenchidos.");
         setIsCpfValid(false);  // Definir como falso para mostrar borda vermelha
         setIsCnpjValid(false);  // Definir como falso para mostrar borda vermelha
         setIsEmailValid(false);  // Definir como falso para mostrar borda vermelha

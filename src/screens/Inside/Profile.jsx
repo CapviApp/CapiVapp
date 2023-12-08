@@ -23,11 +23,6 @@ export default function Profile() {
     });
   }
 
-
-
- 
- 
-
   return (
 
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>

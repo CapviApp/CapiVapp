@@ -78,6 +78,7 @@ const rotation = {
 } 
 
     return (
+      
         <Tab.Navigator screenOptions={screenOptions}>
             <Tab.Screen 
                 name='Home'

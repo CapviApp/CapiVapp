@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Button } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
+import Toast from 'react-native-toast-message';
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
@@ -119,15 +120,23 @@ export default function NewOS() {
   
       const osId = docRef.id;
   
-      alert(`Ordem de serviço cadastrada com sucesso! ID: ${osId}`);
       
       limparCampos();
       loadOS();
+      Toast.show({
+        type: 'success',
+        position: 'bottom',
+        text1: 'Ordem de serviço cadastrada com sucesso!',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     } catch (error) {
       console.error('Erro ao cadastrar ordem de serviço:', error);
     }
   };
-  
+
   const selecionarCliente = (value) => {
     setSelectedCliente(value); // Atualiza o estado do cliente selecionado
     setIsClienteSelected(true); // Define que um cliente foi selecionado
@@ -246,7 +255,7 @@ export default function NewOS() {
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-          
+       <Toast ref={(ref) => Toast.setRef(ref)} />  
       <SectionList
         sections={data}
         renderItem={renderItem}
