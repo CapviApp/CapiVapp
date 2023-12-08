@@ -48,16 +48,10 @@ export default function NewOS() {
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
-  const [selectedCliente, setSelectedCliente] = useState('')
+ const [selectedCliente, setSelectedCliente] = useState('')
   const [imageUri, setImageUri] = useState(null);
   const [image, setImage] = useState(null)
-=======
-  const [selectedCliente, setSelectedCliente] = useState({ value: '' })
-  const [imageUri, setImageUri] = useState(null);
- 
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
- const [clientes, setClientes] = useState([])
+const [clientes, setClientes] = useState([])
 
   const userCollectionRef = collection(db, 'Cliente teste');
   const osCollectionRef = collection(db, 'teste');
@@ -98,15 +92,12 @@ export default function NewOS() {
     }
   };
 
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
   const handleSelectCliente = (value) => {
     setCliente(value);
     setSelectedCliente(clientes.find((item) => item.value === value));
   };
 
-=======
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
-  
+
   const adicionarOS = async () => {
     try {
       const dataAtualUTC = new Date();
@@ -115,14 +106,6 @@ export default function NewOS() {
       
       let docRef;
   
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
-      
-=======
-      if (!selectedCliente || !selectedCliente.value) {
-        console.error('Erro: Cliente não selecionado');
-        return;
-      }
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
       docRef = await addDoc(osCollectionRef, {
         data: dataFormatada,
         cliente: selectedCliente,
@@ -165,12 +148,7 @@ export default function NewOS() {
     }
   };
 
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
   
-=======
-
- 
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
 
 
  
@@ -195,13 +173,9 @@ export default function NewOS() {
     
     listFiles().then((listResp) => {
       const files = listResp.map((value) => {
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
         setImageUri( value.fullPath)
         return {name : value.fullPath }
         
-=======
-        return {name : value.fullPath }
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
       })
       setFiles(files)
     })
@@ -260,10 +234,6 @@ export default function NewOS() {
       listFiles().then((listResp) => {
         const files = listResp.map((value) => {
           return {name : value.fullPath }
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
-
-=======
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
         })
         setFiles(files)
       })
@@ -307,16 +277,10 @@ export default function NewOS() {
               data={clientes}
               onSelect={(value) => setCliente(value)}
               defaultValue={cliente}
-<<<<<<< HEAD:src/screens/Inside/NewOS.jsx
 
               setSelected={(value) => setSelectedCliente(value)}
                           placeholder="Selecione um cliente ou digite um novo"
                 dropdownItemStyles={{ color: 'white' }}
-=======
-              setSelected={(value) => setSelectedCliente(value)}
-                          placeholder="Selecione um cliente ou digite um novo"
-                dropdownItemStyles={{ color: 'whitw' }}
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236:src/screens/Inside/NewOs.jsx
                 dropdownTextStyles={{ color: 'white' }}
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
                 searchicon={<FontAwesome name="search" size={12} color={'white'} />} 

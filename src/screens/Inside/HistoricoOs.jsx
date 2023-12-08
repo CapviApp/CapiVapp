@@ -2,20 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
-<<<<<<< HEAD
 import { addDoc, collection, query, getDocs, onSnapshot, doc } from 'firebase/firestore';
-=======
-import { addDoc, collection, query, getDocs } from 'firebase/firestore';
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
 import Listar from '../components/ListarComponents';
 import { db } from '../../config/firebase';
 
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
 
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');

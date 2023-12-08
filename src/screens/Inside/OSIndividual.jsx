@@ -5,18 +5,12 @@ import { db } from '../../config/firebase';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
-<<<<<<< HEAD
 
 
 const OSIndividual = ({route}) => {
   const {osItem} = route.params
 
   console.log("item: ", osItem);
-=======
-const OSIndividual = ({route}) => {
-  const {item} = route.params
-  console.log("item: ", item);
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
 
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
@@ -60,7 +54,6 @@ const OSIndividual = ({route}) => {
       <Text style={styles.title}>OS</Text>
     
             <View >
-<<<<<<< HEAD
               <Text>ID: {osItem?.id}</Text>
               
           <Text>Status: {osItem?.statusOS}</Text>
@@ -69,16 +62,6 @@ const OSIndividual = ({route}) => {
             <Text>Data: {osItem?.data}</Text>
             <Text>Cliente: {osItem?.cliente}</Text>                   
             <Text>Prioridade: {osItem?.prioridade}</Text>           
-=======
-              <Text>ID: {item?.osId}</Text>
-              {console.log(doc.id)}
-          <Text>Status: {item?.statusOS}</Text>
-           
-
-            <Text>Data: {item?.data}</Text>
-            <Text>Cliente: {item?.cliente}</Text>                   
-            <Text>Prioridade: {item?.prioridade}</Text>           
->>>>>>> 8ad54c71ebd0c8f5266a986e9afbf10a7f037236
            
            
             </View>
