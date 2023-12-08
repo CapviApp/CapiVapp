@@ -62,7 +62,7 @@ const OSIndividual = ({route}) => {
                 <FontAwesome name="pencil-square-o" size={24} color="black" />
             </TouchableOpacity>
           
-      <Button title="Deletar"  onPress={() => deleteOS(item.id)} />
+      <Button title="Deletar"  onPress={() => deleteOS(osItem.id)} />
     </View>
   );
 }

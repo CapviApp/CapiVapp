@@ -11,7 +11,7 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
-import { useFocusEffect } from '@react-navigation/native';
+
 import * as ImagePicker from 'expo-image-picker'
 import Toast from 'react-native-toast-message';
 import { TouchableOpacity } from 'react-native';
@@ -49,11 +49,10 @@ export default function NewOS() {
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
-  const [selectedCliente, setSelectedCliente] = useState('')
+  const [selectedCliente, setSelectedCliente] = useState({ value: '' })
   const [imageUri, setImageUri] = useState(null);
-  const [image, setImage] = useState(null)
-  const [clientes, setClientes] = useState([])
-  
+ 
+ const [clientes, setClientes] = useState([])
 
   const userCollectionRef = collection(db, 'Cliente teste');
   const osCollectionRef = collection(db, 'teste');
@@ -76,6 +75,7 @@ export default function NewOS() {
       console.log(error);
     }
   };
+
   const getNextOsId = async () => {
     try {
       const q = query(osCollectionRef);
@@ -88,11 +88,7 @@ export default function NewOS() {
     }
   };
 
-  const handleSelectCliente = (value) => {
-    setCliente(value);
-    setSelectedCliente(clientes.find((item) => item.value === value));
-  };
-
+  
   const adicionarOS = async () => {
     try {
       const dataAtualUTC = new Date();
@@ -106,10 +102,10 @@ export default function NewOS() {
       setIsClienteSelected(clienteIsValid);
       setIsPrioridadeSelected(prioridadeIsValid);
   
-      if (!clienteIsValid || !prioridadeIsValid) {
-        Alert.alert('Erro', 'Cliente e/ou Prioridade não selecionados');
+      if (!selectedCliente || !selectedCliente.value) {
+        console.error('Erro: Cliente não selecionado');
         return;
-      }  
+      }
       docRef = await addDoc(osCollectionRef, {
         data: dataFormatada,
         cliente: selectedCliente,
@@ -142,37 +138,27 @@ export default function NewOS() {
       console.error('Erro ao cadastrar ordem de serviço:', error);
     }
   };
+  
+  const listOS = async () => {
+    try {
+      //const selectedValue = selected; 
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      
+  
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+      });
+      setOSList(osData);
+    } catch (error) {
+      console.error('Erro ao listar:', error);
+    }
+  };
 
-  const selecionarCliente = (value) => {
-    setSelectedCliente(value); // Atualiza o estado do cliente selecionado
-    setIsClienteSelected(true); // Define que um cliente foi selecionado
-  };
-  const limparCampos = () => {
-    setCliente('');
-    setTipoHardware('');
-    setTipoServico('');
-    setOutros('');
-    setPrioridade('');
-    setComentario('');
-    setDescricaoProduto('');
-    setStatusOS('Novo');
-    setImageUri(null);
-    setSelectedCliente({ value: '' });
-    setSelectedPrioridade({ value: '' });
-    setIsClienteSelected(true);
-    setIsPrioridadeSelected(true);
-  };
-  
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => limparCampos(); 
-    }, [])
-  );
-  
-  const cancelarOperacao = () => {
-    limparCampos(); 
-  };
-  
+
+ 
+
   const loadOS = async () => {
     try {
       const q = query(osCollectionRef);
@@ -404,6 +390,7 @@ export default function NewOS() {
                   <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
                   <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
                 </TouchableOpacity>
+              
               </View>
 
               <View style={styles.buttonContainer}>

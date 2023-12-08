@@ -1,8 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import { View, Text, Platform, StyleSheet, TouchableWithoutFeedback, Animated,  TouchableOpacity } from "react-native";
-import {SimpleLineIcons,Fontisto,MaterialCommunityIcons,MaterialIcons,Entypo,} from "@expo/vector-icons";
-import { Home, Profile, Historico, Cliente, NewCliente, NewOS } from '../screens/Inside';
+import {
+    SimpleLineIcons,
+    Fontisto,
+    MaterialCommunityIcons,
+    MaterialIcons,
+    Entypo,
+  } from "@expo/vector-icons";
+import { Home, Profile, Historico, Cliente, NewCliente, NewOS, Fotos } from '../screens/Inside';
 import COLORS from '../constants/color'
 import FabButton from '../components/FabButton';
 

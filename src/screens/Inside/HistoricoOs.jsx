@@ -2,14 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
-import { addDoc, collection, query, getDocs } from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Listar from '../components/ListarComponents';
 import { db } from '../../config/firebase';
 
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> origin/components-Lara
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = (query) => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
+  
+
+  const loadOS = async () => {
+    try {
+      const q = query(osCollectionRef);
+      const querySnapshot = await getDocs(q);
+      const osData = [];
+      querySnapshot.forEach((doc) => {
+        osData.push({ id: doc.id, ...doc.data() });
+      });
+     
+      setOSList(osData);
+      return osData;
+    } catch (error) {
+      console.error('Erro ao carregar ordens de serviço:', error);
+    }
+  };
 
   const data = [
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },

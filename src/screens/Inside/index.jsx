@@ -12,7 +12,7 @@ import Home from  "./Home"
 import NewOS from "./NewOs.jsx";
 import NewCliente from "./NewCliente";
 import EditOS from "./EditOS";
-import Fotos  from "./Fotos";
+import Fotos from "./Fotos";
 
 export {
     Home,

@@ -1,5 +1,5 @@
 import  { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Profile, Config, Prioridade, EditOS, Cliente, EsperaOs, New, Historico, Home, OSIndividual } from '../screens/Inside'
+import { Profile, Config, Prioridade, EditOS, Cliente, EsperaOs, New, Historico, Home, OSIndividual, Fotos } from '../screens/Inside'
 import { NavigationContainer } from '@react-navigation/native'
 
 import DrawerRoutes from './drawer.routes'
@@ -54,6 +54,10 @@ export default function StackRoutes(){
              <Stack.Screen
                 name='ditOS'
                 component={EditOS}
+            />
+             <Stack.Screen
+                name='fotos'
+                component={Fotos}
             />
        
         </Stack.Navigator>

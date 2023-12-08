@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { db } from '../../config/firebase';
 
+
 function Listar({ selecionarOS }) {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +44,41 @@ function Listar({ selecionarOS }) {
     // Exemplo: navigation.navigate('DetalheOS', { osId: item.id });
   };
 
+  useEffect(() => {
+   
+      try {
+        //const selectedValue = selected; 
+        const q = query(osCollectionRef);
+        const querySnapshot = getDocs(q);
+        const subscriber = onSnapshot(osCollectionRef, {
+          next: (snapshot) => {
+            const osData = [];
+            snapshot.docs.forEach((doc) => {
+            osData.push({ id: doc.id, ...doc.data() });
+          
+        });  setOSList(osData);
+        
+          }
+        })
+        
+    
+        
+        
+       
+      } catch (error) {
+        console.error('Erro ao listar:', error);
+      }
+    return()=> subscriber()
+  }, [])
+
+  const navigateToDetails = (item) => {
+    navigation.navigate("os", { osItem: item });
+    console.log('id:',item);
+  };
+
+  
+
+  
   return (
     <View style={{ flex: 1 }}>
       {isLoading ? (
@@ -56,7 +92,7 @@ function Listar({ selecionarOS }) {
                 <View style={styles.containerText}>
                   <Text style={styles.textStyle}>Status: {item.status}</Text>
                   <Text style={styles.textStyle}>Data: {item.data}</Text>
-                  <Text style={styles.textStyle}>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
+                  <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
                   <Text style={styles.textStyle}>Prioridade: {item.prioridade}</Text>
                 </View>
                 <TouchableOpacity onPress={() => navigateToOS(item)} style={styles.button}>
