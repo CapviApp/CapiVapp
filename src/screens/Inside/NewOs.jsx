@@ -279,7 +279,7 @@ const [clientes, setClientes] = useState([])
               defaultValue={cliente}
 
               setSelected={(value) => setSelectedCliente(value)}
-                          placeholder="Selecione um cliente ou digite um novo"
+                          placeholder="Selecione um cliente"
                 dropdownItemStyles={{ color: 'white' }}
                 dropdownTextStyles={{ color: 'white' }}
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 

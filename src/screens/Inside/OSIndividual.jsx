@@ -86,9 +86,9 @@ const OSIndividual = ({route}) => {
               <SelectList
                 data={[
                   { label: 'Iniciada', value: 'Iniciada' },
-                  { label: 'em andamento', value: 'em andamento' },
+                  { label: 'Em andamento', value: 'em andamento' },
                   { label: 'Concluida', value: 'Concluida' },
-                  { label: 'cancelada', value: 'cancelada' },
+                  { label: 'Cancelada', value: 'cancelada' },
                 ]}
                 onSelect={(value) => osItem?.status}
                 

@@ -87,7 +87,6 @@ export default function Home() {
       <StatusBar  animated={true} style='light'
        />
          
-         <Text style={styles.subTitle}>Olá, {name}!</Text>
          <View style={styles.searchContainer}>
             <Searchbar
               placeholder="Pesquisar"

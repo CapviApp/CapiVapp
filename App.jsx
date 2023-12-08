@@ -19,23 +19,22 @@ export default function App() {
   //const user = false 
 
 
-  
+  if(user) {
+    return <StackRoutes/>
+  }else {
+    return (
+      <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='welcome'>
+        <Stack.Screen name='welcome' component={Welcome} />
+        <Stack.Screen name='login' component={Login} />
+        <Stack.Screen name='signUp' component={SignUp} />
+        <Stack.Screen name='alterar' component={AlterarSenha} />
+        <Stack.Screen name='novaSenha' component={NovaSenha} />
+      </Stack.Navigator>
+    </NavigationContainer>
+    )
+  }
 
-  return (
-    
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      {user ? <StackRoutes /> : (
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='welcome'>
-            <Stack.Screen name='welcome' component={Welcome} />
-            <Stack.Screen name='login' component={Login} />
-            <Stack.Screen name='signUp' component={SignUp} />
-            <Stack.Screen name='alterar' component={AlterarSenha} />
-            <Stack.Screen name='novaSenha' component={NovaSenha} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      )}
-    </GestureHandlerRootView>
-  );
+ 
 
 }

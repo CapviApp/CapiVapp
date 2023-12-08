@@ -4,72 +4,64 @@ import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firesto
 import { db } from '../../config/firebase';
 import { useRoute } from '@react-navigation/native';
 
-
-const  Cliente = ({ route }) => {
- 
-  const  {clienteItem } = route.params;
+export default function Cliente() {
+  const route = useRoute();
+  const  {clienteId } = route.params;
   const [cliente, setCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
-  
+
   useEffect(() => {
-    const buscarClienteEOrdensServico = async () => {
-        setLoading(true);
+    const docRef = doc(db, "Cliente teste", clienteId);
+  
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setCliente(docSnap.data());
+  
+        const osQuery = query(collection(db, "teste"), where("clienteId", "==", clienteId));
+        getDocs(osQuery).then((osSnapshot) => {
+          const osList = osSnapshot.docs.map(doc => doc.data());
+          setOrdensServico(osList);
+        });
+      } else {
+        console.log("Cliente não encontrado!");
+      }
+    }, (error) => {
+      console.error("Erro ao buscar cliente e OS:", error);
+    });
+  
+    return () => unsubscribe(); // Isso é importante para evitar vazamentos de memória
+  }, [clienteId]);
+  
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+  const handlePressCliente = (clienteId) => {
+    // Navega para a tela Cliente e passa o clienteId como parâmetro
+    navigation.navigate('Cliente', { clienteId });
+  };
 
-        try {
-            const docRef = doc(db, "Cliente teste");
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                setCliente(docSnap.data());
-
-                const osQuery = query(collection(db, "teste"), where("clienteId", "==", clienteId));
-                const osSnapshot = await getDocs(osQuery);
-                const osList = osSnapshot.docs.map(doc => doc.data());
-                setOrdensServico(osList);
-            } else {
-                console.log("Cliente não encontrado!");
-            }
-        } catch (error) {
-            console.error("Erro ao buscar cliente e OS:", error);
-        }
-
-        setLoading(false);
-    };
-
-    buscarClienteEOrdensServico();
-}, [clienteId]);
-
-const handlePressCliente = (clienteId) => {
-  // Navega para a tela Cliente e passa o clienteId como parâmetro
-  navigation.navigate('Cliente', { clienteId });
-};
-
-if (loading) {
-  return <ActivityIndicator size="large" color="#0000ff" />;
-}
-
-if (!cliente) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.titulo}>Cliente não encontrado</Text>
-    </View>
-  );
-}
+  if (!cliente) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.titulo}>Cliente não encontrado</Text>
+      </View>
+    );
+  }
 
 return (
   <ScrollView style={styles.container}>
     <View style={styles.header}>
     <Text style={styles.titulo}>Cliente</Text>
-     
-      <Text style={styles.nameText}>{clienteItem?.nome}</Text>
+      <Image source={{ uri: cliente.foto }} style={styles.clienteFoto} />
+      <Text style={styles.nameText}>{cliente.nome}</Text>
     </View>
     
     <View style={styles.infoContainer}>
       <Text style={styles.infoTitle}>Informações</Text>
-      <Text style={styles.infoText}>Email: {clienteItem?.email}</Text>
-      <Text style={styles.infoText}>Telefone: {clienteItem?.telefone}</Text>
-      <Text style={styles.infoText}>CPF: {clienteItem?.cpf}</Text>
+      <Text style={styles.infoText}>Email: {cliente.email}</Text>
+      <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
+      <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
     </View>
 
     <View style={styles.osContainer}>
@@ -86,8 +78,6 @@ return (
   </ScrollView>
 );
 }
-
-export default Cliente
 
 const styles = StyleSheet.create({
 container: {

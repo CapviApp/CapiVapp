@@ -82,12 +82,7 @@ export default function Historico({ navigation }) {
           <View style={styles.container}>
           <Text style={styles.title}>Histórico OS</Text>
           <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Pesquisar"
-              onChangeText={onChangeSearch}
-              value={searchQuery}
-              style={styles.searchBar}
-            />
+           
           </View>
           <Text style={styles.subTitle}>Ordens de Serviço</Text>
           <Listar osList={osList}/>

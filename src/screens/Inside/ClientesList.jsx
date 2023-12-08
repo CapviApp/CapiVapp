@@ -6,7 +6,7 @@ import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-export default function ClienteList() {
+export default function ClientesList() {
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [notFound, setNotFound] = useState(false);
@@ -18,35 +18,26 @@ export default function ClienteList() {
 
 const navigation = useNavigation();
 
-
+const handlePressCliente = (clienteId) => {
+  navigation.navigate('Cliente', { clienteId: clienteId });
+};
 
   useEffect(() => {
     const carregarClientes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
-        const clienteID = doc.id
-        
         querySnapshot.forEach((doc) => {
           listaClientes.push({ id: doc.id, ...doc.data() });
-          
         });
         setClientes(listaClientes);
-        console.log(clienteID);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
       }
-      
     };
-    
 
     carregarClientes();
   }, []);
-
-  const handlePressCliente = (item) => {
-    navigation.navigate('Cliente', { clienteItem: item });
-    console.log('id', item);
-  };
 
   const filteredClientes = clientes.filter(cliente => 
     cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
@@ -58,11 +49,11 @@ const navigation = useNavigation();
   }, [searchQuery, filteredClientes]);
   
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePressCliente(item)}>
+    <TouchableOpacity onPress={() => handlePressCliente(item.id)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
           <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
-          <View style={styles.clienteFoto}>
+          <View style={styles.clienteInfo}>
             <Text style={styles.clienteNome}>{item.nome}</Text>
             <Text style={styles.clienteData}>{item.data}</Text>
           </View>
