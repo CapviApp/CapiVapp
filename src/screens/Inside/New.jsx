@@ -2,16 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, addDoc } from "firebase/firestore";
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { db } from'../../config/firebase'
 import { Button } from 'react-native-paper';
-
-
 export default function New() {
-
-
   const [formData, setFormData] = useState({
-    
     prioridade: '',
     status: '',
     hardware: '',
@@ -55,23 +49,6 @@ export default function New() {
       console.log('Erro ao adicionar dados:', error);
     }
   }
- 
-  const deleteOS = async (id) => {
-    if (id) {
-      try {
-        await deleteDoc(doc(osCollectionRef, id));
-        console.log('Os dados da OS foram excluídos com sucesso.');
-  
-        // Remover o objeto excluído da lista
-        const updatedOS = OS.filter((os) => os.id !== id);
-        setOS(updatedOS);
-      } catch (error) {
-        console.log('Erro ao excluir os dados:', error);
-      }
-    } else {
-      console.log('Nenhum ID de documento válido para exclusão.');
-    }
-  };
   
   const update = async (id) => {
     if(id){
@@ -96,10 +73,6 @@ export default function New() {
       console.log('Nenhum ID de documento válido para o update.');
     }
   }
-
-  
-
-
   const ListOS = async () => {
     try {
       const querySnapshot = await getDocs(osCollectionRef);
@@ -158,7 +131,7 @@ export default function New() {
               value={formData.hardware}
             />
               <View style={styles.buttonContainer}>
-              <Button mode='contained' onPress={() => deleteOS(item.id)}>Excluir</Button>
+              <Button mode='contained' onPress={() => cancelaroperacao(item.id)}>Cancelar</Button>
 
               <Button mode='contained' onPress={() => update(item.id)}>Atualizar</Button>
               </View>
@@ -305,8 +278,4 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     borderWidth: 1,
   },
-
-
 })
-
-

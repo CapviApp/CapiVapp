@@ -5,57 +5,58 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-
-export default function ClientesList() {
+import { ActivityIndicator } from 'react-native';
+export default function ClienteList(navegation) {
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [notFound, setNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigation();
+
+  const handlePressCliente = (email) => {
+    navigation.navigate('Cliente', { email: email });
+  };
 
   const onChangeSearch = query => {
     setSearchQuery(query);
-    setNotFound(false); // Reseta o estado de não encontrado quando a busca muda
+    setNotFound(false);
   };
-
-const navigation = useNavigation();
-
-const handlePressCliente = (clienteId) => {
-  navigation.navigate('Cliente', { clienteId: clienteId });
-};
 
   useEffect(() => {
     const carregarClientes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
+        
         querySnapshot.forEach((doc) => {
-          listaClientes.push({ id: doc.id, ...doc.data() });
+          listaClientes.push({ ...doc.data(), id: doc.id });
         });
         setClientes(listaClientes);
+        setIsLoading(false);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
+        setIsLoading(false);
       }
     };
-
     carregarClientes();
   }, []);
 
-  const filteredClientes = clientes.filter(cliente => 
+  const filteredClientes = clientes.filter(cliente =>
     cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
-    // Atualiza o estado de não encontrado se não houver clientes após a filtragem
     setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
   }, [searchQuery, filteredClientes]);
-  
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePressCliente(item.id)}>
+    <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
           <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
-          <View style={styles.clienteInfo}>
+          <View>
             <Text style={styles.clienteNome}>{item.nome}</Text>
-            <Text style={styles.clienteData}>{item.data}</Text>
+            <Text style={styles.clienteData}>{item.email}</Text>
           </View>
         </View>
       </Card>
@@ -72,19 +73,23 @@ const handlePressCliente = (clienteId) => {
           value={searchQuery}
           style={styles.searchbar}
         />
-        {notFound && (
+        {isLoading ? (
+          // Mostrar um indicador de carregamento enquanto os dados estão sendo carregados
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : notFound ? (
           <Text style={styles.notFoundText}>Não foi encontrado</Text>
+        ) : (
+          <FlatList
+            data={filteredClientes}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.email}
+            ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
+              <Text style={styles.subtitulo}>Mais recentes:</Text>
+            ) : null}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          />
         )}
-      <FlatList
-        data={filteredClientes}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
-          <Text style={styles.subtitulo}>Mais recentes:</Text>
-        ) : null}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </LinearGradient>
+      </LinearGradient>
     </View>
   );
 }

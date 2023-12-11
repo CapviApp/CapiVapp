@@ -6,40 +6,50 @@ import { useRoute } from '@react-navigation/native';
 
 export default function Cliente() {
   const route = useRoute();
-  const  {clienteId } = route.params;
+  const { email } = route.params ??{};
   const [cliente, setCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
 
   useEffect(() => {
-    const docRef = doc(db, "Cliente teste", clienteId);
-  
-    const unsubscribe = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setCliente(docSnap.data());
-  
-        const osQuery = query(collection(db, "teste"), where("clienteId", "==", clienteId));
-        getDocs(osQuery).then((osSnapshot) => {
-          const osList = osSnapshot.docs.map(doc => doc.data());
-          setOrdensServico(osList);
-        });
-      } else {
-        console.log("Cliente não encontrado!");
+    const carregarDadosCliente = async () => {
+      if (!email) {
+        setLoading(false);
+        return;
       }
-    }, (error) => {
-      console.error("Erro ao buscar cliente e OS:", error);
-    });
   
-    return () => unsubscribe(); // Isso é importante para evitar vazamentos de memória
-  }, [clienteId]);
+      try {
+        const docRef = doc(db, "Cliente teste", email);
+        const docSnap = await getDoc(docRef);
   
+        if (docSnap.exists()) {
+          setCliente(docSnap.data());
+  
+          // Verifique se emailCliente está definido antes de fazer a query
+          if (docSnap.data().emailCliente) {
+            const osQuery = query(collection(db, "teste"), where("emailCliente", "==", email));
+            const osSnapshot = await getDocs(osQuery);
+            const osList = osSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setOrdensServico(osList);
+          }
+          setLoading(false);
+        } else {
+          console.log("Cliente não encontrado!");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cliente e OS:", error);
+        setLoading(false);
+      }
+    };
+  
+    carregarDadosCliente();
+  }, [email]);
+  
+
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
-  const handlePressCliente = (clienteId) => {
-    // Navega para a tela Cliente e passa o clienteId como parâmetro
-    navigation.navigate('Cliente', { clienteId });
-  };
 
   if (!cliente) {
     return (
@@ -49,34 +59,34 @@ export default function Cliente() {
     );
   }
 
-return (
-  <ScrollView style={styles.container}>
-    <View style={styles.header}>
-    <Text style={styles.titulo}>Cliente</Text>
-      <Image source={{ uri: cliente.foto }} style={styles.clienteFoto} />
-      <Text style={styles.nameText}>{cliente.nome}</Text>
-    </View>
-    
-    <View style={styles.infoContainer}>
-      <Text style={styles.infoTitle}>Informações</Text>
-      <Text style={styles.infoText}>Email: {cliente.email}</Text>
-      <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
-      <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
-    </View>
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.titulo}>Cliente</Text>
+        <Image source={{ uri: cliente.foto }} style={styles.clienteFoto} />
+        <Text style={styles.nameText}>{cliente.nome}</Text>
+      </View>
+      
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoTitle}>Informações</Text>
+        <Text style={styles.infoText}>Email: {cliente.email}</Text>
+        <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
+        <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
+      </View>
 
-    <View style={styles.osContainer}>
-      <Text style={styles.osTitle}>OS's relacionadas:</Text>
-      {ordensServico.map((os, index) => (
-        <View key={index} style={styles.osItem}>
-          <Text style={styles.osStatusText}>{os.status}</Text>
-          <Text style={styles.osPriorityText}>{os.prioridade}</Text>
-          <Text style={styles.osIdText}>{os.id}</Text>
-          <Text style={styles.dateText}>{os.data}</Text>
-        </View>
-      ))}
-    </View>
-  </ScrollView>
-);
+      <View style={styles.osContainer}>
+        <Text style={styles.osTitle}>OS's relacionadas:</Text>
+        {ordensServico.map((os, index) => (
+          <View key={index} style={styles.osItem}>
+            <Text style={styles.osStatusText}>{os.status}</Text>
+            <Text style={styles.osPriorityText}>{os.prioridade}</Text>
+            <Text style={styles.osIdText}>{os.id}</Text>
+            <Text style={styles.dateText}>{os.data}</Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -1,18 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView , TouchableOpacity} from 'react-native';
 import COLORS from '../../constants/color';
-import { 
-  Feather,
-  SimpleLineIcons,
-  MaterialIcons,
-  MaterialCommunityIcons,
-  FontAwesome,
-  AntDesign, 
-} from '@expo/vector-icons'
-
+import { Feather, SimpleLineIcons, MaterialIcons, MaterialCommunityIcons,FontAwesome,AntDesign,} from '@expo/vector-icons'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../config/firebase';
-
 import Button from '../../components/Button';
 
 export default function Config() {
@@ -27,7 +18,9 @@ export default function Config() {
     <View style={styles.container}>
       
       <Text style={styles.title}>Configurações</Text>
-      <View></View>
+      <View>
+        
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <AntDesign name="logout" size={24} color="white" />
           <Text style={styles.textButton}>Sair</Text>

@@ -4,16 +4,9 @@ import Details from "./Details";
 import { addDoc, collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
-
-
 const List =({navigation})=>{
 
     const [todos, setTodos] = useState<Todo[any]>([]);
-
-  
-
-    
-
 
     useEffect(()=>{
         const osRef = collection(FIREBASE_DB, 'os');
@@ -38,7 +31,6 @@ const List =({navigation})=>{
         navigation.navigate("Details", { osItem: item });
       };
 
-   
       const renderTodo = ({ item }) => {
         return (
           <TouchableOpacity onPress={() => navigateToDetails(item)}>
@@ -49,9 +41,6 @@ const List =({navigation})=>{
         );
       };
     
-
-
-
     return(
         <View style={styles.container}>
             

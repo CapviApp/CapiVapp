@@ -8,14 +8,11 @@ import { Button } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons'; 
 import User from '../../../assets/index'
 import { getAuth, signOut } from 'firebase/auth';
-
 import { auth, firebase } from '../../config/firebase'
 import { useNavigation } from '@react-navigation/native';
 import { Welcome } from '../outside/Welcome';
 
 export default function Profile({ navigation }) {
-
-
   const Signout = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
@@ -25,11 +22,6 @@ export default function Profile({ navigation }) {
     });
 
   }
-
-
-
- 
- 
 
   return (
 

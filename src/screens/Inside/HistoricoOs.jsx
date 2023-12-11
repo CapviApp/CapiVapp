@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SectionList } from 'react-native';
+import { StyleSheet, Text, View, SectionList,  FlatList, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Searchbar } from 'react-native-paper';
 import { addDoc, collection, query, getDocs, onSnapshot, doc } from 'firebase/firestore';
 import Listar from '../components/ListarComponents';
 import { db } from '../../config/firebase';
 
-
-
-
-
 export default function Historico({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = (query) => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const osCollectionRef = collection(db, 'teste');
   
-
+  const onChangeSearch = query => {
+    setSearchQuery(query);
+  };
   const loadOS = async () => {
     try {
       const q = query(osCollectionRef);
@@ -37,33 +37,35 @@ export default function Historico({ navigation }) {
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
   ];
-  const osCollectionRef = collection(db, 'teste');
   
   const listOS = async () => {
+    setIsLoading(true);
     try {
-      //const selectedValue = selected; 
       const q = query(osCollectionRef);
       const querySnapshot = await getDocs(q);
-      
-  
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-        
       });
-      
       setOSList(osData);
     } catch (error) {
       console.error('Erro ao listar:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const filteredClientes = clientes.filter(cliente =>
+    cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
- 
+  useEffect(() => {
+    setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
+  }, [searchQuery, filteredClientes]);
+
   const renderItem = ({ item }) => (
     <View>
-    
-      <Text>{item}</Text>
+      <Text>{item.id}</Text> {/* Garante que todo texto esteja dentro de <Text> */}
     </View>
   );
 
@@ -72,25 +74,31 @@ export default function Historico({ navigation }) {
   }, []);
 
 
+
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-     
-      <SectionList
-        sections={data}
-        renderItem={renderItem}
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.container}>
-          <Text style={styles.title}>Histórico OS</Text>
-          <View style={styles.searchContainer}>
-           
-          </View>
-          <Text style={styles.subTitle}>Ordens de Serviço</Text>
-          <Listar osList={osList}/>
-        </View>
-        
+      <View style={styles.container}>
+        <Text style={styles.title}>Histórico OS</Text>
+        <Searchbar
+          placeholder="Buscar Cliente"
+          onChangeText={onChangeSearch}
+          value={searchQuery}
+          style={styles.searchBar}
+        />
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#00ff00" />
+        ) : notFound ? (
+          <Text style={styles.notFoundText}>Não foi encontrado</Text> 
+        ) : (
+          <FlatList
+            data={filteredOS}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
         )}
-        keyExtractor={(item, index) => index.toString()}
-      />
+        <Text style={styles.subTitle}>Ordens de Serviço</Text>
+        <Listar osList={osList} />
+      </View>
     </LinearGradient>
   );
 }

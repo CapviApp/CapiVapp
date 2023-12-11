@@ -14,8 +14,6 @@ export default function EsperaOs({ navigation }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
 
-
-
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
     <ScrollView>

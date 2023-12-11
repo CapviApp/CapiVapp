@@ -1,20 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TextInput, SectionList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Feather,
-  SimpleLineIcons,
-  MaterialIcons,
-  MaterialCommunityIcons,
-  FontAwesome,
-  AntDesign, 
-} from '@expo/vector-icons'
+import {  Feather, SimpleLineIcons, MaterialIcons, MaterialCommunityIcons, FontAwesome, AntDesign} from '@expo/vector-icons'
 import { Searchbar } from 'react-native-paper';
 import React, {useState, useEffect} from 'react'
 import { useNavigation } from '@react-navigation/native';
-
 import Prioridade from './Prioridade';
-
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { addDoc, collection, query, getDocs } from 'firebase/firestore';
@@ -22,18 +13,10 @@ import { db } from '../../config/firebase';
 import Listar from '../components/ListarComponents';
 
 export default function Home() {
-
-
   const navigation = useNavigation()
-
-
-
-  
   const [searchQuery, setSearchQuery] = React.useState('');
-
   const onChangeSearch = query => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
-
   const osCollectionRef = collection(db, 'teste');
   
   const listOS = async () => {

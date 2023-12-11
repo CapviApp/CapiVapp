@@ -48,10 +48,10 @@ export default function NewOS() {
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
- const [selectedCliente, setSelectedCliente] = useState('')
+  const [selectedCliente, setSelectedCliente] = useState('')
   const [imageUri, setImageUri] = useState(null);
   const [image, setImage] = useState(null)
-const [clientes, setClientes] = useState([])
+  const [clientes, setClientes] = useState([])
 
   const userCollectionRef = collection(db, 'Cliente teste');
   const osCollectionRef = collection(db, 'teste');
@@ -60,9 +60,6 @@ const [clientes, setClientes] = useState([])
   
 
   const [permission, requestPermission] = ImagePicker.useCameraPermissions()
-
-   
-
 
   const listUser = async () => {
     try {
@@ -77,8 +74,6 @@ const [clientes, setClientes] = useState([])
       console.log(error);
     }
   };
-
-
 
   const getNextOsId = async () => {
     try {
@@ -96,7 +91,6 @@ const [clientes, setClientes] = useState([])
     setCliente(value);
     setSelectedCliente(clientes.find((item) => item.value === value));
   };
-
 
   const adicionarOS = async () => {
     try {
@@ -147,11 +141,6 @@ const [clientes, setClientes] = useState([])
       console.error('Erro ao listar:', error);
     }
   };
-
-  
-
-
- 
 
   const loadOS = async () => {
     try {
@@ -274,12 +263,11 @@ const [clientes, setClientes] = useState([])
   
               <Text style={styles.text}>Cliente:</Text>
               <SelectList
-              data={clientes}
-              onSelect={(value) => setCliente(value)}
-              defaultValue={cliente}
-
-              setSelected={(value) => setSelectedCliente(value)}
-                          placeholder="Selecione um cliente"
+                data={clientes}
+                onSelect={(value) => setCliente(value)}
+                defaultValue={cliente}
+                setSelected={(value) => setSelectedCliente(value)}
+                placeholder="Selecione um Cliente"
                 dropdownItemStyles={{ color: 'white' }}
                 dropdownTextStyles={{ color: 'white' }}
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
@@ -437,9 +425,7 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
-    
-    
+    marginTop: 10,    
   },
   selectList: {
     backgroundColor: '#fff',

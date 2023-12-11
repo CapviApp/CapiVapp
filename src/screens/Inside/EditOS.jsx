@@ -1,7 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { useState } from 'react';
-import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useNavigation } from 'expo-router';
 
 import { db } from '../../config/firebase';
@@ -28,7 +27,7 @@ export default function EditOS({ osList, selecionarOS}) {
         }
       };
     
-      const updateOS = async (osId) => {
+      const updateDoc = async (osId) => {
         try {
           const osRef = doc(osCollectionRef, osId);
           await updateDoc(osRef, {
@@ -50,7 +49,19 @@ export default function EditOS({ osList, selecionarOS}) {
           console.error('Erro ao atualizar:', error);
         }
       };
-
+    const updateOS = async (osId, updateData) => {
+        try {
+            const osRef = doc(osCollectionRef, osId);
+            await firebaseUpdateDoc(osRef, updateData);
+            
+            console.log('Atualização realizada com sucesso!');
+            // limparCampos();  // Defina esta função se necessário
+            // setEditMode(false);  // Defina esta função se necessário
+            loadOS();
+        } catch (error) {
+            console.error('Erro ao atualizar:', error);
+        }
+    };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>EditarOS</Text>

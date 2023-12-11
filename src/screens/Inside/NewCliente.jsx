@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, SectionList } from 'react-native';
-import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, getDoc } from "firebase/firestore";
+import { doc, setDoc, collection,getDocs, addDoc } from "firebase/firestore";
 import firebase, { db } from '../../config/firebase';
 import { Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -160,12 +160,12 @@ const validarNumero = (numero) => {
  
   const adicionar = async () => {
     try {
-      const cpfIsValid = cpf ? validarCPF(cpf) : !cnpj;  // Se CPF for preenchido, valida, senão, é válido se CNPJ não for preenchido
-      const cnpjIsValid = cnpj ? validarCNPJ(cnpj) : !cpf;  // Se CNPJ for preenchido, valida, senão, é válido se CPF não for preenchido
+      const cpfPreenchido = cpf.trim() !== '';
+      const cnpjPreenchido = cnpj.trim() !== '';
+      const cpfIsValid = cpfPreenchido ? validarCPF(cpf) : true;
+      const cnpjIsValid = cnpjPreenchido ? validarCNPJ(cnpj) : true;
       const emailIsValid = validarEmail(email);
       const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
-      const peloMenosUmDocumentoValido = cpfIsValid || cnpjIsValid;
-  
       // Atualizar estados de validação
       setIsCpfValid(cpfIsValid);
       setIsCnpjValid(cnpjIsValid);
@@ -175,7 +175,7 @@ const validarNumero = (numero) => {
       setIsEmailDuplicated(clienteExiste && email);
   
       // Verificações
-      if (!peloMenosUmDocumentoValido || !emailIsValid || clienteExiste) {
+      if ((!cpfPreenchido && !cnpjPreenchido) || !cpfIsValid || !cnpjIsValid || !emailIsValid || clienteExiste) {
         Alert.alert("Erro", "Verifique os erros nos campos");
         setIsCpfValid(false);  // Definir como falso para mostrar borda vermelha
         setIsCnpjValid(false);  // Definir como falso para mostrar borda vermelha
@@ -183,7 +183,7 @@ const validarNumero = (numero) => {
         return;
       }
   
-      await addDoc(doc(userCollectionRef, email), {
+      await setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
         cpf: cpf,
@@ -194,7 +194,6 @@ const validarNumero = (numero) => {
         cep: cep,
         numero: numero
       });
-  
       Toast.show({
         type: 'success',
         text1: 'Salvo',
@@ -221,9 +220,7 @@ const validarNumero = (numero) => {
     }
   };
   
-  
   const cancelarOperacao = () => {
-  // Limpar todos os estados
   setUsername('');
   setEmail('');
   setCpf('');
@@ -235,7 +232,6 @@ const validarNumero = (numero) => {
   setNumero('');
   
   };
-  
   //VERIFICA SE O CLIENTE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
   const verificarClienteExistente = async (email, cpf, cnpj) => {
     const querySnapshot = await getDocs(userCollectionRef);
@@ -263,21 +259,6 @@ const validarNumero = (numero) => {
     });
     return existe;
   }; 
-
-//LISTA USUARIOS CADASTRADOS -------------------------------------------------------------------------------------
-  const listUser = async () => {
-    try {
-      const querySnapshot = await getDocs(userCollectionRef);
-      const userList = [];
-      querySnapshot.forEach((doc) => {
-        userList.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(userList);
-      console.log('Clientes listados:', userList);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useFocusEffect(
     React.useCallback(() => {  
       return () => {  
@@ -302,42 +283,6 @@ const validarNumero = (numero) => {
       };
     }, [])
   );
-
-  const update = async () => {
-    try {
-      const userDoc = await getDoc(doc(userCollectionRef, email));
-      if (userDoc.exists()) {
-        updateDoc(doc(userCollectionRef, email), {
-          nome: username,
-          cpf: cpf,
-          cnpj: cnpj,
-          telefone: telefone,
-          endereco: endereco,
-        }).then(() => {
-          console.log('Cliente atualizado');
-        }).catch((error) => {
-          console.log(error);
-        });
-      } else {
-        console.log('Documento não encontrado para atualização');
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-  
-
-  const deleteUser = () => {
-    try {
-      deleteDoc(doc(userCollectionRef, email)).then(() => {
-        console.log('Cliente excluído');
-      }).catch((error) => {
-        console.log(error);
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
   const data = [
     { title: 'Seção 1', data: [] },
@@ -397,8 +342,6 @@ const validarNumero = (numero) => {
         />
         {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
       </View>
-
-
           </View>
           <View style={styles.buttonContainer}>
             <Button onPress={adicionar} mode='contained' style={styles.button}>Salvar</Button>
