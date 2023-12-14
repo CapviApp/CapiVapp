@@ -53,6 +53,7 @@ export default function ClienteList(navegation) {
     <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
+          
           <Image 
             source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
             style={styles.clienteFoto}

@@ -199,39 +199,7 @@ export default function NewOS({ navigation })  {
     )
    }
   
-  const takePhoto = async () => {
-    try {
-    const cameraResp = await ImagePicker.launchCameraAsync({
-      allowsEditing : true,
-      mediaTypes : ImagePicker.MediaTypeOptions.All,
-      quality: 1
-    })
-
-    if (!cameraResp.canceled) {
-      const  {uri} = cameraResp.assets[0]
-
-      const fileName = uri.split('/').pop()
-
-      const uploadResp = await uploadToFirebase(  uri, fileName, (v) => 
-      console.log(v)
-      )
-      console.log('upload: ', uploadResp);
-
-     
-      listFiles().then((listResp) => {
-        const files = listResp.map((value) => {
-          return {name : value.fullPath }
-        })
-        setFiles(files)
-      })
-      }
-   
-  }catch (e) {
-    Alert.alert ('Erro ao carregar imagem: ' + e.messsage)
-  }
   
-  }
-
   const data = [
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
@@ -248,7 +216,16 @@ export default function NewOS({ navigation })  {
   const goToNewCliente = () => {
     navigation.navigate('newcliente');
   };
-
+  
+  const navigateToFotos = () => {
+    if (!osId) {
+      Alert.alert('Erro', 'O ID da OS não está definido.');
+      return;
+    }
+  
+    navigation.navigate('fotos', { osId });
+  };
+  
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
       <SectionList
@@ -383,10 +360,10 @@ export default function NewOS({ navigation })  {
                 placeholderTextColor={color='#DEDEDE'}
               />
               <View style={styles.photoButtonContainer} >
-                <TouchableOpacity  style={styles.photoButton} onPress={takePhoto}>
-                  <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
-                  <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
-                </TouchableOpacity>
+              <TouchableOpacity style={styles.photoButton} onPress={navigateToFotos}>
+                <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
+                <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
+              </TouchableOpacity>       
               
               </View>
 

@@ -83,9 +83,9 @@ export default function Cliente() {
           <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
           <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
         </View>
-
+        <Text style={styles.osTitle}>OS's relacionadas:</Text>
         <View style={styles.osContainer}>
-          <Text style={styles.osTitle}>OS's relacionadas:</Text>
+          
           {ordensServico && ordensServico.map((os, index) => (
           <TouchableOpacity key={index} onPress={() => goToOSIndividual(os)}>     
             <View style={styles.osItem}>

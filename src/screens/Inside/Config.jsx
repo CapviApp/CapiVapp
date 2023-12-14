@@ -1,45 +1,57 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView , TouchableOpacity} from 'react-native';
-import COLORS from '../../constants/color';
-import { Feather, SimpleLineIcons, MaterialIcons, MaterialCommunityIcons,FontAwesome,AntDesign,} from '@expo/vector-icons'
-import { signOut } from 'firebase/auth'
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { AntDesign } from '@expo/vector-icons';
+import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase';
-import Button from '../../components/Button';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Config() {
-  const handleLogout = async ()=>{
-    await signOut(auth);
-}
+  const navigation = useNavigation();
+  
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Utilizando o 'auth' corretamente aqui
+      navigation.navigate('login'); // Navegando para a tela de login após deslogar
+    } catch (error) {
+      console.error('Erro ao sair:', error);
+    }
+  };
 
   return (
-    <SafeAreaView style={{
-        flex: 1,
-        backgroundColor: COLORS.white,}}>
-    <View style={styles.container}>
-      
-      <Text style={styles.title}>Configurações</Text>
-      <View>
-        
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <AntDesign name="logout" size={24} color="white" />
-          <Text style={styles.textButton}>Sair</Text>
-      </TouchableOpacity>
-    </View>
-   
-    </SafeAreaView>
+    <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Configurações</Text>
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
+            <AntDesign name="logout" size={24} color="white" />
+            <Text style={styles.textButton}>Sair</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
   container: {
     marginHorizontal: 12,
-    justifyContent: "center",
+    justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom:20,
+    marginTop: 50,
+
   },
   button: {
     backgroundColor: '#B22222',
@@ -47,13 +59,13 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     borderWidth: 1,
     borderColor: '#B22222',
-    paddingBottom: 16,
     paddingVertical: 10,
     borderRadius: 40,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    marginTop: 500,
+    marginTop: 20,
+    
   },
   textButton: {
     color: '#FFF',

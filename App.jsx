@@ -16,9 +16,6 @@ const Stack = createNativeStackNavigator()
 export default function App() {
 
   const {user} = useAuth();
-  //const user = false 
-
-
   if(user) {
     return <StackRoutes/>
   }else {
@@ -34,7 +31,4 @@ export default function App() {
     </NavigationContainer>
     )
   }
-
- 
-
 }

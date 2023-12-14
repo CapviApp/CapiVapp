@@ -2,12 +2,15 @@ import { StatusBar, FlatList, TouchableOpacity, View, Text, StyleSheet, Image, S
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { db, uploadToFirebase, listFiles } from '../../config/firebase';
-import { LinearGradient } from 'expo-linear-gradient';
 import { SelectList } from 'react-native-dropdown-select-list-expo';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Button } from 'react-native-paper';
 import Fotos from './Fotos';
 import * as ImagePicker from 'expo-image-picker'
+import { setDoc } from "firebase/firestore";
+
 
 const OSIndividual = ({route}) => {
   const {osItem} = route.params
@@ -24,7 +27,10 @@ const OSIndividual = ({route}) => {
   const [comments, setComments] = useState(osItem?.comentarios || []); 
   const [imageUri, setImageUri] = useState(null);
   const [image, setImage] = useState(null)
+  const osId = osItem?.id;
 
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions()
+  
   const onStatusChange = (value) => {
     setStatusOS(value); // Atualiza o estado 'statusOS'
   };
@@ -55,6 +61,7 @@ const OSIndividual = ({route}) => {
   };
 
   const editOS = async (osId, updatedData) => {
+    const osDocRef = doc(db, 'OS', osId);
     console.log('Editando OS com ID:', osId);
     if (osId && updatedData) {
       const dataToUpdate = Object.entries(updatedData).reduce((acc, [key, value]) => {
@@ -89,16 +96,7 @@ const OSIndividual = ({route}) => {
     }
   };
 
-  const addNewComment = () => {
-    if (newComment.trim()) { // Verifica se o novo comentário não está vazio
-      const updatedComments = [newComment, ...comments]; // Adiciona o novo comentário ao início do array
-      setComments(updatedComments); // Atualiza o estado 'comments'
-      setNewComment(''); // Limpa o campo de entrada do novo comentário
-      editOS(osItem.id, { comentarios: updatedComments }); // Atualiza os comentários na base de dados
-    } else {
-      console.error('Erro: Não é possível adicionar um comentário vazio.');
-    }
-  };
+
 
   const renderComments = () => {
     return comments.map((comment, index) => (
@@ -117,6 +115,14 @@ const OSIndividual = ({route}) => {
       <Text>{item}</Text>
     </View>
   );
+  const navigateToFotos = () => {
+    if (!osId) {
+      Alert.alert('Erro', 'O ID da OS não está definido.');
+      return;
+    }
+  
+    navigation.navigate('fotos', { osId });
+  };
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
       <SectionList
@@ -168,32 +174,48 @@ const OSIndividual = ({route}) => {
               <View style={styles.textContainer}>
                 <Text style={styles.text}>Comentario: {osItem?.comentario}</Text>  
             </View>
-           
-          </View>
-                  {isEditing ? (
-                  <>
-                  <TextInput 
-                    style={styles.input}
-                    value={newComment}
-                    onChangeText={setNewComment}
-                    placeholder="Adicione um comentário"
-                  />
-                  <Button mode='contained' onPress={onSave}>Salvar</Button>
-                  <Button mode='contained' onPress={() => setIsEditing(false)}>Cancelar</Button>
-                            </>
-                  ) : (
-                    <Button mode='contained' onPress={() => setIsEditing(true)}>Editar</Button>
-                  )}
-                        <View style={styles.commentsContainer}>
-                          {renderComments()}
+
+            <TouchableOpacity style={styles.photoButton} onPress={navigateToFotos}>
+                <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
+                <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
+              </TouchableOpacity>
+            </View>
+            {isEditing ? (
+                      <>
+                        <TextInput 
+                          style={styles.input} 
+                          value={newComment} 
+                          onChangeText={setNewComment} 
+                          placeholder="Adicione um comentário"
+                          placeholderTextColor="#DEDEDE"
+                        />
+                        <View style={styles.buttonContainer}>
+                          <TouchableOpacity onPress={onSave} style={[styles.button, styles.saveButton]}>
+                            <Text style={styles.buttonText}>Salvar</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => setIsEditing(false)} style={[styles.button, styles.cancelButton]}>
+                            <Text style={styles.buttonText}>Cancelar</Text>
+                          </TouchableOpacity>
                         </View>
+                      </>
+                      ) : (
+                        <View style={styles.editButtonContainer}>
+                          <TouchableOpacity onPress={() => setIsEditing(true)} style={[styles.button, styles.editButton]}>
+                            <Text style={styles.buttonText}>Editar</Text>
+                          </TouchableOpacity>
+                        </View>
+                    )}
+                    <View style={styles.commentsContainer}>
+                      {comments.map((comment, index) => (
+                        <Text key={index} style={styles.commentStyle}>{comment}</Text>
+                      ))}
+                    </View>
             </View>
         )}
     />
     </LinearGradient>
   );
 }
-
 export default OSIndividual
 
 const styles = StyleSheet.create({
@@ -220,7 +242,7 @@ const styles = StyleSheet.create({
   textContainer: {
     borderWidth: 1,
     borderColor: 'white',
-    borderRadius: 20,
+    borderRadius: 23,
     padding: 20,
     marginBottom: 10,
     color: 'white',
@@ -234,6 +256,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     fontSize: 16,
+    marginBottom: 10,
   },
   id: {
     paddingStart: 15,
@@ -266,6 +289,63 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 10,
     color: 'white',
-
-  }
+    marginTop:10,
+    fontSize: 16,
+    paddingVertical: 10,
+  },
+  photoButton: {
+    backgroundColor: '#08354a', // Cor de fundo do botão
+    paddingVertical: 12, // Espaçamento vertical dentro do botão
+    paddingHorizontal: 77, // Espaçamento horizontal dentro do botão
+    borderRadius: 20, // Bordas arredondadas
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2, // Sombra no Android
+    marginTop: 10, // Espaço acima do botão
+    borderWidth: 1,
+    borderColor: '#fff', // Border color
+  },
+  
+  iconStyle: {
+    marginRight: 8,
+  },
+  photoButtonText: {
+    color: '#fff', // Text color
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20, 
+  },
+  button: {
+    flex: 1, 
+    marginHorizontal: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    marginHorizontal: 5, // Espaçamento entre os botões
+    minWidth: 100, // Largura mínima do botão
+    justifyContent: 'center', // Centraliza o texto no botão
+    backgroundColor: '#4604B1',
+    marginTop: 20,
+  },
+  saveButton: {
+    backgroundColor: '#4604B1',  
+    borderColor: 'rgba(255, 255, 255, 0.6)', 
+  },
+  cancelButton: {
+    backgroundColor: '#4604B1',
+    borderColor: 'rgba(255, 255, 255, 0.6)', 
+   },
+  buttonText: {
+    textAlign: 'center',
+    color: 'white', // Cor do texto
+  },
+  
 });
