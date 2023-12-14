@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, SectionList, Alert } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list-expo';
@@ -9,18 +8,21 @@ import { format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { Button } from 'react-native-paper';
-import Fotos from './Fotos';
+import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'
+import Toast from 'react-native-toast-message';
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
   const handleSelect = (value) => {
     onSelect(value);
     setSelected(data.find((item) => item.value === value)); 
+    onSelectCliente(value);
   };
-
 
   return (
     <SelectList
@@ -30,7 +32,7 @@ function CustomSelectList({ data, onSelect, defaultValue, setSelected }) {
     />
   );
 }
-export default function NewOS() {
+export default function NewOS({ navigation })  {
 
   const [osId, setOsId] = useState('');
   const [cliente, setCliente] = useState('');
@@ -42,15 +44,13 @@ export default function NewOS() {
   const [osList, setOSList] = useState([]);
   const [descricaoProduto, setDescricaoProduto] = useState('');
   const [statusOS, setStatusOS] = useState('Novo');
-  const [editMode, setEditMode] = useState(false);
-  const [selected, setSelected] = React.useState({ value: "" });
+ 
   const [selectedTipoHardware, setSelectedTipoHardware] = useState('');
   const [selectedTipoServico, setSelectedTipoServico] = useState('');
   const [selectedPrioridade, setSelectedPrioridade] = useState('');
-  const [selectedCliente, setSelectedCliente] = useState({ value: '' })
+  const [selectedCliente, setSelectedCliente] = useState('')
   const [imageUri, setImageUri] = useState(null);
- 
- const [clientes, setClientes] = useState([])
+  const [clientes, setClientes] = useState([])
 
   const userCollectionRef = collection(db, 'Cliente teste');
   const osCollectionRef = collection(db, 'teste');
@@ -59,9 +59,6 @@ export default function NewOS() {
   
 
   const [permission, requestPermission] = ImagePicker.useCameraPermissions()
-
-   
-
 
   const listUser = async () => {
     try {
@@ -89,7 +86,11 @@ export default function NewOS() {
     }
   };
 
-  
+  const handleSelectCliente = (value) => {
+    setCliente(value);
+    setSelectedCliente(clientes.find((item) => item.value === value));
+  };
+
   const adicionarOS = async () => {
     try {
       const dataAtualUTC = new Date();
@@ -98,10 +99,6 @@ export default function NewOS() {
       
       let docRef;
   
-      if (!selectedCliente || !selectedCliente.value) {
-        console.error('Erro: Cliente não selecionado');
-        return;
-      }
       docRef = await addDoc(osCollectionRef, {
         data: dataFormatada,
         cliente: selectedCliente,
@@ -144,9 +141,6 @@ export default function NewOS() {
     }
   };
 
-
- 
-
   const loadOS = async () => {
     try {
       const q = query(osCollectionRef);
@@ -167,7 +161,9 @@ export default function NewOS() {
     
     listFiles().then((listResp) => {
       const files = listResp.map((value) => {
+        setImageUri( value.fullPath)
         return {name : value.fullPath }
+        
       })
       setFiles(files)
     })
@@ -200,9 +196,6 @@ export default function NewOS() {
       </View>
     )
    }
-
-
-
   
   const takePhoto = async () => {
     try {
@@ -237,7 +230,6 @@ export default function NewOS() {
   
   }
 
-
   const data = [
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
    
@@ -251,11 +243,12 @@ export default function NewOS() {
       <Text>{item}</Text>
     </View>
   );
-
+  const goToNewCliente = () => {
+    navigation.navigate('newcliente');
+  };
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-          
       <SectionList
         sections={data}
         renderItem={renderItem}
@@ -266,12 +259,12 @@ export default function NewOS() {
   
               <Text style={styles.text}>Cliente:</Text>
               <SelectList
-              data={clientes}
-              onSelect={(value) => setSelectedCliente(value)}
-              defaultValue={cliente}
-              setSelected={(value) => setSelectedCliente(value)}
-                          placeholder="Selecione um cliente ou digite um novo"
-                dropdownItemStyles={{ color: 'whitw' }}
+                data={clientes}
+                onSelect={(value) => setCliente(value)}
+                defaultValue={cliente}
+                setSelected={(value) => setSelectedCliente(value)}
+                placeholder="Selecione um Cliente"
+                dropdownItemStyles={{ color: 'white' }}
                 dropdownTextStyles={{ color: 'white' }}
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
                 searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
@@ -281,7 +274,11 @@ export default function NewOS() {
                 dropdownStyles={{ borderColor: 'white' }}
                 searchPlaceholder=''
               />
-      
+
+            <TouchableOpacity onPress={goToNewCliente} style={styles.addClienteButton}>
+                <Text style={styles.addClienteText}>Cadastrar Cliente</Text>
+            </TouchableOpacity>
+
       <Text style={styles.text}>Tipo de Hardware:</Text>
       <SelectList
         data={[
@@ -423,14 +420,13 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center',
     marginVertical: 5,
-    elevation: 2, 
+    elevation: 2,
+     
   },
   listTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
-    
-    
+    marginTop: 10,    
   },
   selectList: {
     backgroundColor: '#fff',
@@ -500,5 +496,22 @@ const styles = StyleSheet.create({
     color: '#fff', // Text color
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  clienteSelectContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  addClienteText: {
+    color: '#D9D9D9',
+    fontSize: 14,
+    paddingTop: 10,
   },
 });

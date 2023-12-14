@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, SectionList } from 'react-native';
-import { doc, setDoc, collection, updateDoc, deleteDoc, getDocs, getDoc } from "firebase/firestore";
+import { doc, setDoc, collection,getDocs, addDoc } from "firebase/firestore";
 import firebase, { db } from '../../config/firebase';
 import { Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -160,30 +160,19 @@ const validarNumero = (numero) => {
  
   const adicionar = async () => {
     try {
-      const cpfIsValid = cpf ? validarCPF(cpf) : !cnpj;  // Se CPF for preenchido, valida, senão, é válido se CNPJ não for preenchido
-      const cnpjIsValid = cnpj ? validarCNPJ(cnpj) : !cpf;  // Se CNPJ for preenchido, valida, senão, é válido se CPF não for preenchido
-      const emailIsValid = validarEmail(email);
+      const cpfPreenchido = cpf.trim() !== '';
+      const cnpjPreenchido = cnpj.trim() !== '';
+      
       const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
-      const peloMenosUmDocumentoValido = cpfIsValid || cnpjIsValid;
-  
       // Atualizar estados de validação
-      setIsCpfValid(cpfIsValid);
-      setIsCnpjValid(cnpjIsValid);
-      setIsEmailValid(emailIsValid);
+     
       setIsCpfDuplicated(clienteExiste && cpf);
       setIsCnpjDuplicated(clienteExiste && cnpj);
       setIsEmailDuplicated(clienteExiste && email);
   
-      // Verificações
-      if (!peloMenosUmDocumentoValido || !emailIsValid || clienteExiste) {
-        Alert.alert("Erro", "Verifique os erros nos campos");
-        setIsCpfValid(false);  // Definir como falso para mostrar borda vermelha
-        setIsCnpjValid(false);  // Definir como falso para mostrar borda vermelha
-        setIsEmailValid(false);  // Definir como falso para mostrar borda vermelha
-        return;
-      }
+     
   
-      await addDoc(doc(userCollectionRef, email), {
+      await addDoc(userCollectionRef, {
         nome: username,
         email: email,
         cpf: cpf,
@@ -194,7 +183,6 @@ const validarNumero = (numero) => {
         cep: cep,
         numero: numero
       });
-  
       Toast.show({
         type: 'success',
         text1: 'Salvo',
@@ -221,9 +209,7 @@ const validarNumero = (numero) => {
     }
   };
   
-  
   const cancelarOperacao = () => {
-  // Limpar todos os estados
   setUsername('');
   setEmail('');
   setCpf('');
@@ -263,21 +249,6 @@ const validarNumero = (numero) => {
     });
     return existe;
   }; 
-
-//LISTA USUARIOS CADASTRADOS -------------------------------------------------------------------------------------
-  const listUser = async () => {
-    try {
-      const querySnapshot = await getDocs(userCollectionRef);
-      const userList = [];
-      querySnapshot.forEach((doc) => {
-        userList.push({ id: doc.id, ...doc.data() });
-      });
-      setUsers(userList);
-      console.log('Clientes listados:', userList);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useFocusEffect(
     React.useCallback(() => {  
       return () => {  
@@ -290,9 +261,6 @@ const validarNumero = (numero) => {
         setBairro('');
         setCep('');
         setNumero('');
-        setIsCpfValid(true);
-        setIsEmailValid(true);
-        setIsCnpjValid(true);
         setIsTelefoneValid(true);
         setIsCepValid(true);
         setIsNumeroValid(true);
@@ -302,42 +270,6 @@ const validarNumero = (numero) => {
       };
     }, [])
   );
-
-  const update = async () => {
-    try {
-      const userDoc = await getDoc(doc(userCollectionRef, email));
-      if (userDoc.exists()) {
-        updateDoc(doc(userCollectionRef, email), {
-          nome: username,
-          cpf: cpf,
-          cnpj: cnpj,
-          telefone: telefone,
-          endereco: endereco,
-        }).then(() => {
-          console.log('Cliente atualizado');
-        }).catch((error) => {
-          console.log(error);
-        });
-      } else {
-        console.log('Documento não encontrado para atualização');
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-  
-
-  const deleteUser = () => {
-    try {
-      deleteDoc(doc(userCollectionRef, email)).then(() => {
-        console.log('Cliente excluído');
-      }).catch((error) => {
-        console.log(error);
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
 
   const data = [
     { title: 'Seção 1', data: [] },
@@ -362,9 +294,9 @@ const validarNumero = (numero) => {
           <View style={styles.inputContainer}>
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" value={username}onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={[styles.input, !isEmailValid && styles.inputError]}  placeholderTextColor='white'/>{!isEmailValid && <Text style={styles.errorText}>E-mail inválido</Text>}{isEmailDuplicated && <Text style={styles.errorText}>E-mail já cadastrado</Text>}         
-            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={[styles.input, !isCpfValid && styles.inputError]}placeholderTextColor='white'/>{!isCpfValid && <Text style={styles.errorText}>CPF inválido</Text>}{isCpfDuplicated && <Text style={styles.errorText}>CPF já cadastrado</Text>}          
-            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={[styles.input, !isCnpjValid && styles.inputError]}placeholderTextColor='white'/>{!isCnpjValid && <Text style={styles.errorText}>CNPJ inválido</Text>}{isCnpjDuplicated && <Text style={styles.errorText}>CNPJ já cadastrado</Text>}
+            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={styles.input}  placeholderTextColor='white'/>{isEmailDuplicated && <Text style={styles.errorText}>E-mail já cadastrado</Text>}         
+            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>{isCpfDuplicated && <Text style={styles.errorText}>CPF já cadastrado</Text>}          
+            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>{isCnpjDuplicated && <Text style={styles.errorText}>CNPJ já cadastrado</Text>}
             <TextInput placeholder="Telefone:"value={telefone}onChangeText={handleTelefoneChange}keyboardType="numeric"style={[styles.input, !isTelefoneValid && styles.inputError]}placeholderTextColor='white'/>{!isTelefoneValid && <Text style={styles.errorText}>Telefone inválido</Text>}
             <TextInput placeholder="Endereço:" value={endereco}onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Bairro:"value={bairro}onChangeText={(value) => setBairro(value)} style={styles.input} placeholderTextColor={color='white'} />
@@ -397,8 +329,6 @@ const validarNumero = (numero) => {
         />
         {!isNumeroValid && <Text style={styles.errorTextRow}>Número inválido</Text>}
       </View>
-
-
           </View>
           <View style={styles.buttonContainer}>
             <Button onPress={adicionar} mode='contained' style={styles.button}>Salvar</Button>
@@ -458,6 +388,8 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center',
     marginVertical: 5,
+    marginTop:60,
+    marginBottom:20,
   },
   button: {
     flex: 1, 

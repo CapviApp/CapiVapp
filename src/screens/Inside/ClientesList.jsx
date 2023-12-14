@@ -5,93 +5,89 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
 
-export default function ClienteList() {
+export default function ClienteList(navegation) {
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [notFound, setNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigation = useNavigation();
 
+  const handlePressCliente = (email) => {
+    navigation.navigate('Cliente', { email: email });
+  };
   const onChangeSearch = query => {
     setSearchQuery(query);
-    setNotFound(false); // Reseta o estado de não encontrado quando a busca muda
-  };
-
-const navigation = useNavigation();
-
-const handlePressCliente = (clienteId) => {
-  navigation.navigate('Cliente', { clienteId: clienteId });
-  console.log(clienteId);
-};
+    setNotFound(false);
+  };//item
 
   useEffect(() => {
     const carregarClientes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
-        const clienteID = doc.id
         
         querySnapshot.forEach((doc) => {
-          listaClientes.push({ id: doc.id, ...doc.data() });
-          
+          listaClientes.push({ ...doc.data(), id: doc.id });
         });
         setClientes(listaClientes);
-        console.log(clienteID);
+        setIsLoading(false);
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
+        setIsLoading(false);
       }
-      
     };
-    
-
     carregarClientes();
   }, []);
 
-  const filteredClientes = clientes.filter(cliente => 
-    cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredClientes = clientes.filter(cliente =>
+    cliente.nome && cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   useEffect(() => {
-    // Atualiza o estado de não encontrado se não houver clientes após a filtragem
     setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
   }, [searchQuery, filteredClientes]);
-  
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePressCliente(item.id)}>
+    <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
-          <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
-          <View style={styles.clienteFoto}>
+          <Image 
+            source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
+            style={styles.clienteFoto}
+          />
+          <View>
             <Text style={styles.clienteNome}>{item.nome}</Text>
-            <Text style={styles.clienteData}>{item.data}</Text>
+            <Text style={styles.clienteData}>{item.email}</Text>
           </View>
         </View>
       </Card>
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
         <Text style={styles.titulo}>Clientes</Text>
-        <Searchbar
-          placeholder="Buscar Cliente"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          style={styles.searchbar}
-        />
-        {notFound && (
+        <Searchbar placeholder="Buscar Cliente"onChangeText={onChangeSearch}value={searchQuery}style={styles.searchbar}/>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#fff" />
+        ) : notFound ? (
           <Text style={styles.notFoundText}>Não foi encontrado</Text>
+        ) : (
+          <FlatList
+            data={filteredClientes}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.email}
+            ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
+              <Text style={styles.subtitulo}>Mais recentes:</Text>
+            ) : null}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          />
         )}
-      <FlatList
-        data={filteredClientes}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
-          <Text style={styles.subtitulo}>Mais recentes:</Text>
-        ) : null}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </LinearGradient>
+      </LinearGradient>
     </View>
   );
 }

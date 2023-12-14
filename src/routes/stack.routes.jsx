@@ -5,6 +5,7 @@ import { Profile, Config, Prioridade, EditOS, Cliente, EsperaOs, New, Historico,
 import { NavigationContainer } from '@react-navigation/native'
 
 import DrawerRoutes from './drawer.routes'
+import { Truncate } from '@primer/react'
 
 const Stack = createNativeStackNavigator()
 
@@ -18,6 +19,7 @@ export default function StackRoutes(){
             <Stack.Screen
                 name='drawerhome'
                 component={DrawerRoutes}
+                
             />
 
             <Stack.Screen
@@ -51,6 +53,7 @@ export default function StackRoutes(){
              <Stack.Screen
                 name='os'
                 component={OSIndividual}
+              
                 
             />
              <Stack.Screen

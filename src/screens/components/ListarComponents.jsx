@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, TouchableOpacity, View, Text, Button, StyleSheet, SectionList } from 'react-native';
-import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, doc, updateDoc, deleteDoc, where, onSnapshot } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import { db } from '../../config/firebase';
@@ -14,9 +14,43 @@ function Listar({ osList, selecionarOS }) {
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
 
+  
+
+  useEffect(() => {
+   
+      try {
+        //const selectedValue = selected; 
+        const q = query(osCollectionRef);
+        const querySnapshot = getDocs(q);
+        const subscriber = onSnapshot(osCollectionRef, {
+          next: (snapshot) => {
+            const osData = [];
+            snapshot.docs.forEach((doc) => {
+            osData.push({ id: doc.id, ...doc.data() });
+          
+        });  setOSList(osData);
+        
+          }
+
+        })
+        return()=> subscriber()
+        
+    
+        
+        
+       
+      } catch (error) {
+        console.error('Erro ao listar:', error);
+      }
+    
+  }, [])
+
   const navigateToDetails = (item) => {
     navigation.navigate("os", { osItem: item });
+    console.log('id:',item);
   };
+
+  
 
   
   return (
@@ -35,10 +69,7 @@ function Listar({ osList, selecionarOS }) {
                 <Text>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
                 <Text>Prioridade: {item.prioridade}</Text>
               </View>
-              <TouchableOpacity  onPress={() => navigateToOS(item)}
-                style={styles.button}>
-                <Feather name="edit" size={24} color="white" />
-              </TouchableOpacity>
+            
               
             </View>
           </TouchableOpacity>
@@ -67,6 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    marginLeft: 100,
+    marginLeft: 110,
+    position: 'fixed',
   },
 });

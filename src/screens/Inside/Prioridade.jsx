@@ -16,16 +16,13 @@ export default function Prioridade({ navigation }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
-
   const osCollectionRef = collection(db, 'teste');
   
   const listOS = async () => {
     try {
       //const selectedValue = selected; 
       const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      
-  
+      const querySnapshot = await getDocs(q);  
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
@@ -55,8 +52,6 @@ export default function Prioridade({ navigation }) {
   useEffect(() => {
     listOS();
   }, []);
-
-
 
   return (
 
