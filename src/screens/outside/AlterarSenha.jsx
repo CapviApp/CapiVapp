@@ -4,28 +4,38 @@ import Button from '../../components/Button';
 import { AntDesign } from '@expo/vector-icons';
 import { useState } from 'react';
 
-import { auth} from '../../config/firebase'
-import { sendEmailVerification } from 'firebase/auth';
+import { auth } from '../../config/firebase';
+import { sendEmailVerification, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
 export default function AlterarSenha() {
 
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('')
 
+  const sendVerificationEmail = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        sendEmailVerification(user)
+          .then(() => {
+            console.log('Email enviado!');
+            Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
+              {
+                text: 'OK', onPress: () => console.log('OK Pressed')
+              }
+            ]);
+          })
+          .catch((error) => {
+            console.log('Erro ao enviar email de verificação: ', error);
+          });
+      })
+      .catch((error) => {
+        console.log('Erro ao criar usuário: ', error);
+      });
+  };
 
-  const navigation = useNavigation()
-  const alert = () => Alert.alert('Um novo código foi enviado', 'Confira o seu Email', [
-    {
-      text: 'OK', onPress: () => console.log('OK Pressed')
-    }
-  ])
-
-  sendEmailVerification(auth.currentUser)
-  .then(() => {
-    alert('Email enviado!');
-  })
-  .catch((error) => {
-    console.log('erro: ', error);
-  })
 
   return (
     <View style={styles.container}>
@@ -53,12 +63,24 @@ export default function AlterarSenha() {
           </TouchableOpacity>
           <View style={styles.inputContainer}>
           <TextInput 
-              style={styles.input} 
-              placeholder='Código'  
-              placeholderTextColor='#FFF'    
+            style={styles.input} 
+            placeholder='Email'  
+            placeholderTextColor='#FFF'
+            value={email}
+            onChangeText={value => setEmail(value)} 
+          />
+           <TextInput 
+            style={styles.input} 
+            placeholder='Senha'  
+            placeholderTextColor='#FFF'
+            value={password}
+            onChangeText={value => setPassword(value)} 
           />
           </View>
-          <Text style={styles.text} onPress={alert} >Reenviar código</Text>
+          <TouchableOpacity onPress={() => sendVerificationEmail()}>
+            <Text style={styles.text}  >Reenviar código</Text>
+
+          </TouchableOpacity>
           <Button
               title='Confirmar'      
               style={styles.button}

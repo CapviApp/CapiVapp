@@ -74,6 +74,8 @@ export default function NewOS({ navigation })  {
     }
   };
 
+
+
   const getNextOsId = async () => {
     try {
       const q = query(osCollectionRef);
@@ -225,7 +227,7 @@ export default function NewOS({ navigation })  {
       }
    
   }catch (e) {
-    Alert.alert ('Erro ao carregar imagem: ' + e.messsage)
+   console.log('Erro ao carregar imagem: ' + e.messsage)
   }
   
   }

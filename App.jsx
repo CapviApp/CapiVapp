@@ -18,11 +18,18 @@ export default function App() {
   const {user} = useAuth();
   //const user = false 
 
+<<<<<<< HEAD
   if(user) {
     return (
       <StackRoutes />
     )
   } else {
+=======
+
+  if(user) {
+    return <StackRoutes/>
+  }else {
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
     return (
       <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='welcome'>
@@ -36,6 +43,10 @@ export default function App() {
     )
   }
 
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
 
 }

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+
 
 export default function Cliente() {
   const route = useRoute();
@@ -12,89 +12,51 @@ export default function Cliente() {
   const [cliente, setCliente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ordensServico, setOrdensServico] = useState([]);
-  const [username, setUsername] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [cnpj, setCnpj] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [bairro, setBairro] = useState('');
-  const [cep, setCep] = useState('');
-  const [numero, setNumero] = useState('');
-
+  
   useEffect(() => {
-    const carregarDadosCliente = async () => {
-      if (!email) {
-        setLoading(false);
-        return;
-      }
-  
-      try {
-        const docRef = doc(db, "Cliente teste", email);
-        const docSnap = await getDoc(docRef);
-  
-        if (docSnap.exists()) {
-          setCliente(docSnap.data());
+    const buscarClienteEOrdensServico = async () => {
+        setLoading(true);
 
-          // Modificando a consulta para usar o campo 'cliente'
-          const osQuery = query(collection(db, "teste"), where("cliente", "==", email));
-          const osSnapshot = await getDocs(osQuery);
-          const osList = osSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setOrdensServico(osList);
+        try {
+            const docRef = doc(db, "Cliente teste", clienteId);
+            const docSnap = await getDoc(docRef);
 
-          setLoading(false);
-        } else {
-          console.log("Cliente não encontrado!");
-          setLoading(false);
+            if (docSnap.exists()) {
+                setCliente(docSnap.data());
+
+                const osQuery = query(collection(db, "teste"), where("clienteId", "==", clienteId));
+                const osSnapshot = await getDocs(osQuery);
+                const osList = osSnapshot.docs.map(doc => doc.data());
+                setOrdensServico(osList);
+            } else {
+                console.log("Cliente não encontrado!");
+            }
+        } catch (error) {
+            console.error("Erro ao buscar cliente e OS:", error);
         }
-      } catch (error) {
-        console.error("Erro ao buscar cliente e OS:", error);
-        setLoading(false);
-      }
-    };
-  
-    carregarDadosCliente();
-  }, [email]);
-  
-  const atualizarCliente = async () => {
-    try {
-     
-      const docRef = doc(db, "Cliente teste", email);
-      await updateDoc(docRef, {
-        nome: username,
-        cpf: cpf,
-        cnpj: cnpj,
-        telefone: telefone,
-        endereco: endereco,
-        bairro: bairro,
-        cep: cep,
-        numero: numero
-      });
-  
-      console.log("Cliente atualizado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao atualizar cliente:", error);
-    }
-  };
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#fff" />;
-  }
-  const goToOSIndividual = (os) => {
-    navigation.navigate('os', { osItem: os });
-  };
-  const renderItem = ({ item }) => (
-    <View>
-      {/* Seu componente de item da lista (OsItemH) */}
-      <Text>{item}</Text>
+        setLoading(false);
+    };
+
+    buscarClienteEOrdensServico();
+}, [clienteId]);
+
+const handlePressCliente = (clienteId) => {
+  // Navega para a tela Cliente e passa o clienteId como parâmetro
+  navigation.navigate('Cliente', { clienteId });
+};
+
+if (loading) {
+  return <ActivityIndicator size="large" color="#0000ff" />;
+}
+
+if (!cliente) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Cliente não encontrado</Text>
     </View>
   );
-  if (!cliente) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.tituloNot}>Cliente não encontrado</Text>
-      </View>
-    );
-  }
+}
 
   return (
     <ScrollView style={styles.container}>

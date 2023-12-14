@@ -11,16 +11,19 @@ import { getAuth, signOut } from 'firebase/auth';
 
 import { auth, firebase } from '../../config/firebase'
 import { useNavigation } from '@react-navigation/native';
+import { Welcome } from '../outside/Welcome';
+
+export default function Profile({ navigation }) {
 
 
-export default function Profile() {
-
-  const SignOutFunction = () => {
+  const Signout = () => {
+    const auth = getAuth();
     signOut(auth).then(() => {
-     console.log('usuario deslogado com sucesso');
+      console.log('usuario deslogado');
     }).catch((error) => {
-      console.log('Erro ao deslogar', error);
+      console.log('erro ao deslogar');
     });
+
   }
 
 
@@ -50,7 +53,7 @@ export default function Profile() {
           <Text style={styles.title}>Telefone</Text>
           <Text style={styles.subTitle}>45 9 9123-4567</Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => SignOutFunction()}> 
+            <TouchableOpacity style={styles.button} onPress={() => Signout()}> 
               <AntDesign name="logout" size={20} color="white" style={styles.textButton}/> 
               <Text style={styles.text}>Desconectar</Text>     
             </TouchableOpacity>

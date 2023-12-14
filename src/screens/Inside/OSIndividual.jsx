@@ -116,6 +116,8 @@ const OSIndividual = ({route}) => {
       {/* Seu componente de item da lista (OsItemH) */}
       <Text>{item}</Text>
     </View>
+       
+    
   );
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 

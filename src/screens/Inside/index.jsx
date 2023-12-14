@@ -9,7 +9,7 @@ import Prioridade from "./Prioridade";
 import OSIndividual from "./OSIndividual";
 import ClientesList from "./ClientesList";
 import Home from  "./Home"
-import NewOS from "./NewOS";
+import NewOS from "./NewOs";
 import NewCliente from "./NewCliente";
 import EditOS from "./EditOS";
 import Fotos from "./Fotos";

@@ -7,7 +7,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 
+<<<<<<< HEAD
 export default function ClienteList(navegation) {
+=======
+export default function ClientesList() {
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [notFound, setNotFound] = useState(false);
@@ -19,25 +23,47 @@ export default function ClienteList(navegation) {
   };
   const onChangeSearch = query => {
     setSearchQuery(query);
+<<<<<<< HEAD
     setNotFound(false);
   };//item
+=======
+    setNotFound(false); // Reseta o estado de não encontrado quando a busca muda
+  };
+
+const navigation = useNavigation();
+
+const handlePressCliente = (clienteId) => {
+  navigation.navigate('Cliente', { clienteId: clienteId });
+};
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
 
   useEffect(() => {
     const carregarClientes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
+<<<<<<< HEAD
         
         querySnapshot.forEach((doc) => {
           listaClientes.push({ ...doc.data(), id: doc.id });
         });
         setClientes(listaClientes);
         setIsLoading(false);
+=======
+        querySnapshot.forEach((doc) => {
+          listaClientes.push({ id: doc.id, ...doc.data() });
+        });
+        setClientes(listaClientes);
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
       } catch (error) {
         console.error("Erro ao buscar clientes:", error);
         setIsLoading(false);
       }
     };
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
     carregarClientes();
   }, []);
 
@@ -53,11 +79,16 @@ export default function ClienteList(navegation) {
     <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
+<<<<<<< HEAD
           <Image 
             source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
             style={styles.clienteFoto}
           />
           <View>
+=======
+          <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
+          <View style={styles.clienteInfo}>
+>>>>>>> 4c98ce2cb32297b03f82a4f2f7cc3b445fcb426a
             <Text style={styles.clienteNome}>{item.nome}</Text>
             <Text style={styles.clienteData}>{item.email}</Text>
           </View>
