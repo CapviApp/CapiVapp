@@ -55,86 +55,90 @@ export default function Historico({ navigation }) {
     }
   };
 
-  const filteredClientes = clientes.filter(cliente =>
-    cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredOS = osList.filter(os => {
+    const searchLower = searchQuery.toLowerCase();
+    const emailMatch = os.cliente && os.cliente.email && os.cliente.email.toLowerCase().includes(searchLower);
+    const prioridadeMatch = os.prioridade && os.prioridade.toLowerCase().includes(searchLower);
+    return emailMatch || prioridadeMatch;
+  });
 
   useEffect(() => {
-    setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
-  }, [searchQuery, filteredClientes]);
+    setNotFound(searchQuery.length > 0 && filteredOS.length === 0);
+  }, [searchQuery, filteredOS]);
+
+  useEffect(() => {
+    loadOS();
+  }, []);
 
   const renderItem = ({ item }) => (
     <View>
-      <Text>{item.id}</Text> {/* Garante que todo texto esteja dentro de <Text> */}
+
+
     </View>
   );
 
-  useEffect(() => {
-    listOS();
-  }, []);
-
-
-
   return (
+    <View style={styles.container}>
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Histórico OS</Text>
-        <Searchbar
-          placeholder="Buscar Cliente"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          style={styles.searchBar}
-        />
+        <Text style={styles.titulo}>Histórico OS</Text>
+        <Searchbar placeholder="Pesquisar"onChangeText={onChangeSearch} value={searchQuery}style={styles.searchbar}/>
         {isLoading ? (
-          <ActivityIndicator size="large" color="#00ff00" />
+          <ActivityIndicator size="large" color="#fff" />
         ) : notFound ? (
-          <Text style={styles.notFoundText}>Não foi encontrado</Text> 
+          <Text style={styles.notFoundText}>Não foi encontrado</Text>
         ) : (
           <FlatList
             data={filteredOS}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.email }
+            ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
+              <Text style={styles.subtitulo}>Ordens de Serviço:</Text>
+            ) : null}
+            contentContainerStyle={{ paddingBottom: 20 }}
           />
         )}
-        <Text style={styles.subTitle}>Ordens de Serviço</Text>
         <Listar osList={osList} />
-      </View>
     </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    width: '100%',
-    marginBottom: '23%',
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
+  gradient: {
+    flex: 1,
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 32,
     color: 'white',
-    paddingStart: 22,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    alignSelf: 'center', 
     textAlign: 'center',
   },
-  subTitle: {
-    fontSize: 20,
-    fontWeight: '400',
-    color: 'white',
-    padding: 5,
-    paddingStart: 20,
-    marginVertical: 10,
+  searchbar: {
+    marginBottom: 20,
+    borderRadius: 30,
   },
+  subtitulo: {
+    fontSize: 24,
+    color: 'white',
+    marginBottom: 10,
+  },
+
   backgroundColor: {
     flex: 1,
     width: '100%',
   },
-  searchBar: {
-    width: '90%',
+  notFoundText: {
+    color: 'red', 
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 5,
   },
-  searchContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
+  
+
 });

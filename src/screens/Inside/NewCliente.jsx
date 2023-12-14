@@ -232,6 +232,7 @@ const validarNumero = (numero) => {
   setNumero('');
   
   };
+  
   //VERIFICA SE O CLIENTE JA EXITE NO BANCO DE DADOS ---------------------------------------------------------------------
   const verificarClienteExistente = async (email, cpf, cnpj) => {
     const querySnapshot = await getDocs(userCollectionRef);
@@ -401,6 +402,8 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center',
     marginVertical: 5,
+    marginTop:60,
+    marginBottom:20,
   },
   button: {
     flex: 1, 

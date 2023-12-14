@@ -6,6 +6,7 @@ import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
+
 export default function ClienteList(navegation) {
   const [clientes, setClientes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,11 +17,10 @@ export default function ClienteList(navegation) {
   const handlePressCliente = (email) => {
     navigation.navigate('Cliente', { email: email });
   };
-
   const onChangeSearch = query => {
     setSearchQuery(query);
     setNotFound(false);
-  };
+  };//item
 
   useEffect(() => {
     const carregarClientes = async () => {
@@ -42,8 +42,8 @@ export default function ClienteList(navegation) {
   }, []);
 
   const filteredClientes = clientes.filter(cliente =>
-    cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    cliente.nome && cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   useEffect(() => {
     setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
@@ -53,7 +53,10 @@ export default function ClienteList(navegation) {
     <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
-          <Image source={{ uri: item.foto }}  style={styles.clienteFoto} />
+          <Image 
+            source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
+            style={styles.clienteFoto}
+          />
           <View>
             <Text style={styles.clienteNome}>{item.nome}</Text>
             <Text style={styles.clienteData}>{item.email}</Text>
@@ -62,20 +65,15 @@ export default function ClienteList(navegation) {
       </Card>
     </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
         <Text style={styles.titulo}>Clientes</Text>
-        <Searchbar
-          placeholder="Buscar Cliente"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-          style={styles.searchbar}
-        />
+        <Searchbar placeholder="Buscar Cliente"onChangeText={onChangeSearch}value={searchQuery}style={styles.searchbar}/>
         {isLoading ? (
-          // Mostrar um indicador de carregamento enquanto os dados estão sendo carregados
-          <ActivityIndicator size="large" color="#00ff00" />
+          <ActivityIndicator size="large" color="#fff" />
         ) : notFound ? (
           <Text style={styles.notFoundText}>Não foi encontrado</Text>
         ) : (

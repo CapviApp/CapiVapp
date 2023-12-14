@@ -1,22 +1,17 @@
+import React, { useState, useEffect } from 'react';
 import  { DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer'
-import { 
-    Feather,
-    SimpleLineIcons,
-    MaterialIcons,
-    MaterialCommunityIcons,
-    FontAwesome,
-    AntDesign, 
-} from '@expo/vector-icons'
+import {Feather,SimpleLineIcons,MaterialIcons,MaterialCommunityIcons,FontAwesome,AntDesign,} from '@expo/vector-icons'
 import { Button, SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
 import User from '../../assets/user.jpeg'
-
 import TabRoutes from './tab.routes'
-
 import { Prioridade, Config, EsperaOs, Historico, Cliente, Profile, ClientesList, Fotos } from '../screens/Inside'
+import useAuth from '../hooks/useAuth';
 
 const Drawer = createDrawerNavigator()
 
 export default function DrawerRoutes(){
+    const { user } = useAuth();
+
     return (
         <Drawer.Navigator style={styles.container}
         screenOptions={{ 
@@ -34,37 +29,13 @@ export default function DrawerRoutes(){
     
             }} drawerContent={(props) => {
                 return (
-                    <SafeAreaView>
-                        <View style={{
-                            height: 200,
-                            width: '100%',
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderBottomColor: "#f4f4f4",
-                            borderBottomWidth: 1,
-                            paddingTop: 50,
-                           
-                         }}>
-                            <Image   
-                                source={User}
-                                style={{
-                                height: 130,
-                                width: 130,
-                                borderRadius: 65,
-                               
-                    }}/>
-                     <Text
-                        style={{
-                        fontSize: 22,
-                        marginVertical: 6,
-                        fontWeight: "bold",
-                        color: "#FFF",
-                        marginBottom: 30,
-                        }}
-                        >Lara Doe</Text>
-                        </View>
-                        <DrawerItemList {...props}/>
-                    </SafeAreaView>
+                <SafeAreaView>
+                    <View style={styles.drawerHeader}>
+                        <Image source={User} style={styles.profileImage} />
+                        <Text style={styles.userName}>{user ? (user.displayName || user.email) : 'Usuário Desconhecido'}</Text>
+                    </View>
+                    <DrawerItemList {...props} />
+                </SafeAreaView>
                 )
             }}>
             <Drawer.Screen
@@ -143,5 +114,27 @@ const styles = StyleSheet.create({
     icon: {
         color: '#FFF',
         fontSize: 23
+    },
+    drawerHeader: {
+        height: 200,
+        width: '100%',
+        justifyContent: "center",
+        alignItems: "center",
+        borderBottomColor: "#f4f4f4",
+        borderBottomWidth: 1,
+        paddingTop: 50,
+    },
+    profileImage: {
+        height: 130,
+        width: 130,
+        borderRadius: 65,
+    },
+    userName: {
+        fontSize: 15,
+        marginVertical: 6,
+        fontWeight: "bold",
+        color: "#FFF",
+        marginBottom: 30,
     }
+
 })

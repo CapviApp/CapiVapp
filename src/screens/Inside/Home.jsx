@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, SectionList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, SectionList, ActivityIndicator} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {  Feather, SimpleLineIcons, MaterialIcons, MaterialCommunityIcons, FontAwesome, AntDesign} from '@expo/vector-icons'
 import { Searchbar } from 'react-native-paper';
@@ -8,36 +8,47 @@ import { useNavigation } from '@react-navigation/native';
 import Prioridade from './Prioridade';
 import ListaHorizontal from '../../components/layout/ListaHorizontal/ListaHorizontal';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { addDoc, collection, query, getDocs } from 'firebase/firestore';
+import { addDoc, collection, query, getDocs, orderBy} from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import Listar from '../components/ListarComponents';
 
 export default function Home() {
   const navigation = useNavigation()
   const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => setSearchQuery(query);
+  const [isLoading, setIsLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [osList, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
   
+  const onChangeSearch = query => setSearchQuery(query);
+
   const listOS = async () => {
-    try {
-      //const selectedValue = selected; 
-      const q = query(osCollectionRef);
-      const querySnapshot = await getDocs(q);
-      
+    setIsLoading(true);
+    setNotFound(false);
   
+    try {
+      const q = query(osCollectionRef);
+      //const q = query(osCollectionRef, orderBy('timestamp', 'desc'));
+      
+      const querySnapshot = await getDocs(q);
+    
       const osData = [];
       querySnapshot.forEach((doc) => {
         osData.push({ id: doc.id, ...doc.data() });
-       
       });
       
+      if (osData.length === 0) {
+        setNotFound(true);
+      }
+  
       setOSList(osData);
     } catch (error) {
       console.error('Erro ao listar:', error);
+      setNotFound(true);
+    } finally {
+      setIsLoading(false);
     }
   };
-
 
   const data = [
     { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
@@ -45,8 +56,7 @@ export default function Home() {
   ];
 
   const renderItem = ({ item }) => (
-    <View>
-    
+    <View>    
       <Text>{item}</Text>
     </View>
   );
@@ -77,12 +87,15 @@ export default function Home() {
               value={searchQuery} 
               style={styles.searchBar}
             />
-          </View>
-          <Listar osList={osList}/>
-         
-          
+         </View>
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#fff" />// Substitua por um componente de spinner, se desejar
+        ) : notFound ? (
+          <Text>Nenhum item encontrado.</Text>
+        ) : (
+          <Listar osList={osList} />
+        )}
     </View>
-  
    
     )}/>
       </LinearGradient>

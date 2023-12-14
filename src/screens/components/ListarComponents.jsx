@@ -9,25 +9,39 @@ function Listar({ osList, selecionarOS }) {
   const navigation = useNavigation(); // Move the useNavigation hook inside the function component
   const [osListState, setOSList] = useState([]);
   const osCollectionRef = collection(db, 'teste');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  const onChangeSearch = query => setSearchQuery(query);
 
   useEffect(() => {
+    setIsLoading(true); // Inicia o carregamento
+  
     try {
-      // Query com ordenação decrescente pelo campo 'timestamp'
       const q = query(osCollectionRef, orderBy('timestamp', 'desc'));
       const subscriber = onSnapshot(q, {
-        next: (snapshot) => {
-          const osData = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          setOSList(osData);
-        }
-      });
+          next: (snapshot) => {
+            const osData = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            setOSList(osData);
+            setIsLoading(false); // Finaliza o carregamento após os dados serem recebidos
+          },
+          error: () => {
+            console.error('Erro ao listar.');
+            setIsLoading(false); // Finaliza o carregamento em caso de erro
+          }
+        });
+  
       return () => subscriber();
     } catch (error) {
       console.error('Erro ao listar:', error);
+      setIsLoading(false); // Finaliza o carregamento em caso de erro
     }
   }, []);
+  
 
   const navigateToDetails = (item) => {
     navigation.navigate("os", { osItem: item });

@@ -160,7 +160,7 @@ const OSIndividual = ({route}) => {
                 <Text style={styles.text}>Prioridade: {osItem?.prioridade}</Text>    
                 <Text style={styles.text}>Tipo de Serviço: {osItem?.tipoServico}</Text> 
                 <Text style={styles.text}>Tipo de Hardware: {osItem?.tipoHardware}</Text>
-                <Text style={styles.text}>Descriçõo: {osItem?.descricaoProduto}</Text>  
+                <Text style={styles.text}>Descrição: {osItem?.descricaoProduto}</Text>  
               </View>
 
               <Text style={styles.text}>Comentario:</Text> 
