@@ -16,7 +16,7 @@ export default function Config() {
     } catch (error) {
       console.error('Erro ao sair:', error);
     }
-  };//teste
+  };
 
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>

@@ -91,45 +91,81 @@ const OSIndividual = ({ route }) => {
     }
   };
   
-const onSave = async () => {
+  const onSave = async () => {
+    if (statusOS === 'Novo' && (tempStatusOS === 'Concluído' || tempStatusOS === 'Cancelado')) {
+      Alert.alert('Ação não permitida', 'Não é possível mudar o status para Concluído ou Cancelado diretamente do status Novo.');
+      return;
+    }
+  
+    if (tempComment.trim() === '') {
+      Alert.alert('Erro', 'O comentário não pode ser vazio.');
+      return;
+    }
+  
+    if (!tempStatusOS || (tempStatusOS !== 'Iniciada' && tempStatusOS !== 'Pendente' && tempStatusOS !== 'Concluído' && tempStatusOS !== 'Cancelado')) {
+      console.log('statusOS:', statusOS, 'tempStatusOS:', tempStatusOS);
+      Alert.alert('Erro', 'Selecione um status válido.');
+      return;
+    }
+  
+    if (!osItem.id) {
+      console.error('Erro: ID da OS não definido.');
+      return;
+    }
 
-  if (tempComment.trim() === '') {
-    Alert.alert('Erro', 'O comentário não pode ser vazio.');
-    return;
-  }
+    const osDocRef = doc(db, 'Ordem de Serviço', osItem.id);
+    try {
+      await updateDoc(osDocRef, { 
+        statusOS: tempStatusOS, 
+        comentarios: [...comments, tempComment].filter(comment => comment.trim() !== '')
+      });
+      setStatusOS(tempStatusOS);
+      setComments([...comments, tempComment].filter(comment => comment.trim() !== ''));
+      setIsEditing(false);
+      setNewComment(''); // Limpa o campo de comentário após a atualização
+      setTempComment(''); // Adicione esta linha para limpar o campo de entrada do novo comentário
+      console.log('OS atualizada com sucesso.');
+    } catch (error) {
+      console.error('Erro ao salvar a OS:', error);
+    }
+  };
 
-  if (!tempStatusOS || (tempStatusOS !== 'Iniciada' && tempStatusOS !== 'Pendente' && tempStatusOS !== 'Concluído' && tempStatusOS !== 'Cancelado')) {
-    console.log('statusOS:', statusOS, 'tempStatusOS:', tempStatusOS);
-    Alert.alert('Erro', 'Selecione um status válido.');
-    return;
-  }
-
-  if ((statusOS === 'Concluído' || statusOS === 'Cancelado') && (tempStatusOS === 'Iniciada' || tempStatusOS === 'Pendente')) {
-    console.log('Condição atingida, exibindo alerta'); // Adicionar para depuração
-    Alert.alert('Ação não permitida', 'Não é possível mudar o status para Iniciado ou Pendente após estar Concluído ou Cancelado.');
-    return;
-  }
-
-  if (!osItem.id) {
-    console.error('Erro: ID da OS não definido.');
-    return;
-  }
-
-  const osDocRef = doc(db, 'Ordem de Serviço', osItem.id);
-  try {
-    await updateDoc(osDocRef, { 
-      statusOS: tempStatusOS, 
-      comentarios: [...comments, tempComment].filter(comment => comment.trim() !== '')
-    });
-    setStatusOS(tempStatusOS);
-    setComments([...comments, tempComment].filter(comment => comment.trim() !== ''));
-    setIsEditing(false);
-    setNewComment('');
-    console.log('OS atualizada com sucesso.');
-  } catch (error) {
-    console.error('Erro ao salvar a OS:', error);
-  }
-};
+  const renderStatusSelect = () => (
+    <SelectList
+      data={
+        statusOS === 'Novo'
+          ? [{ label: 'Iniciada', value: 'Iniciada' }]
+          : statusOS === 'Iniciada'
+          ? [
+            { label: 'Em andamento', value: 'Pendente' },
+            { label: 'Concluída', value: 'Concluído' },
+            { label: 'Cancelada', value: 'Cancelado' },]
+          : statusOS === 'Concluída' || statusOS === 'Cancelada'
+           [
+             {label: '', value: ''}
+            ]
+      }
+      selected={tempStatusOS}
+      setSelected={setTempStatusOS}
+      onSelect={onStatusChange}
+      placeholder={tempStatusOS || 'Selecione'}
+      dropdownItemStyles={{ color: 'white' }}
+      dropdownTextStyles={{ color: 'white' }}
+      arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />}
+      searchicon={<FontAwesome name="search" size={12} color={'white'} />}
+      closeicon={<Ionicons name="close" size={24} color="white" />}
+      boxStyles={{
+        color: 'white',
+        borderColor: 'white',
+        borderRadius: 30,
+        backgroundColor: '#1A4963',
+        marginVertical: 10,
+      }}
+      inputStyles={{ color: 'white', borderColor: 'white' }}
+      dropdownStyles={{ borderColor: 'white' }}
+      searchPlaceholder=''
+    />
+  );
 
   
   const onEdit = () => {
@@ -181,29 +217,8 @@ const onSave = async () => {
              <Text style={styles.id}>ID: {osItem?.id}</Text>
              <Text style={styles.data}>Data: {osItem?.data}</Text>
              <Text style={styles.text}>Status da Ordem de Serviço: </Text>
-             <SelectList
-                data={[
-                  { label: 'Iniciada', value: 'Iniciada' },
-                  { label: 'Em andamento', value: 'Pendente' },
-                  { label: 'Concluída', value: 'Concluído' },
-                  { label: 'Cancelada', value: 'Cancelado' },
-                ]}
-                selected={statusOS}
-                setSelected={setStatusOS}
-                onSelect={onStatusChange}
-                placeholder={statusOS || 'Selecione'}
-                dropdownItemStyles={{ color: 'white' }}
-                dropdownTextStyles={{ color: 'white' }}
-                arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
-                searchicon={<FontAwesome name="search" size={12} color={'white'} />} 
-                closeicon={<Ionicons name="close" size={24} color="white" />}
-                boxStyles={{ color: 'white', borderColor: 'white', borderRadius: 30, backgroundColor: '#1A4963', marginVertical: 10  }}
-                inputStyles={{ color: 'white', borderColor: 'white' }}
-                dropdownStyles={{ borderColor: 'white' }}
-                searchPlaceholder=''
-                
-              />
-              
+             
+             {renderStatusSelect()}
           <View >            
             <Text style={styles.cliente}>Cliente: {osItem?.cliente}</Text>  
             
