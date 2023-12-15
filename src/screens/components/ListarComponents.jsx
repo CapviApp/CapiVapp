@@ -47,6 +47,21 @@ function Listar({ osList, selecionarOS }) {
     navigation.navigate("os", { osItem: item });
     console.log('id:',item);
   };
+
+  
+// mudar cor da prioridade
+  const getColorByPriority = (priority) => {
+    switch (priority.toLowerCase()) {
+      case 'baixa':
+        return 'green';
+        case 'média' || 'media':
+          return '#D59712';
+      case 'alta':
+        return 'red';
+      default:
+        return 'gray'; 
+    }
+  };
   
   return (
     <SectionList
@@ -60,6 +75,8 @@ function Listar({ osList, selecionarOS }) {
                 <Text style={styles.text}>Data: {item.data}</Text>
                 <Text style={styles.text}>Cliente: {typeof item.cliente === 'object' ? item.cliente.value : item.cliente}</Text>
                 <Text style={styles.text}>Prioridade: {item.prioridade}</Text>
+                <Text style={[styles.osPriorityText, 
+                { backgroundColor: getColorByPriority(item.prioridade) } ]}>Prioridade: {item.prioridade}</Text>
               </View >              
             </View>
           </TouchableOpacity>
@@ -93,5 +110,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'white'
+  },
+  osPriorityText: {
+   
+   
+    marginBottom: 4,
+   
+    borderRadius: 10,
+    paddingLeft: 8,
+    color: "#fff"
   }
 });

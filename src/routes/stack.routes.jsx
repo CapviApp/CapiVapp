@@ -1,11 +1,7 @@
 import  { createNativeStackNavigator } from '@react-navigation/native-stack'
-
-
-import { Profile, Config, Prioridade, EditOS, Cliente, EsperaOs, New, Historico, Home, OSIndividual, Fotos } from '../screens/Inside'
+import { Profile, Config, Prioridade, EditOS, ClientesList, EsperaOs, New, Historico, Home, OSIndividual, Fotos, Cliente, NewOS, NewCliente } from '../screens/Inside'
 import { NavigationContainer } from '@react-navigation/native'
-
 import DrawerRoutes from './drawer.routes'
-import { Truncate } from '@primer/react'
 
 const Stack = createNativeStackNavigator()
 
@@ -19,7 +15,6 @@ export default function StackRoutes(){
             <Stack.Screen
                 name='drawerhome'
                 component={DrawerRoutes}
-                
             />
 
             <Stack.Screen
@@ -38,10 +33,15 @@ export default function StackRoutes(){
                 name='espera'
                 component={EsperaOs}
             />
-            <Stack.Screen
-                name='cliente'
-                component={Cliente}
+            <Stack.Screen 
+                name="clientelist" 
+                component={ClientesList} 
             />
+            <Stack.Screen
+                name="Cliente" 
+                component={Cliente}
+              />
+                    
             <Stack.Screen
                 name='new'
                 component={New}
@@ -53,9 +53,8 @@ export default function StackRoutes(){
              <Stack.Screen
                 name='os'
                 component={OSIndividual}
-              
-                
             />
+            
              <Stack.Screen
                 name='editOS'
                 component={EditOS}
@@ -63,10 +62,14 @@ export default function StackRoutes(){
              <Stack.Screen
                 name='fotos'
                 component={Fotos}
-            />
+            />       
+
+            <Stack.Screen
+                name='newcliente'
+                component={NewCliente}
+            /> 
        
         </Stack.Navigator>
         </NavigationContainer>
     )
-   
 }

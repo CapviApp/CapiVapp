@@ -162,17 +162,28 @@ const validarNumero = (numero) => {
     try {
       const cpfPreenchido = cpf.trim() !== '';
       const cnpjPreenchido = cnpj.trim() !== '';
-      
+      const cpfIsValid = cpfPreenchido ? validarCPF(cpf) : true;
+      const cnpjIsValid = cnpjPreenchido ? validarCNPJ(cnpj) : true;
+      const emailIsValid = validarEmail(email);
       const clienteExiste = await verificarClienteExistente(email, cpf, cnpj);
       // Atualizar estados de validação
-     
+      setIsCpfValid(cpfIsValid);
+      setIsCnpjValid(cnpjIsValid);
+      setIsEmailValid(emailIsValid);
       setIsCpfDuplicated(clienteExiste && cpf);
       setIsCnpjDuplicated(clienteExiste && cnpj);
       setIsEmailDuplicated(clienteExiste && email);
   
-     
+      // Verificações
+      if ((!cpfPreenchido && !cnpjPreenchido) || !cpfIsValid || !cnpjIsValid || !emailIsValid || clienteExiste) {
+        Alert.alert("Erro", "Verifique os erros nos campos");
+        setIsCpfValid(false);  // Definir como falso para mostrar borda vermelha
+        setIsCnpjValid(false);  // Definir como falso para mostrar borda vermelha
+        setIsEmailValid(false);  // Definir como falso para mostrar borda vermelha
+        return;
+      }
   
-      await addDoc(userCollectionRef, {
+      await setDoc(doc(userCollectionRef, email), {
         nome: username,
         email: email,
         cpf: cpf,
@@ -261,6 +272,9 @@ const validarNumero = (numero) => {
         setBairro('');
         setCep('');
         setNumero('');
+        setIsCpfValid(true);
+        setIsEmailValid(true);
+        setIsCnpjValid(true);
         setIsTelefoneValid(true);
         setIsCepValid(true);
         setIsNumeroValid(true);
@@ -294,9 +308,9 @@ const validarNumero = (numero) => {
           <View style={styles.inputContainer}>
           <Text style={styles.title}>Novo Cliente</Text>
             <TextInput placeholder="Nome:" value={username}onChangeText={(value) => setUsername(value)} style={styles.input} placeholderTextColor={color='white'}/>
-            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={styles.input}  placeholderTextColor='white'/>{isEmailDuplicated && <Text style={styles.errorText}>E-mail já cadastrado</Text>}         
-            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>{isCpfDuplicated && <Text style={styles.errorText}>CPF já cadastrado</Text>}          
-            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={styles.input}placeholderTextColor='white'/>{isCnpjDuplicated && <Text style={styles.errorText}>CNPJ já cadastrado</Text>}
+            <TextInput placeholder="Email:"value={email}onChangeText={handleEmailChange} style={[styles.input, !isEmailValid && styles.inputError]}  placeholderTextColor='white'/>{!isEmailValid && <Text style={styles.errorText}>E-mail inválido</Text>}{isEmailDuplicated && <Text style={styles.errorText}>E-mail já cadastrado</Text>}         
+            <TextInput placeholder="CPF:"value={cpf}onChangeText={handleCpfChange}keyboardType="numeric"style={[styles.input, !isCpfValid && styles.inputError]}placeholderTextColor='white'/>{!isCpfValid && <Text style={styles.errorText}>CPF inválido</Text>}{isCpfDuplicated && <Text style={styles.errorText}>CPF já cadastrado</Text>}          
+            <TextInput placeholder="CNPJ:"value={cnpj}onChangeText={handleCnpjChange} keyboardType="numeric"style={[styles.input, !isCnpjValid && styles.inputError]}placeholderTextColor='white'/>{!isCnpjValid && <Text style={styles.errorText}>CNPJ inválido</Text>}{isCnpjDuplicated && <Text style={styles.errorText}>CNPJ já cadastrado</Text>}
             <TextInput placeholder="Telefone:"value={telefone}onChangeText={handleTelefoneChange}keyboardType="numeric"style={[styles.input, !isTelefoneValid && styles.inputError]}placeholderTextColor='white'/>{!isTelefoneValid && <Text style={styles.errorText}>Telefone inválido</Text>}
             <TextInput placeholder="Endereço:" value={endereco}onChangeText={(value) => setEndereco(value)} style={styles.input} placeholderTextColor={color='white'}/>
             <TextInput placeholder="Bairro:"value={bairro}onChangeText={(value) => setBairro(value)} style={styles.input} placeholderTextColor={color='white'} />

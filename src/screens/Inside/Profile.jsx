@@ -8,13 +8,14 @@ import { Button } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons'; 
 import User from '../../../assets/index'
 import { getAuth, signOut } from 'firebase/auth';
-
 import { auth, firebase } from '../../config/firebase'
 import { useNavigation } from '@react-navigation/native';
 import { Welcome } from '../outside/Welcome';
+import useAuth from '../../hooks/useAuth';
+
 
 export default function Profile({ navigation }) {
-
+  const { user } = useAuth();
 
   const Signout = () => {
     const auth = getAuth();
@@ -25,93 +26,69 @@ export default function Profile({ navigation }) {
     });
 
   }
-
-
-
- 
- 
-
+  if (!user) {
+    return <Text>Usuário não está logado</Text>;
+  }
   return (
-
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}>
-    
       <View style={styles.container}>
-          <Text style={styles.title}>Perfil</Text>
-          <View style={styles.image}>
-            <Image 
-              source={User} 
-              style={{
-              height: 130,
-              width: 130,
-              borderRadius: 65,                
-              }}/>
-          </View>
-          <Text style={styles.title}>Lara</Text>
-          <Text style={styles.subTitle}>lara.vic@gmail.com</Text>
-          <Text style={styles.title}>CPF</Text>
-          <Text style={styles.subTitle}>123.456.789-71</Text>
-          <Text style={styles.title}>Telefone</Text>
-          <Text style={styles.subTitle}>45 9 9123-4567</Text>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => Signout()}> 
-              <AntDesign name="logout" size={20} color="white" style={styles.textButton}/> 
-              <Text style={styles.text}>Desconectar</Text>     
-            </TouchableOpacity>
-         
-          
-          </View>
+        <Text style={styles.title}>Perfil</Text>
+        <View style={styles.imageContainer}>
+          <Image 
+            source={user?.photoURL ? { uri: user.photoURL } : require('../../../assets/user.jpeg')} 
+            style={styles.profileImage}
+          />
+        </View>
+        <Text style={styles.title}>{user?.displayName || 'Nome Indisponível'}</Text>
+        <Text style={styles.subTitle}>{user?.email || 'E-mail Indisponível'}</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={Signout}> 
+            <AntDesign name="logout" size={20} color="white" />
+            <Text style={styles.text}>Desconectar</Text>     
+          </TouchableOpacity>
+        </View>
       </View>
-     
     </LinearGradient>
-
   );
 }
 
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     justifyContent: "center",
     width: '100%',
-    marginBottom: '25%'
+    marginBottom: '25%',
   },
   title: {
-    fontSize: 22,
+    fontSize: 30,
     fontWeight: 'bold',
     color: 'white',
-   
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom:50,
   },
   subTitle: {
     fontSize: 20,
     color: 'white',
     padding: 5,
-   
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 20,
   },
   backgroundColor: {
     flex: 1,
     width: '100%',
   },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 40,
-    color: 'white',
-    height: 30,
-    width: '90%',
-    paddingStart: 20,
+  imageContainer: {
+    alignItems: 'center', // Centraliza horizontalmente
     marginBottom: 10,
   },
-  inputContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+  profileImage: {
+    height: 130,
+    width: 130,
+    borderRadius: 65,
   },
   buttonContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    
   },
   button: {
     justifyContent: 'center',
@@ -120,7 +97,6 @@ const styles = StyleSheet.create({
     height: 57,
     borderRadius: 40,
     flexDirection: 'row',
-    color: 'blue',
     backgroundColor: '#1D55A8',
     borderWidth: 1,
     borderColor: 'red',
@@ -129,14 +105,10 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   text: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
     paddingStart: 5,
-    textAlign: 'center'
+    textAlign: 'center',
   },
-  image: {
-    
-  },
-
-})
+});

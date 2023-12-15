@@ -6,6 +6,7 @@ import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function ClienteList(navegation) {
   const [clientes, setClientes] = useState([]);
@@ -27,7 +28,6 @@ export default function ClienteList(navegation) {
       try {
         const querySnapshot = await getDocs(collection(db, "Cliente teste"));
         const listaClientes = [];
-        const clienteID = doc.id
         
         querySnapshot.forEach((doc) => {
           listaClientes.push({ ...doc.data(), id: doc.id });
@@ -54,6 +54,7 @@ export default function ClienteList(navegation) {
     <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
       <Card style={styles.card}>
         <View style={styles.clienteItem}>
+          
           <Image 
             source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
             style={styles.clienteFoto}
@@ -71,6 +72,7 @@ export default function ClienteList(navegation) {
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
+
         <Text style={styles.titulo}>Clientes</Text>
         <Searchbar placeholder="Buscar Cliente"onChangeText={onChangeSearch}value={searchQuery}style={styles.searchbar}/>
         {isLoading ? (

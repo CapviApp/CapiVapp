@@ -51,7 +51,7 @@ export default function ImageComponent() {
             <TouchableOpacity onPress={pickImage}>
                 <Text>Select Image</Text>
             </TouchableOpacity>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, borderRadius: 5 }} />}
         </View>
     );
 }

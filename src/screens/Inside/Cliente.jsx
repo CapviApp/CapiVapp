@@ -1,163 +1,251 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from 'react-native';
-import { Searchbar, Card } from 'react-native-paper';
-import { getDocs, collection } from "firebase/firestore";
+import { StyleSheet, Text, View, ActivityIndicator, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { ActivityIndicator } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
 
-export default function ClienteList(navegation) {
-  const [clientes, setClientes] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [notFound, setNotFound] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+export default function Cliente() {
+  const route = useRoute();
   const navigation = useNavigation();
-
-  const handlePressCliente = (email) => {
-    navigation.navigate('Cliente', { email: email });
-  };
-  const onChangeSearch = query => {
-    setSearchQuery(query);
-    setNotFound(false);
-  };//item
+  const { email } = route.params ?? {};
+  const [cliente, setCliente] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [ordensServico, setOrdensServico] = useState([]);
 
   useEffect(() => {
-    const carregarClientes = async () => {
+    const carregarDadosCliente = async () => {
+      if (!email) {
+        setLoading(false);
+        return;
+      }
+  
       try {
-        const querySnapshot = await getDocs(collection(db, "Cliente teste"));
-        const listaClientes = [];
-        
-        querySnapshot.forEach((doc) => {
-          listaClientes.push({ ...doc.data(), id: doc.id });
-        });
-        setClientes(listaClientes);
-        setIsLoading(false);
+        const docRef = doc(db, "Cliente teste", email);
+        const docSnap = await getDoc(docRef);
+  
+        if (docSnap.exists()) {
+          setCliente(docSnap.data());
+
+          // Modificando a consulta para usar o campo 'cliente'
+          const osQuery = query(collection(db, "teste"), where("cliente", "==", email));
+          const osSnapshot = await getDocs(osQuery);
+          const osList = osSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setOrdensServico(osList);
+
+          setLoading(false);
+        } else {
+          console.log("Cliente não encontrado!");
+          setLoading(false);
+        }
       } catch (error) {
-        console.error("Erro ao buscar clientes:", error);
-        setIsLoading(false);
+        console.error("Erro ao buscar cliente e OS:", error);
+        setLoading(false);
       }
     };
-    carregarClientes();
-  }, []);
-
-  const filteredClientes = clientes.filter(cliente =>
-    cliente.nome && cliente.nome.toLowerCase().includes(searchQuery.toLowerCase())
-);
-
-  useEffect(() => {
-    setNotFound(searchQuery.length > 0 && filteredClientes.length === 0);
-  }, [searchQuery, filteredClientes]);
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePressCliente(item.email)}>
-      <Card style={styles.card}>
-        <View style={styles.clienteItem}>
-          <Image 
-            source={item.foto ? { uri: item.foto } : require('../../../assets/cliente.jpeg')} 
-            style={styles.clienteFoto}
-          />
-          <View>
-            <Text style={styles.clienteNome}>{item.nome}</Text>
-            <Text style={styles.clienteData}>{item.email}</Text>
-          </View>
-        </View>
-      </Card>
-    </TouchableOpacity>
-  );
+  
+    carregarDadosCliente();
+  }, [email]);
   
 
-  return (
-    <View style={styles.container}>
-      <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
-        <Text style={styles.titulo}>Clientes</Text>
-        <Searchbar placeholder="Buscar Cliente"onChangeText={onChangeSearch}value={searchQuery}style={styles.searchbar}/>
-        {isLoading ? (
-          <ActivityIndicator size="large" color="#fff" />
-        ) : notFound ? (
-          <Text style={styles.notFoundText}>Não foi encontrado</Text>
-        ) : (
-          <FlatList
-            data={filteredClientes}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.email}
-            ListHeaderComponent={searchQuery.length === 0 && !notFound ? () => (
-              <Text style={styles.subtitulo}>Mais recentes:</Text>
-            ) : null}
-            contentContainerStyle={{ paddingBottom: 20 }}
-          />
-        )}
-      </LinearGradient>
+  if (loading) {
+    return <ActivityIndicator size="large" color="#fff" />;
+  }
+  const goToOSIndividual = (os) => {
+    navigation.navigate('os', { osItem: os });
+  };
+  const renderItem = ({ item }) => (
+    <View>
+      {/* Seu componente de item da lista (OsItemH) */}
+      <Text>{item}</Text>
     </View>
   );
+  if (!cliente) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.tituloNot}>Cliente não encontrado</Text>
+      </View>
+    );
+  }
+
+  
+  const getColorByPriority = (priority) => {
+    switch (priority.toLowerCase()) {
+      case 'baixa':
+        return 'green';
+      case 'média' || 'media':
+        return '#D59712';
+      case 'alta':
+        return 'red';
+      default:
+        return 'gray'; 
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.gradient}>
+      <AntDesign style={styles.icon} name="leftcircle" size={30} color="white" onPress={() => navigation.navigate("clientelist")}/>
+
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Cliente</Text>
+          <Image source={cliente.foto ? { uri: cliente.foto } : require('../../../assets/cliente.jpeg')} style={styles.clienteFoto}/>        
+          <Text style={styles.nameText}>{cliente.nome}</Text>
+        </View>
+        
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Informações</Text>
+          <Text style={styles.infoText}>Email: {cliente.email}</Text>
+          <Text style={styles.infoText}>Telefone: {cliente.telefone}</Text>
+          <Text style={styles.infoText}>CPF: {cliente.cpf}</Text>
+        </View>
+        <Text style={styles.osTitle}>OS's relacionadas:</Text>
+        <View style={styles.osContainer}>
+          
+        {ordensServico && ordensServico.length > 0 ? (
+          ordensServico.map((os, index) => (
+            <TouchableOpacity key={index} onPress={() => goToOSIndividual(os)}>     
+              <View style={styles.osItem}>
+                <Text style={styles.osStatusText}>Status: {os.statusOS}</Text>
+              
+                <Text style={styles.osIdText}>ID: {os.id}</Text>
+                <Text style={styles.dateText}>Data: {os.data}</Text>
+                <Text style={[styles.osPriorityText, 
+                { backgroundColor: getColorByPriority(os.prioridade) } ]}>Prioridade: {os.prioridade}</Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noOSMessage}>Este cliente não possui nenhuma ordem de serviço</Text>
+        )}
+        </View>
+      </LinearGradient>
+    </ScrollView>
+  );
+
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gradient: {
-    flex: 1,
-    padding: 20,
-  },
-  titulo: {
-    fontSize: 32,
-    color: 'white',
-    fontWeight: 'bold',
-    marginVertical: 20,
-    alignSelf: 'center', 
-    textAlign: 'center',
-  },
-  searchbar: {
-    marginBottom: 20,
-    borderRadius: 30,
-  },
-  subtitulo: {
-    fontSize: 24,
-    color: 'white',
-    marginBottom: 10,
-  },
-  card: {
-    
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 20,
-    padding: 15,
-    marginBottom: 15,
-    elevation: 10,
-    borderWidth: 1,
-    borderColor: 'white',
-    
-  },
-  clienteItem: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    borderRadius: 15, 
-    overflow: 'hidden', 
+container: {
+  flex: 1,
+  backgroundColor: '#08354a',
+},
+icon: {
+  paddingHorizontal: 8,
+  paddingVertical: 6,
+  borderRadius: 4,
+  alignSelf: 'flex-start',
+  marginHorizontal: '5%',
+  marginTop: 30,
+},
+header: {
+  alignItems: 'center',
+  
+},
+dateText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 8,
+},
+clienteFoto: {
+  width: 100,
+  height: 100,
+  borderRadius: 50,
+  marginBottom: 8,
+  borderWidth: 1,
+  borderColor: 'white',
+},
+nameText: {
+  color: 'white',
+  fontSize: 24,
+  fontWeight: 'bold',
+  marginBottom: 16,
+},
+infoContainer: {
+  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  borderRadius: 10,
+  padding: 20,
+  marginHorizontal: 20,
+  marginBottom: 16,
+  borderWidth: 1, 
+  borderColor: '#fff',
+},
+infoTitle: {
+  color: 'white',
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 8,
+},
+infoText: {
+  color: 'white',
+  fontSize: 18,
+  marginBottom: 4,
+},
+osContainer: {
+ 
+  borderRadius: 10,
+  padding: 16,
+ 
+  marginBottom: 20,
+ 
+},
+osTitle: {
+  color: 'white',
+  fontSize: 20,
+  fontWeight: 'bold',
+  marginBottom: 8,
+  paddingLeft: 50,
+},
+osItem: {
+  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  borderRadius: 10,
+  padding: 10,
+  marginBottom: 10,
+  borderBottomWidth: 5,
+  borderWidth: 1, // Ajuste a largura da borda conforme desejado
+  borderColor: 'white',
+},
+osStatusText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 4,
+},
+osPriorityText: {
+ 
+  fontSize: 16,
+  marginBottom: 4,
+ 
+  borderRadius: 10,
+  paddingLeft: 8,
+  color: "#fff"
+},
+osIdText: {
+  color: 'white',
+  fontSize: 16,
+  marginBottom: 4,
+},
+titulo: {
+  fontSize: 32,
+  color: 'white',
+  fontWeight: 'bold',
+  marginVertical: 20,
+ 
+  alignSelf: 'center', 
+  textAlign: 'center',
 
-  },
-  clienteFoto: {
-    width: 70, 
-    height: 70, 
-    borderRadius: 35, 
-    borderWidth: 1, 
-    borderColor: 'white', 
-    marginRight: 10,
-    
-  },
-  clienteNome: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold', 
-    marginLeft: 10,
-  },
-  clienteData: {
-    fontSize: 14,
-    color: 'white',
-  },
-  notFoundText: {
-    color: 'red', 
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 5,
-  },
+},
+tituloNot:{
+  fontSize: 32,
+  color: 'white',
+  fontWeight: 'bold',
+  marginVertical: 20,
+  marginTop:80,
+  alignSelf: 'center', 
+  textAlign: 'center',
+},
+osInfoText: {
+  color: 'white',
+  fontSize: 14,
+  marginBottom: 4,
+},
 });
