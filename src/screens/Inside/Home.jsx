@@ -18,10 +18,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [osList, setOSList] = useState([]);
-  const osCollectionRef = collection(db, 'teste');
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
   
   const onChangeSearch = query => setSearchQuery(query);
-
+//teste
   const listOS = async () => {
     setIsLoading(true);
     setNotFound(false);
@@ -66,8 +66,6 @@ export default function Home() {
     listOS();
   }, []);
 
-
-  const name = 'Lara'
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
     <SectionList

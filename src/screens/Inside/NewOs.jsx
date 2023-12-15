@@ -54,8 +54,8 @@ export default function NewOS({ navigation })  {
   const [image, setImage] = useState(null)
   const [clientes, setClientes] = useState([])
 
-  const userCollectionRef = collection(db, 'Cliente teste');
-  const osCollectionRef = collection(db, 'teste');
+  const userCollectionRef = collection(db, 'Clientes');
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
 
   const [files, setFiles] = useState([])
   
@@ -92,7 +92,7 @@ export default function NewOS({ navigation })  {
     setCliente(value);
     setSelectedCliente(clientes.find((item) => item.value === value));
   };
-
+//teste
   const adicionarOS = async () => {
     try {
       const dataAtualUTC = new Date();

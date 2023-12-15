@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, TextInput, FlatList, Touchable, Touchab
 import Details from "./Details";
 import { addDoc, collection, onSnapshot, doc } from "firebase/firestore";
 import { db } from "../../config/firebase";
-
+//teste
 const List =({navigation})=>{
 
     const [todos, setTodos] = useState<Todo[any]>([]);

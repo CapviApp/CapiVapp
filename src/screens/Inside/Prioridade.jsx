@@ -16,7 +16,7 @@ export default function Prioridade({ navigation }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
   const [osList, setOSList] = useState([]);
-  const osCollectionRef = collection(db, 'teste');
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
   
   const listOS = async () => {
     try {

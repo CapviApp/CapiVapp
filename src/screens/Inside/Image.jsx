@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import storage from '@react-native-firebase/storage';
 import styles from './styles';
-
+//teste
 export default function ImageComponent() {
     const [image, setImage] = useState(null);
 
@@ -51,7 +51,7 @@ export default function ImageComponent() {
             <TouchableOpacity onPress={pickImage}>
                 <Text>Select Image</Text>
             </TouchableOpacity>
-            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            {image && <Image source={{ uri: image }} style={{ width: 200, height: 200, borderRadius: 5 }} />}
         </View>
     );
 }

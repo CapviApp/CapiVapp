@@ -11,7 +11,7 @@ export default function Historico({ navigation }) {
   const [osList, setOSList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
-  const osCollectionRef = collection(db, 'teste');
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
   
   const onChangeSearch = query => {
     setSearchQuery(query);
@@ -61,7 +61,7 @@ export default function Historico({ navigation }) {
     const prioridadeMatch = os.prioridade && os.prioridade.toLowerCase().includes(searchLower);
     return emailMatch || prioridadeMatch;
   });
-
+//teste
   useEffect(() => {
     setNotFound(searchQuery.length > 0 && filteredOS.length === 0);
   }, [searchQuery, filteredOS]);

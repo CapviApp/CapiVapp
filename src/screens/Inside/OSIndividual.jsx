@@ -1,7 +1,8 @@
-import { StatusBar, FlatList, TouchableOpacity, View, Text, StyleSheet, Image, SectionList, TextInput, ScrollView, KeyboardAvoidingView  } from 'react-native';import {addDoc, collection,query, getDocs,doc,updateDoc,editDoc,where,} from 'firebase/firestore';
-import { useState } from 'react';
+import { Alert,StatusBar, FlatList, TouchableOpacity, View, Text, StyleSheet, Image, SectionList, TextInput, ScrollView, KeyboardAvoidingView  } from 'react-native';import {addDoc, collection,query, getDocs,doc,updateDoc,editDoc,where,} from 'firebase/firestore';
+import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { db, uploadToFirebase, listFiles } from '../../config/firebase';
+import { db, uploadToFirebase, listFiles,  } from '../../config/firebase';
+import { getDoc } from 'firebase/firestore';
 import { SelectList } from 'react-native-dropdown-select-list-expo';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,29 +12,29 @@ import Fotos from './Fotos';
 import * as ImagePicker from 'expo-image-picker'
 import { setDoc } from "firebase/firestore";
 
-
-const OSIndividual = ({route}) => {
-  const {osItem} = route.params
+const OSIndividual = ({ route }) => {
+  const { osItem } = route.params;
   const [osListState, setOSList] = useState([]);
-  const osCollectionRef = collection(db, 'teste');
-  const navigation = useNavigation()
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
+  const navigation = useNavigation();
   const [statusOS, setStatusOS] = useState(osItem?.statusOS || 'Novo');
-  const [editMode, setEditMode] = useState(false);
-  const [selected, setSelected] = useState({ value: "" });
-  const [selectStatusOS, setSelectStatusOS] = useState('Novo');
   const [prioridade, setPrioridade] = useState(osItem?.prioridade);
   const [isEditing, setIsEditing] = useState(false);
-  const [newComment, setNewComment] = useState(''); // Estado para armazenar o novo comentário
-  const [comments, setComments] = useState(osItem?.comentarios || []); 
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState(osItem?.comentarios || []);
   const [imageUri, setImageUri] = useState(null);
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState(null);
   const osId = osItem?.id;
+  const [tempStatusOS, setTempStatusOS] = useState(statusOS);
+  const [tempComment, setTempComment] = useState('');
 
   const [permission, requestPermission] = ImagePicker.useCameraPermissions()
   
-  const onStatusChange = (value) => {
-    setStatusOS(value); // Atualiza o estado 'statusOS'
+  const onStatusChange = (selectedValue) => {
+    console.log("Status selecionado:", selectedValue);
+    setTempStatusOS(selectedValue);
   };
+  //teste
 
   const loadOS = async () => {
     try {
@@ -51,7 +52,7 @@ const OSIndividual = ({route}) => {
   };
 
   const updateStatus = async (id, newStatus) => {
-    const osDocRef = doc(db, 'teste', id);
+    const osDocRef = doc(db, 'Ordem de Serviço', id);
     try {
       await updateDoc(osDocRef, { statusOS: newStatus });
       console.log(`Status da OS ${id} atualizado para ${newStatus}`);
@@ -61,21 +62,24 @@ const OSIndividual = ({route}) => {
   };
 
   const editOS = async (osId, updatedData) => {
-    const osDocRef = doc(db, 'OS', osId);
-    console.log('Editando OS com ID:', osId);
+    const osDocRef = doc(db, 'Ordem de Serviço', osId);
+    console.log('Temporário:', tempStatusOS, 'Atual:', statusOS);  
     if (osId && updatedData) {
-      const dataToUpdate = Object.entries(updatedData).reduce((acc, [key, value]) => {
-        if (value !== undefined) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
-        if (Object.keys(dataToUpdate).length === 0) {
-        console.error('Erro: Todos os valores para atualização estão indefinidos.');
-        return;
-      }
       try {
-        const osDocRef = doc(osCollectionRef, osId);
+        // Preparando os dados para atualização
+        const dataToUpdate = {};
+        if (updatedData.prioridade !== undefined) dataToUpdate.prioridade = updatedData.prioridade;
+        if (updatedData.statusOS !== undefined) dataToUpdate.statusOS = updatedData.statusOS;
+        if (updatedData.imageUri !== undefined) dataToUpdate.imageUri = updatedData.imageUri;
+  
+        // Adiciona o novo comentário ao array existente sem substituir os antigos
+        if (updatedData.comentario !== undefined) {
+          const osSnapshot = await getDoc(osDocRef);
+          const osData = osSnapshot.data();
+          const updatedComments = osData.comentarios ? [...osData.comentarios, updatedData.comentario] : [updatedData.comentario];
+          dataToUpdate.comentarios = updatedComments;
+        }
+  
         await updateDoc(osDocRef, dataToUpdate);
         console.log('Ordem de serviço atualizada com sucesso!', osId);
         loadOS();
@@ -86,35 +90,72 @@ const OSIndividual = ({route}) => {
       console.log('Nenhum ID de documento válido para atualização ou dados de atualização ausentes.');
     }
   };
+  
+const onSave = async () => {
 
-  const onSave = () => {
-    if (statusOS?.trim()) {
-      editOS(osItem.id, { statusOS, comentarios: comments });  
-      setIsEditing(false); // Desativa o modo de edição
-    } else {
-      console.error('Erro: O status está indefinido ou vazio.');
-    }
+  if (tempComment.trim() === '') {
+    Alert.alert('Erro', 'O comentário não pode ser vazio.');
+    return;
+  }
+
+  if (!tempStatusOS || (tempStatusOS !== 'Iniciada' && tempStatusOS !== 'Pendente' && tempStatusOS !== 'Concluído' && tempStatusOS !== 'Cancelado')) {
+    console.log('statusOS:', statusOS, 'tempStatusOS:', tempStatusOS);
+    Alert.alert('Erro', 'Selecione um status válido.');
+    return;
+  }
+
+  if ((statusOS === 'Concluído' || statusOS === 'Cancelado') && (tempStatusOS === 'Iniciada' || tempStatusOS === 'Pendente')) {
+    console.log('Condição atingida, exibindo alerta'); // Adicionar para depuração
+    Alert.alert('Ação não permitida', 'Não é possível mudar o status para Iniciado ou Pendente após estar Concluído ou Cancelado.');
+    return;
+  }
+
+  if (!osItem.id) {
+    console.error('Erro: ID da OS não definido.');
+    return;
+  }
+
+  const osDocRef = doc(db, 'Ordem de Serviço', osItem.id);
+  try {
+    await updateDoc(osDocRef, { 
+      statusOS: tempStatusOS, 
+      comentarios: [...comments, tempComment].filter(comment => comment.trim() !== '')
+    });
+    setStatusOS(tempStatusOS);
+    setComments([...comments, tempComment].filter(comment => comment.trim() !== ''));
+    setIsEditing(false);
+    setNewComment('');
+    console.log('OS atualizada com sucesso.');
+  } catch (error) {
+    console.error('Erro ao salvar a OS:', error);
+  }
+};
+
+  
+  const onEdit = () => {
+    setTempStatusOS(statusOS);
+    setTempComment('');
+    setIsEditing(true);
   };
-
-
 
   const renderComments = () => {
     return comments.map((comment, index) => (
-      <Text key={index} style={styles.comment}>{comment}</Text>
+      <View key={index} style={styles.commentCard}>
+        <Text style={styles.commentText}>{comment}</Text>
+      </View>
     ));
   };
-
   const data = [
-    { title: 'Seção 1', data: [/* ...itens da seção 1... */] },
+    { title: 'Seção 1', data: [] },
    
   ];
   
   const renderItem = ({ item }) => (
     <View>
-      {/* Seu componente de item da lista (OsItemH) */}
       <Text>{item}</Text>
     </View>
   );
+  
   const navigateToFotos = () => {
     if (!osId) {
       Alert.alert('Erro', 'O ID da OS não está definido.');
@@ -123,6 +164,11 @@ const OSIndividual = ({route}) => {
   
     navigation.navigate('fotos', { osId });
   };
+  useEffect(() => {
+    setTempStatusOS(statusOS);
+  }, [statusOS]);
+  
+
   return (
     <LinearGradient colors={['#08354a', '#10456e', '#08354a']} style={styles.backgroundColor}> 
       <SectionList
@@ -135,7 +181,7 @@ const OSIndividual = ({route}) => {
              <Text style={styles.id}>ID: {osItem?.id}</Text>
              <Text style={styles.data}>Data: {osItem?.data}</Text>
              <Text style={styles.text}>Status da Ordem de Serviço: </Text>
-              <SelectList
+             <SelectList
                 data={[
                   { label: 'Iniciada', value: 'Iniciada' },
                   { label: 'Em andamento', value: 'Pendente' },
@@ -144,8 +190,8 @@ const OSIndividual = ({route}) => {
                 ]}
                 selected={statusOS}
                 setSelected={setStatusOS}
-                onSelect={onStatusChange} 
-                placeholder={osItem?.status || 'Selecione'} 
+                onSelect={onStatusChange}
+                placeholder={statusOS || 'Selecione'}
                 dropdownItemStyles={{ color: 'white' }}
                 dropdownTextStyles={{ color: 'white' }}
                 arrowicon={<FontAwesome name="chevron-down" size={12} color={'white'} />} 
@@ -163,6 +209,7 @@ const OSIndividual = ({route}) => {
             
             <View style={styles.textContainer}>
                 <Text style={styles.detalhes}>Detalhes:</Text>
+                <Text style={styles.text}>Status: {statusOS}</Text>
                 <Text style={styles.text}>Prioridade: {osItem?.prioridade}</Text>    
                 <Text style={styles.text}>Tipo de Serviço: {osItem?.tipoServico}</Text> 
                 <Text style={styles.text}>Tipo de Hardware: {osItem?.tipoHardware}</Text>
@@ -175,47 +222,39 @@ const OSIndividual = ({route}) => {
                 <Text style={styles.text}>Comentario: {osItem?.comentario}</Text>  
             </View>
 
-            <TouchableOpacity style={styles.photoButton} onPress={navigateToFotos}>
+            <View style={styles.commentsContainer}>
+              {renderComments()}
+            </View>
+
+            </View>
+                <TextInput
+                  style={styles.input}
+                  value={tempComment}
+                  onChangeText={setTempComment}
+                  placeholder="Adicione um comentário"
+                  placeholderTextColor="#DEDEDE"
+                />
+                <TouchableOpacity style={styles.photoButton} onPress={navigateToFotos}>
                 <Icon name="add-a-photo" size={24} color="#fff" style={styles.iconStyle} />
                 <Text style={styles.photoButtonText}>Adicionar Anexo</Text>
               </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity onPress={onSave} style={[styles.button, styles.saveButton]}>
+                    <Text style={styles.buttonText}>Salvar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setIsEditing(false)} style={[styles.button, styles.cancelButton]}>
+                    <Text style={styles.buttonText}>Cancelar</Text>
+                  </TouchableOpacity>
             </View>
-            {isEditing ? (
-                      <>
-                        <TextInput 
-                          style={styles.input} 
-                          value={newComment} 
-                          onChangeText={setNewComment} 
-                          placeholder="Adicione um comentário"
-                          placeholderTextColor="#DEDEDE"
-                        />
-                        <View style={styles.buttonContainer}>
-                          <TouchableOpacity onPress={onSave} style={[styles.button, styles.saveButton]}>
-                            <Text style={styles.buttonText}>Salvar</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={() => setIsEditing(false)} style={[styles.button, styles.cancelButton]}>
-                            <Text style={styles.buttonText}>Cancelar</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </>
-                      ) : (
-                        <View style={styles.editButtonContainer}>
-                          <TouchableOpacity onPress={() => setIsEditing(true)} style={[styles.button, styles.editButton]}>
-                            <Text style={styles.buttonText}>Editar</Text>
-                          </TouchableOpacity>
-                        </View>
-                    )}
-                    <View style={styles.commentsContainer}>
-                      {comments.map((comment, index) => (
-                        <Text key={index} style={styles.commentStyle}>{comment}</Text>
-                      ))}
-                    </View>
-            </View>
+              
+           
+          </View>
         )}
-    />
+      />
     </LinearGradient>
   );
-}
+};
+
 export default OSIndividual
 
 const styles = StyleSheet.create({
@@ -236,7 +275,7 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop:70,
     alignSelf: 'center',
-    marginVertical: 50,
+    marginVertical: 10,
 
   },
   textContainer: {
@@ -347,5 +386,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white', // Cor do texto
   },
+
+    commentCard: {
+      borderWidth: 1,
+      borderColor: 'white',
+      borderRadius: 20,
+      padding: 20,
+      marginBottom: 10,
+      color: 'white',
+      marginTop:10,
+      fontSize: 16,
+      paddingVertical: 10,
+  },
+  commentText: {
+    color: 'white', // ou outra cor de sua escolha
+    fontSize: 14,
+  },
+  
   
 });

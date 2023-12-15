@@ -19,7 +19,7 @@ export default function Fotos({ route }) {
   const navigateToFotos = (osId) => {
     navigation.navigate("Fotos", { osId });
   };
-
+//teste
   // Função atualizada para escolher imagem da galeria
 const pickImage = async () => {
   let result = await ImagePicker.launchImageLibraryAsync({
@@ -160,6 +160,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     alignItems: 'center',
+    paddingTop:50,
+    marginBottom: 50,
   },
   header: {
     fontSize: 22,
@@ -175,9 +177,10 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-    margin: 5,
+    margin: 10,
     borderWidth: 1,
     borderColor: '#fff',
+    borderRadius: 5,
   },
   button: {
     backgroundColor: 'blue',

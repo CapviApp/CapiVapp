@@ -20,12 +20,12 @@ export default function ClienteList(navegation) {
   const onChangeSearch = query => {
     setSearchQuery(query);
     setNotFound(false);
-  };//item
+  };//teste
 
   useEffect(() => {
     const carregarClientes = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "Cliente teste"));
+        const querySnapshot = await getDocs(collection(db, "Clientes"));
         const listaClientes = [];
         
         querySnapshot.forEach((doc) => {

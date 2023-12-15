@@ -15,8 +15,8 @@ export default function New() {
     cliente: '',
     data: '',
   });
-
-  const osCollectionRef = collection(db, 'os');
+//teste
+  const osCollectionRef = collection(db, 'Ordem de Serviço');
   const [OS, setOS] = useState([]);
   const [docIdToBeUpdated, setDocIdToBeUpdated] = useState(null);
  

@@ -8,7 +8,7 @@ import Toast from 'react-native-toast-message';
 import { useFocusEffect } from '@react-navigation/native';
 import { Alert } from 'react-native';
 
-//Toast.show
+//teste
 export default function Cliente() {
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
@@ -30,7 +30,7 @@ export default function Cliente() {
   const [isCnpjDuplicated, setIsCnpjDuplicated] = useState(false);
   const [isEmailDuplicated, setIsEmailDuplicated] = useState(false);
 
-  const userCollectionRef = collection(db, 'Cliente teste');
+  const userCollectionRef = collection(db, 'Clientes');
 
   const handleCpfChange = (value) => {
     const formattedValue = formatarCPF(value);
